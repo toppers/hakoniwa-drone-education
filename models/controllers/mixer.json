@@ -1,0 +1,9 @@
+{
+    "comment": "Mixer",
+    "num": [
+        "1"
+    ],
+    "den": [
+        "2 * N * A * W0 * Kr"
+    ]
+}    

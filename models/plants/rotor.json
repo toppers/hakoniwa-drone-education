@@ -1,0 +1,10 @@
+{
+    "comment": "Rotor",
+    "num": [
+        "2 * N * A * W0 * Kr"
+    ],
+    "den": [
+        "Tr",
+        "1"
+    ]
+}

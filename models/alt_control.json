@@ -1,0 +1,16 @@
+{
+    "plants":
+    [
+        "rotor.json",
+        "altitude.json"
+    ],
+    "controllers":
+    [
+        "alt_pid.json",
+        "mixer.json"
+    ],
+    "constants":
+    [
+        "constants.json"
+    ]
+}
