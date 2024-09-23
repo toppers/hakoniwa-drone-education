@@ -13,6 +13,7 @@ class TransParser:
         self.json_file = json_file
         self.data = self.load_transfer_function()
         self.constants = self.evaluate_constants(self.data['constants'])
+        self.s = symbols('s')  # シンボル s をここで定義し、クラス全体で共有する
 
     def update_constant(self, const_name, new_value):
         if const_name in self.constants:
@@ -75,13 +76,13 @@ class TransParser:
     # C(s) の取得（複数のコントローラに対応）
     def get_controllers(self):
         controllers_data = self.data['controllers']
-        overall_num = Poly([1], s)  # 初期値 1
-        overall_den = Poly([1], s)  # 初期値 1
+        overall_num = Poly([1], self.s)  # 初期値 1
+        overall_den = Poly([1], self.s)  # 初期値 1
         for controller in controllers_data:
             numerator = self.evaluate_terms(controller['num'])
             denominator = self.evaluate_terms(controller['den'])
-            controller_num_poly = Poly(numerator, s)
-            controller_den_poly = Poly(denominator, s)
+            controller_num_poly = Poly(numerator, self.s)
+            controller_den_poly = Poly(denominator, self.s)
             # 複数コントローラがある場合は掛け合わせる
             overall_num *= controller_num_poly
             overall_den *= controller_den_poly
@@ -90,13 +91,13 @@ class TransParser:
     # P(s) (プラント) の取得
     def get_plants(self):
         plants_data = self.data['plants']
-        overall_num = Poly([1], s)  # 初期値 1
-        overall_den = Poly([1], s)  # 初期値 1
+        overall_num = Poly([1], self.s)  # 初期値 1
+        overall_den = Poly([1], self.s)  # 初期値 1
         for plant in plants_data:
             num = self.evaluate_terms(plant['num'])
             den = self.evaluate_terms(plant['den'])
-            plant_num_poly = Poly(num, s)
-            plant_den_poly = Poly(den, s)
+            plant_num_poly = Poly(num, self.s)
+            plant_den_poly = Poly(den, self.s)
             # 複数プラントがある場合は掛け合わせる
             overall_num *= plant_num_poly
             overall_den *= plant_den_poly
