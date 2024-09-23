@@ -189,7 +189,8 @@ def plot_bode_and_margins(num, den):
         plt.axvline(wp, color='r', linestyle='--', label=f'Phase Cross @ {wp:.2f} rad/s')
     plt.axhline(-180, color='k', linestyle='--')
 
-    plt.show()
+    plt.savefig('bode_plot.png')
+    plt.close()
 
 # 極をプロットする関数
 def plot_poles(num, den):
@@ -206,7 +207,8 @@ def plot_poles(num, den):
     plt.title('Pole-Zero Plot')
     plt.xlabel('Real')
     plt.ylabel('Imaginary')
-    plt.show()
+    plt.savefig('poles_plot.png')
+    plt.close()
 
 
 # ステップ応答をプロットし、各種パラメータを計算・表示する関数
@@ -258,7 +260,8 @@ def plot_step_response(num, den):
     plt.axhline(y=steady_state_value, color='g', linestyle='--', label=f'Steady-State Value = {steady_state_value:.2f}')
     
     plt.legend()
-    plt.show()
+    plt.savefig('step_plot.png')
+    plt.close()
 
 
 
@@ -274,7 +277,8 @@ def plot_impulse_response(num, den):
     plt.xlabel('Time (s)')
     plt.ylabel('Amplitude')
     plt.grid(True)
-    plt.show()
+    plt.savefig('impulse_plot.png')
+    plt.close()
 
 class PDEvaluator:
     def __init__(self, PM, Ki, Wc):
