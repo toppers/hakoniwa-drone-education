@@ -12,21 +12,22 @@ PYTHONPATH_VAR="${TOP_DIR}/lib/hakoniwa:${TOP_DIR}/lib/hakoniwa/py"
 DRONE_CONFIG_PATH_VAR="config/mixer-api"
 HAKO_CONTROLLER_PARAM_FILE_VAR="../drone_control/config/param-api-mixer.txt"
 
-# .bashrc に環境変数を追加する関数
-add_to_bashrc() {
+# setup.bash に環境変数を追加する関数
+add_to_setup() {
     local var_name="$1"
     local var_value="$2"
     
-    echo "export ${var_name}=${var_value}" >> ~/.bashrc
-    echo "${var_name} added to .bashrc"
+    echo "export ${var_name}=${var_value}" >> ./setup.bash
+    echo "${var_name} added to setup.bash"
 }
+rm setup.bash
 
-# 環境変数を.bashrcに追加 (すでに存在しない場合のみ)
-add_to_bashrc "DYLD_LIBRARY_PATH" "${DYLD_LIBRARY_PATH_VAR}:${DYLD_LIBRARY_PATH}"
-add_to_bashrc "PATH" "${PATH_VAR}:${PATH}"
-add_to_bashrc "PYTHONPATH" "${PYTHONPATH_VAR}:${PYTHONPATH}"
-add_to_bashrc "DRONE_CONFIG_PATH" "${DRONE_CONFIG_PATH_VAR}"
-add_to_bashrc "HAKO_CONTROLLER_PARAM_FILE" "${HAKO_CONTROLLER_PARAM_FILE_VAR}"
-add_to_bashrc "HAKO_CUSTOM_JSON_PATH" "${HAKO_CUSTOM_JSON_PATH_VAR}"
+# 環境変数を.setupに追加 (すでに存在しない場合のみ)
+add_to_setup "DYLD_LIBRARY_PATH" "${DYLD_LIBRARY_PATH_VAR}:\$DYLD_LIBRARY_PATH"
+add_to_setup "PATH" "${PATH_VAR}:\$PATH"
+add_to_setup "PYTHONPATH" "${PYTHONPATH_VAR}:\$PYTHONPATH"
+add_to_setup "DRONE_CONFIG_PATH" "${DRONE_CONFIG_PATH_VAR}"
+add_to_setup "HAKO_CONTROLLER_PARAM_FILE" "${HAKO_CONTROLLER_PARAM_FILE_VAR}"
+add_to_setup "HAKO_CUSTOM_JSON_PATH" "${HAKO_CUSTOM_JSON_PATH_VAR}"
 
 echo "Installation complete. Environment variables have been set."

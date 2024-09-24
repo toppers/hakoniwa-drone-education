@@ -43,4 +43,4 @@ export default_core_mmap_path=${ROOT_DIR}/var/lib/hakoniwa/mmap
 export config_file=${ROOT_DIR}/etc/hakoniwa/cpp_core_config.json
 bash ${UTILS_PATH}/hako-mmap-set.bash -p ${ROOT_DIR}/var/lib/hakoniwa/mmap
 
-#bash ${UTILS_PATH}/add_env_bashrc.bash
+bash ${UTILS_PATH}/create_setup.bash
