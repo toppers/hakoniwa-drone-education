@@ -241,7 +241,7 @@ def my_on_manual_timing_control(context):
             height = -target_values.values['Z']
         takeoff_wait(client, height)
         if (target_values.has_key('Z')):
-            hakopy.usleep(100000000)
+            hakopy.usleep(10000000)
     else:
         # start
         button_event(client, 0)
