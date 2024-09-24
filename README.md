@@ -98,6 +98,20 @@ OK T_s(5% settling time)  : 1.428 s (Target: ≤ 20.000 s)
 
 TODO
 
+## PIDパラメータの変更方法
+
+PIDパラメータは、以下に配置されています。
+
+`workspace/root/var/lib/hakoniwa/config/param-api-mixer.txt`
+
+高度制御の場合は、以下のパラメータで調整できます。
+
+```
+PID_PARM_ALT_Kp 10.0
+PID_PARM_ALT_Ki 0.0
+PID_PARM_ALT_Kd 4.0
+```
+
 # Open this repository in Colab
 
 ## Altitude Control
