@@ -1,6 +1,12 @@
 #!/bin/bash
 trap 'kill 0' EXIT
 
+script_path=$(realpath "$0")
+echo "Script path: $script_path"
+
+TOOL_PATH=`(cd "$(dirname $script_path)" && pwd)`
+
+
 if [ -z "${HAKO_CUSTOM_JSON_PATH}" ]
 then
     echo "ERROR: HAKO_CUSTOM_JSON_PATH is not defined"
@@ -24,11 +30,6 @@ fi
 if [ -z "${BIN_PATH}" ]
 then
     echo "ERROR: BIN_PATH is not defined"
-    exit 1
-fi
-if [ -z "${TOOL_PATH}" ]
-then
-    echo "ERROR: TOOL_PATH is not defined"
     exit 1
 fi
 if [ -z "${CONFIG_PATH}" ]
@@ -57,7 +58,7 @@ SPEED_KEY_VALUE=
 if [ $# -eq 4 ]
 then
     SPEED_KEY_VALUE=${4}
-endif
+fi
 
 TKEY_VALUE=${2}
 KEY_VALUE=${3}

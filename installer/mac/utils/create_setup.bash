@@ -9,8 +9,12 @@ DYLD_LIBRARY_PATH_VAR="${TOP_DIR}/lib/hakoniwa:${TOP_DIR}/lib/hakoniwa/py"
 PATH_VAR="${TOP_DIR}/bin/hakoniwa"
 HAKO_CUSTOM_JSON_PATH_VAR="${ROOT_DIR}/var/lib/hakoniwa/config/custom.json"
 PYTHONPATH_VAR="${TOP_DIR}/lib/hakoniwa:${TOP_DIR}/lib/hakoniwa/py"
-DRONE_CONFIG_PATH_VAR="config/mixer-api"
-HAKO_CONTROLLER_PARAM_FILE_VAR="../drone_control/config/param-api-mixer.txt"
+DRONE_CONFIG_PATH_VAR="${ROOT_DIR}/var/lib/hakoniwa/config/mixer-api"
+HAKO_CONTROLLER_PARAM_FILE_VAR="${ROOT_DIR}/var/lib/hakoniwa/config/param-api-mixer.txt"
+#BIN_PATH
+BIN_PATH_VAR="${ROOT_DIR}/usr/local/bin/hakoniwa"
+#CONFIG_PATH
+CONFIG_PATH_VAR="${ROOT_DIR}/var/lib/hakoniwa/config"
 
 # setup.bash に環境変数を追加する関数
 add_to_setup() {
@@ -29,5 +33,6 @@ add_to_setup "PYTHONPATH" "${PYTHONPATH_VAR}:\$PYTHONPATH"
 add_to_setup "DRONE_CONFIG_PATH" "${DRONE_CONFIG_PATH_VAR}"
 add_to_setup "HAKO_CONTROLLER_PARAM_FILE" "${HAKO_CONTROLLER_PARAM_FILE_VAR}"
 add_to_setup "HAKO_CUSTOM_JSON_PATH" "${HAKO_CUSTOM_JSON_PATH_VAR}"
-
+add_to_setup "BIN_PATH" "${BIN_PATH_VAR}"
+add_to_setup "CONFIG_PATH" "${CONFIG_PATH_VAR}"
 echo "Installation complete. Environment variables have been set."
