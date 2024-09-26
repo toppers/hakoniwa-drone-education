@@ -1,5 +1,16 @@
 # hakoniwa-drone-education
-This repository is designed to provide a clear, educational framework for controlling drones using the Hakoniwa Drone Simulator.
+
+本リポジトリでは、箱庭ドローンの数式を線形モデル化して、解析的にドローン制御のPIDパラメータを調査する方法をまとめています。
+
+具体的には、こんなことができます。
+
+- 解析的なPIDパラメータ調査手法としては、ボード線図や位相線図の作成からステップ応答解析などを Google Colab で簡単に行えます。
+- 解析的に求めたパラメータを箱庭ドローンシミュレータで動作確認できます。この際、遅延時間やオーバーシュート量などを定量的に評価できます。
+
+箱庭ドローンの物理モデルは[こちら](https://github.com/toppers/hakoniwa-px4sim/blob/main/drone_physics/README-ja.md#%E6%95%B0%E5%BC%8F)。
+
+![image](https://github.com/user-attachments/assets/270c4b61-39f2-4451-b442-c6fc5c1100eb)
+
 
 # 箱庭ドローンシミュレータの環境構築手順
 
