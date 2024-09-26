@@ -29,3 +29,5 @@ export config_file=${ROOT_DIR}/etc/hakoniwa/cpp_core_config.json
 bash ${UTILS_PATH}/hako-mmap-set.bash -p ${ROOT_DIR}/var/lib/hakoniwa/mmap
 
 bash ${UTILS_PATH}/create_setup.bash
+
+(cd ../src/drone_control && rm -rf cmake-build/* && bash build.bash)
