@@ -24,6 +24,9 @@
 ```bash
 cd workspace
 ```
+```bash
+export PYTHON_BIN=python3
+```
 
 ## 高度制御
 
@@ -104,7 +107,7 @@ hakoniwa-px4sim root            setup.bash
 
 例：
 ```
-export PYTHON_BIN=python3.12
+export PYTHON_BIN=python3
 ```
 
 ## Dockerマシンの場合
