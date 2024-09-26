@@ -1,5 +1,7 @@
 #!/bin/bash
 
+${SUDO} apt update
+
 # root ディレクトリ作成 (存在する場合は作成しない)
 mkdir -p ${ROOT_DIR}/etc/hakoniwa 
 mkdir -p ${ROOT_DIR}/var/lib/hakoniwa/mmap
@@ -74,5 +76,16 @@ fi
 # python3-dev のインストール (失敗時はエラーメッセージ表示)
 if ! ${SUDO} apt install -y python3-dev; then
   echo "Failed to install python3-dev."
+  exit 1
+fi
+
+if ! ${SUDO} apt install -y python3; then
+  echo "Failed to install python3."
+  exit 1
+fi
+
+
+if ! ${SUDO} apt install -y python3-pip; then
+  echo "Failed to install python3-pip."
   exit 1
 fi
