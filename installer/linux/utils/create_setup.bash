@@ -16,7 +16,7 @@ BIN_PATH_VAR="${ROOT_DIR}/usr/local/bin/hakoniwa"
 #CONFIG_PATH
 CONFIG_PATH_VAR="${ROOT_DIR}/var/lib/hakoniwa/config"
 HAKO_CONFIG_PATH_VAR="${ROOT_DIR}/etc/hakoniwa/cpp_core_config.json"
-HAKO_BINARY_PATH_VAR="${ROOT_DIR}/usr/local/lib/hakoniwa/hako_binary"
+HAKO_BINARY_PATH_VAR="${ROOT_DIR}/usr/local/lib/hakoniwa/hako_binary/offset"
 
 # setup.bash に環境変数を追加する関数
 add_to_setup() {
