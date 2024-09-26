@@ -89,3 +89,8 @@ if ! ${SUDO} apt install -y python3-pip; then
   echo "Failed to install python3-pip."
   exit 1
 fi
+
+if ! ${SUDO} apt install -y cmake; then
+  echo "Failed to install cmake."
+  exit 1
+fi
