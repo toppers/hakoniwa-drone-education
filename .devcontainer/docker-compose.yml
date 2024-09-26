@@ -1,0 +1,9 @@
+version: '3'
+services:
+  dev:
+    image: mcr.microsoft.com/devcontainers/universal:2
+    deploy:
+      resources:
+        limits:
+          cpus: '4'   # 最大4コア使用（必要に応じて変更）
+          memory: 8g  # 最大8GBメモリ使用（必要に応じて変更）

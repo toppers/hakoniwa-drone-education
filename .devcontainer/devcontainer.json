@@ -1,0 +1,7 @@
+{
+    "name": "Universal Dev Container",
+    "image": "mcr.microsoft.com/devcontainers/universal:2",
+    "features": {},
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "dev"
+}
