@@ -42,6 +42,12 @@ git clone https://github.com/toppers/hakoniwa-drone-education.git
 cd hakoniwa-drone-education && mkdir workspace
 ```
 
+ワークスペースに移動します。
+
+```bash
+cd workspace
+```
+
 インストーラを起動します。
 
 mac:
