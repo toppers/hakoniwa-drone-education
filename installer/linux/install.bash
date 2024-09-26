@@ -19,8 +19,23 @@ CURR_DIR=`pwd`
 export ROOT_DIR=${CURR_DIR}/root
 
 bash ${UTILS_PATH}/install_env.bash
+if [ $? -ne 0 ]
+then
+    echo "ERROR: instal_env.bash error"
+    exit 1
+fi
 bash ${UTILS_PATH}/build_hako.bash
+if [ $? -ne 0 ]
+then
+    echo "ERROR: build_hako.bash error"
+    exit 1
+fi
 bash ${UTILS_PATH}/install_hako.bash
+if [ $? -ne 0 ]
+then
+    echo "ERROR: instal_hako.bash error"
+    exit 1
+fi
 
 cp -rp ${DIR_PATH}/config/* ${ROOT_DIR}/var/lib/hakoniwa/config/
 

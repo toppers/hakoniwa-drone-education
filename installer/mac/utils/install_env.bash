@@ -75,3 +75,5 @@ if ! brew install jq; then
   echo "Failed to install jq."
   exit 1
 fi
+
+pip3 install -r ../requirements.txt

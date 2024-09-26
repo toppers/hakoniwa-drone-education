@@ -37,7 +37,7 @@ then
     exit 1
 fi
 
-cp ${DIR_PATH}/config/* ${ROOT_DIR}/var/lib/hakoniwa/config/
+cp -rp ${DIR_PATH}/config/* ${ROOT_DIR}/var/lib/hakoniwa/config/
 
 export default_core_mmap_path=${ROOT_DIR}/var/lib/hakoniwa/mmap
 export config_file=${ROOT_DIR}/etc/hakoniwa/cpp_core_config.json

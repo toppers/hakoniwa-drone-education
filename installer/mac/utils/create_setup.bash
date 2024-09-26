@@ -15,6 +15,8 @@ HAKO_CONTROLLER_PARAM_FILE_VAR="${ROOT_DIR}/var/lib/hakoniwa/config/param-api-mi
 BIN_PATH_VAR="${ROOT_DIR}/usr/local/bin/hakoniwa"
 #CONFIG_PATH
 CONFIG_PATH_VAR="${ROOT_DIR}/var/lib/hakoniwa/config"
+HAKO_CONFIG_PATH_VAR="${ROOT_DIR}/etc/hakoniwa/cpp_core_config.json"
+HAKO_BINARY_PATH_VAR="${ROOT_DIR}/usr/local/lib/hakoniwa/hako_binary/offset"
 
 # setup.bash に環境変数を追加する関数
 add_to_setup() {
@@ -24,7 +26,7 @@ add_to_setup() {
     echo "export ${var_name}=${var_value}" >> ./setup.bash
     echo "${var_name} added to setup.bash"
 }
-rm setup.bash
+rm -f setup.bash
 
 # 環境変数を.setupに追加 (すでに存在しない場合のみ)
 add_to_setup "DYLD_LIBRARY_PATH" "${DYLD_LIBRARY_PATH_VAR}:\$DYLD_LIBRARY_PATH"
@@ -35,4 +37,6 @@ add_to_setup "HAKO_CONTROLLER_PARAM_FILE" "${HAKO_CONTROLLER_PARAM_FILE_VAR}"
 add_to_setup "HAKO_CUSTOM_JSON_PATH" "${HAKO_CUSTOM_JSON_PATH_VAR}"
 add_to_setup "BIN_PATH" "${BIN_PATH_VAR}"
 add_to_setup "CONFIG_PATH" "${CONFIG_PATH_VAR}"
+add_to_setup "HAKO_CONFIG_PATH" "${HAKO_CONFIG_PATH_VAR}"
+add_to_setup "HAKO_BINARY_PATH" "${HAKO_BINARY_PATH_VAR}"
 echo "Installation complete. Environment variables have been set."

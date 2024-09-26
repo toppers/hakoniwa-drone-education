@@ -16,6 +16,11 @@ mkdir -p ${ROOT_DIR}/usr/local/lib/hakoniwa/py/hako_binary
 # px4sim をクローン (既にクローンされているか確認)
 if [ ! -d hakoniwa-px4sim ]; then
   git clone https://github.com/toppers/hakoniwa-px4sim.git
+  if [ $? -ne 0 ]
+  then
+    echo "ERROR: can not clone hakoniwa-px4sim..."
+    exit 1
+  fi
 else
   echo "hakoniwa-px4sim is already cloned."
 fi
@@ -94,3 +99,5 @@ if ! ${SUDO} apt install -y cmake; then
   echo "Failed to install cmake."
   exit 1
 fi
+
+pip3 install -r ../requirements.txt
