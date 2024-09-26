@@ -50,6 +50,5 @@ else
         -it --rm \
         --net host \
         -w ${DOCKER_DIR} \
-        --name ${IMAGE_NAME} ${DOCKER_IMAGE} \
-        /bin/bash /root/ev3rt-athrill-v850e2m/sdk/src/build.bash
+        --name ${IMAGE_NAME} ${DOCKER_IMAGE} 
 fi
