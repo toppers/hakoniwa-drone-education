@@ -325,7 +325,8 @@ def main():
     # connect to the HakoSim simulator
     client = hakosim.MultirotorClient(config_path)
     client.default_drone_name = "DroneTransporter"
-    client.pdu_manager = hako_pdu.HakoPduManager('/usr/local/lib/hakoniwa/hako_binary/offset', config_path)
+    hako_binary_path = os.getenv('HAKO_BINARY_PATH', '/usr/local/lib/hakoniwa/hako_binary/offset')
+    client.pdu_manager = hako_pdu.HakoPduManager(hako_binary_path, config_path)
     client.enableApiControl(True)
     client.armDisarm(True)
 
