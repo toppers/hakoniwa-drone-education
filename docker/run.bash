@@ -7,6 +7,17 @@ IMAGE_NAME=`cat docker/image_name.txt`
 IMAGE_TAG=`cat docker/latest_version.txt`
 DOCKER_IMAGE=toppersjp/${IMAGE_NAME}:${IMAGE_TAG}
 
+if [ ! -d workspace/root/var/lib/hakoniwa/config ]
+then
+    :
+else
+    mkdir -p workspace/root/var/lib/hakoniwa/config/
+    cp -rp installer/linux/config/* workspace/root/var/lib/hakoniwa/config/
+fi
+
+VAR_CONFIG_HOST_DIR=${HAKONIWA_TOP_DIR}/workspace/root/var/lib/hakoniwa/config
+VAR_CONFIG_DOCKER_DIR=/var/lib/hakoniwa/config
+
 ARCH=`arch`
 OS_TYPE=`bash docker/utils/detect_os_type.bash`
 echo $ARCH
@@ -18,6 +29,7 @@ then
         docker run \
             --platform linux/amd64 \
             -v ${HOST_WORKDIR}:${DOCKER_DIR} \
+            -v ${VAR_CONFIG_HOST_DIR}:${VAR_CONFIG_DOCKER_DIR} \
             -it --rm \
             -w ${DOCKER_DIR} \
             --net host \
@@ -25,6 +37,7 @@ then
     else
         docker run \
             -v ${HOST_WORKDIR}:${DOCKER_DIR} \
+            -v ${VAR_CONFIG_HOST_DIR}:${VAR_CONFIG_DOCKER_DIR} \
             -it --rm \
             --net host \
             -w ${DOCKER_DIR} \
@@ -33,6 +46,7 @@ then
 else
     docker run \
         -v ${HOST_WORKDIR}:${DOCKER_DIR} \
+        -v ${VAR_CONFIG_HOST_DIR}:${VAR_CONFIG_DOCKER_DIR} \
         -it --rm \
         --net host \
         -w ${DOCKER_DIR} \

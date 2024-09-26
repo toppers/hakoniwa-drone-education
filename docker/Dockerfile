@@ -98,7 +98,7 @@ COPY requirements.txt /root/requirements.txt
 RUN pip3 install -r /root/requirements.txt
 
 # Add initialization script
-COPY ./docker/init_script.sh /root/init_script.sh
+COPY docker/init_script.sh /root/init_script.sh
 
 # Add entrypoint to run initialization script once
 RUN chmod +x /root/init_script.sh
