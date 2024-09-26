@@ -18,7 +18,7 @@
 - 高度制御：[![Altitude Control](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/toppers/hakoniwa-drone-education/blob/main/colab/alt_control.ipynb)
 
 
-# 箱庭ドローンシミュレータでの解析
+# 箱庭ドローンシミュレータでの動作確認
 
 共通操作：
 ```bash
