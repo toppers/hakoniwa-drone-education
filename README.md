@@ -12,6 +12,13 @@
 ![image](https://github.com/user-attachments/assets/270c4b61-39f2-4451-b442-c6fc5c1100eb)
 
 
+# Google Colab での解析
+
+
+- 高度制御：[![Altitude Control](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/toppers/hakoniwa-drone-education/blob/main/colab/alt_control.ipynb)
+
+
+
 # 箱庭ドローンシミュレータの環境構築手順
 
 - サポート範囲：
@@ -171,10 +178,4 @@ PID_PARM_ALT_Kp 10.0
 PID_PARM_ALT_Ki 0.0
 PID_PARM_ALT_Kd 4.0
 ```
-
-# Open this repository in Colab
-
-## Altitude Control
-
-[![Altitude Control](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/toppers/hakoniwa-drone-education/blob/main/colab/alt_control.ipynb)
 
