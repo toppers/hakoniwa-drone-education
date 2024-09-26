@@ -105,6 +105,12 @@ kill -s TERM ${EVAL_PID}
 
 jq --arg axis "$TKEY" --argjson value "$TVALUE" '.AXIS = $axis | .TARGET_VALUE = $value' ${CONFIG_PATH}/control_evaluate_sample.json > ./tmp.json
 
+if [ ! -f /tmp/v.txt ]
+then
+    echo "ERROR: EXEC_SIM_TIME is too small value: ${EXEC_SIM_TIME}"
+    exit 1
+fi
+
 START_TIME=`cat /tmp/v.txt`
 cp ./tmp.json ./tmp1.json
 jq --argjson value "$START_TIME" '.EVALUATION_START_TIME = $value' ./tmp1.json > ./tmp.json
