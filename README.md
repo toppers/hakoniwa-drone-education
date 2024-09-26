@@ -18,6 +18,35 @@
 - 高度制御：[![Altitude Control](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/toppers/hakoniwa-drone-education/blob/main/colab/alt_control.ipynb)
 
 
+# 箱庭ドローンシミュレータでの解析
+
+共通操作：
+```bash
+cd workspace
+```
+
+## 高度制御
+
+上空３メートルまでテイクオフする場合の動作確認するには、以下のコマンドで`Z:-3` としてください。他のパラメータは変更しないでください。
+```bash
+bash ../src/tools/eval-ctrl.bash -1 Z:-3 X:0 S:5
+```
+出力ログ：
+```
+NG c(Steady state value)  : 3.000   (Target: -3±-0.030 m)
+OK T_r(Rise time)         : 0.576 s (Target: ≤ 10.000 s)
+OK T_d(Delay time)        : 0.471 s (Target: ≤ 5.000 s)
+OK O_s(Maximum overshoot) : 0.182   (Target: ≤ 1.000 m)
+OK T_s(5% settling time)  : 1.428 s (Target: ≤ 20.000 s)
+```
+
+グラフ化方法：
+```bash
+python3 ../src/tools/hako_TimelineAnalyzer.py drone_log0/drone_dynamics.csv --columns Z --diff
+```
+
+![image](https://github.com/user-attachments/assets/f57e0d25-5fd5-438b-a9c3-989a848cb269)
+
 
 # 箱庭ドローンシミュレータの環境構築手順
 
@@ -27,6 +56,7 @@
     - Ubuntu 22.0.4
     - Windows/WSL2
   - Dockerコンテナ
+  - Codespace
 
 ## Nativeマシンの場合
 
