@@ -1,7 +1,8 @@
 {
-    "name": "Universal Dev Container",
-    "image": "mcr.microsoft.com/devcontainers/universal:2",
+    "name": "Ubuntu 22.04 Dev Container",
+    "image": "mcr.microsoft.com/devcontainers/base:jammy",  // Ubuntu 22.04をベースにしたコンテナイメージ
     "features": {},
     "dockerComposeFile": "docker-compose.yml",
     "service": "dev"
-}
+  }
+  
