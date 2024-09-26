@@ -24,7 +24,7 @@ add_to_setup() {
     echo "export ${var_name}=${var_value}" >> ./setup.bash
     echo "${var_name} added to setup.bash"
 }
-rm setup.bash
+rm -f setup.bash
 
 # 環境変数を.setupに追加 (すでに存在しない場合のみ)
 add_to_setup "LD_LIBRARY_PATH" "${LD_LIBRARY_PATH_VAR}:\$LD_LIBRARY_PATH"
