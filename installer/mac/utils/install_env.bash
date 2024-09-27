@@ -93,4 +93,4 @@ pip3 install -r hakoniwa-webserver/requirements.txt
 
 wget https://github.com/toppers/hakoniwa-unity-drone-model/releases/download/v2.1.1/static.webgl.zip
 unzip static.webgl.zip
-mv static.webgl static.webgl hakoniwa-webserver/server/
+mv static.webgl hakoniwa-webserver/server/
