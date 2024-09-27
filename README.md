@@ -76,6 +76,18 @@ Press ENTER to start the services
 リプレイ完了後、もう一度見たい場合は、`restart` とキー入力してENTERキーを押下してください。
 終了する場合は、`exit` とキー入力して、ENTERキーを押下後、CTRL±Cで終了させてください。
 
+***リプレイ：***
+
+
+https://github.com/user-attachments/assets/228db9bb-6f13-43a8-9a44-6c13eea45682
+
+
+***リスタート：***
+
+
+https://github.com/user-attachments/assets/d81d4e5e-5f5e-4770-bd81-4e77e11e8488
+
+
 
 # 箱庭ドローンシミュレータの環境構築手順
 
