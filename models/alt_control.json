@@ -1,21 +1,20 @@
 {
     "plants":
     [
-        "rotor.json",
+        "rotor_num1.json",
         "altitude.json"
     ],
     "controllers":
     [
-        "alt_pid.json",
-        "mixer.json"
+        "alt_pid.json"
     ],
     "constants":
     [
         "constants.json"
     ],
     "pd_args": {
-        "PM": 20,
-        "Wc": 10,
+        "PM": 60,
+        "Wc": 1,
         "Ki": 0.0
     }
 }
