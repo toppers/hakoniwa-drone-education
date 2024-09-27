@@ -113,4 +113,5 @@ plt.xlabel('Time (seconds)' if args.diff else 'Time')  # x軸のラベル
 plt.ylabel('Values')  # y軸のラベル
 plt.grid(True)  # グリッドの表示
 plt.legend()  # 凡例の表示
-plt.show()  # グラフの表示
+plt.savefig('plot.png')
+plt.close()

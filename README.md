@@ -48,6 +48,8 @@ OK T_s(5% settling time)  : 1.428 s (Target: ≤ 20.000 s)
 python3 ../src/tools/hako_TimelineAnalyzer.py drone_log0/drone_dynamics.csv --columns Z --diff
 ```
 
+成功すると、`plot.png` ファイルがカレントディレクトリ直下に出力されます。
+
 ![image](https://github.com/user-attachments/assets/f57e0d25-5fd5-438b-a9c3-989a848cb269)
 
 
