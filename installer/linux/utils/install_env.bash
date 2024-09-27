@@ -66,6 +66,18 @@ else
   exit 1
 fi
 
+# Hakoniwa Webserver
+if [ ! -d hakoniwa-webserver ]; then
+  git clone https://github.com/toppers/hakoniwa-webserver.git
+  if [ $? -ne 0 ]
+  then
+    echo "ERROR: can not clone hakoniwa-webserver..."
+    exit 1
+  fi
+else
+  echo "hakoniwa-webserver is already cloned."
+fi
+
 # Google Test のインストール (失敗時はエラーメッセージ表示)
 if ! ${SUDO} apt install -y libgtest-dev; then
   echo "Failed to install Google Test."
@@ -101,3 +113,4 @@ if ! ${SUDO} apt install -y cmake; then
 fi
 
 pip3 install -r ../requirements.txt
+pip3 install -r hakoniwa-webserver/requirements.txt
