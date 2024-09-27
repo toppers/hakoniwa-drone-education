@@ -1,6 +1,12 @@
 #!/bin/bash
 trap 'kill 0' EXIT
 
+if [ ! -f drone_log0/drone_dynamics.csv ]
+then
+    echo "ERROR: not found log on drone_log0"
+    exit 1
+fi
+
 # Get the real path of the script
 script_path=$(realpath "$0")
 echo "Script path: $script_path"

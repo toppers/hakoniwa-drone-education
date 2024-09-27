@@ -53,6 +53,30 @@ python3 ../src/tools/hako_TimelineAnalyzer.py drone_log0/drone_dynamics.csv --co
 ![image](https://github.com/user-attachments/assets/f57e0d25-5fd5-438b-a9c3-989a848cb269)
 
 
+実際の飛行状況を見たい場合は、リプレイ機能で確認できます(Nativeマシンの場合のみ利用できます)。
+
+```bash
+bash ../src/tools/replay.bash
+```
+
+以下のログが出力されたら、Webブラウザから`http://localhost:8000`にアクセスすればOKです。
+
+```
+INFO: start hakoniwa asset(web server)
+INFO: start http server
+INFO: start websocket server
+INFO: Success for external initialization.
+======== Running on http://localhost:8080 ========
+(Press CTRL+C to quit)
+WebSocket server started on ws://localhost:8765
+Starting HTTP server on port 8000...
+Press ENTER to start the services
+```
+
+リプレイ完了後、もう一度見たい場合は、`restart` とキー入力してENTERキーを押下してください。
+終了する場合は、`exit` とキー入力して、ENTERキーを押下後、CTRL±Cで終了させてください。
+
+
 # 箱庭ドローンシミュレータの環境構築手順
 
 - サポート範囲：
