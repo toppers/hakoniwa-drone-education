@@ -12,5 +12,10 @@
     "constants":
     [
         "constants.json"
-    ]
+    ],
+    "pd_args": {
+        "PM": 20,
+        "Wc": 10,
+        "Ki": 0.0
+    }
 }

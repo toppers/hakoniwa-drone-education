@@ -46,6 +46,9 @@ def merge_json_files(base_dir, config_file):
                 merged_data['constants'].update(load_json(json_path))
             except FileNotFoundError as e:
                 print(e)
+    # pd_argsのJSONファイルをそのまま展開
+    if 'pd_args' in config_data:
+        merged_data['pd_args'] = config_data['pd_args']
 
     return merged_data
 

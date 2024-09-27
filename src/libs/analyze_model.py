@@ -13,6 +13,10 @@ class TransParser:
         self.json_file = json_file
         self.data = self.load_transfer_function()
         self.constants = self.evaluate_constants(self.data['constants'])
+        if 'pd_args' in self.data:
+            self.pd_args = self.data['pd_args']
+        else:
+            self.pd_args = None
         self.s = symbols('s')  # シンボル s をここで定義し、クラス全体で共有する
 
     def update_constant(self, const_name, new_value):
@@ -329,14 +333,18 @@ class PDEvaluator:
         return kd
 
 def calc_pd(tfd):
-    e = PDEvaluator(tfd.constants['PM'], tfd.constants['Ki'], tfd.constants['Wc'])
+    if tfd.pd_args is None:
+        print("ERROR: not found pd_args")
+        return False
+    e = PDEvaluator(tfd.pd_args['PM'], tfd.pd_args['Ki'], tfd.pd_args['Wc'])
     P_num, P_den = tfd.get_plants()
     e.calc(tfd.get_coefficients(P_num), tfd.get_coefficients(P_den))
     Kp = e.getKp()
     Kd = e.getKd()
     print(f"\"Kp\": {Kp},")
-    print(f"\"Ki\": {tfd.constants['Ki']},")
+    print(f"\"Ki\": {tfd.pd_args['Ki']},")
     print(f"\"Kd\": {Kd},")
+    return True
 
 # メイン処理
 if __name__ == "__main__":
