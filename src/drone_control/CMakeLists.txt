@@ -4,16 +4,9 @@ project(LoadableModuleProject)
 # C++標準の指定
 set(CMAKE_CXX_STANDARD 17)
 
-if(EXISTS "${PROJECT_SOURCE_DIR}/../hakoniwa")
-    set(HAKONIWA_SOURCE_DIR "${PROJECT_SOURCE_DIR}/../hakoniwa")
-else()
-    set(HAKONIWA_SOURCE_DIR "${PROJECT_SOURCE_DIR}/../workspace")
-endif()
-
 include_directories(
     include
     common/include
-    ${HAKONIWA_SOURCE_DIR}/src/utils
 )
 
 # workspaceディレクトリ内のサブディレクトリを自動的に追加
