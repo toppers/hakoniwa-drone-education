@@ -7,7 +7,10 @@
     "Tr": 1.93e-02,
     "Kr": 2896,
     "W0": 1448,
-    "Alt_Kp": -1,
+    "VAlt_Kp": -1,
+    "VAlt_Ki": 0.0,
+    "VAlt_Kd": -1,
+    "Alt_Kp": 1,
     "Alt_Ki": 0.0,
-    "Alt_Kd": -1
+    "Alt_Kd": 1
 }
