@@ -57,6 +57,7 @@ public:
             loader.getParameter("PID_ALT_SPD_Kd"), 
             0, delta_time);
     }
+    ~DroneAltController() {}
     DroneAltOutputType run(DroneALtInputType &in)
     {
         DroneAltOutputType out = prev_out;

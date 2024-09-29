@@ -2,6 +2,7 @@
 #define _DRONE_CONTROLLER_HPP_
 
 #include "drone_alt_controller.hpp"
+#include "drone_pos_controller.hpp"
 #include "hako_controller_param_loader.hpp"
 #include <stdexcept>
 #include <memory>
@@ -9,6 +10,7 @@
 class DroneController {
 public:
     std::unique_ptr<DroneAltController> alt;
+    std::unique_ptr<DronePosController> pos;
     HakoControllerParamLoader loader;
     
     DroneController() : 
@@ -20,6 +22,7 @@ public:
             throw std::runtime_error("Parameter file is not found on HAKO_CONTROLLER_PARAM_FILE");
         }
         alt = std::make_unique<DroneAltController>(loader);
+        pos = std::make_unique<DronePosController>(loader);
     }
 };
 
