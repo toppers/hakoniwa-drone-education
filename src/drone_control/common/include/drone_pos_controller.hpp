@@ -19,10 +19,10 @@ struct DronePosInputType {
 };
 
 struct DronePosOutputType {
-    double roll;
-    double pitch;
-    DronePosOutputType() : roll(0), pitch(0) {}
-    DronePosOutputType(double roll_val, double pitch_val) : roll(roll_val), pitch(pitch_val) {}
+    double target_roll;
+    double target_pitch;
+    DronePosOutputType() : target_roll(0), target_pitch(0) {}
+    DronePosOutputType(double roll_val, double pitch_val) : target_roll(roll_val), target_pitch(pitch_val) {}
 };
 
 struct DroneVelInputType {
@@ -88,10 +88,10 @@ private:
         DronePosOutputType out = pos_prev_out;
         if (spd_simulation_time >= spd_control_cycle) {
             spd_simulation_time = 0;
-            out.roll = speed_control_vy->calculate(in.target_vy, in.velocity.v);
-            out.roll = flight_controller_get_limit_value(out.roll, 0, -max_roll_deg, max_roll_deg);
-            out.pitch = -speed_control_vx->calculate(in.target_vx, in.velocity.u);
-            out.pitch = flight_controller_get_limit_value(out.pitch, 0, -max_pitch_deg, max_pitch_deg);
+            out.target_roll = speed_control_vy->calculate(in.target_vy, in.velocity.v);
+            out.target_roll = flight_controller_get_limit_value(out.target_roll, 0, -max_roll_deg, max_roll_deg);
+            out.target_pitch = -speed_control_vx->calculate(in.target_vx, in.velocity.u);
+            out.target_pitch = flight_controller_get_limit_value(out.target_pitch, 0, -max_pitch_deg, max_pitch_deg);
         }
         spd_simulation_time += delta_time;
         return out;

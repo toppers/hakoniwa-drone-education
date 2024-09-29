@@ -60,19 +60,15 @@ mi_drone_control_out_t hako_module_drone_controller_impl_run(mi_drone_control_in
     /*
      * 姿勢角度制御
      */
-    //TODO
-    /*
-     * 姿勢角速度制御
-     */
-    //TODO
-
+    DroneAngleInputType angle_in(euler, angular_rate, pos_out.target_roll, pos_out.target_pitch, head_out.target_yaw_rate);
+    DroneAngleOutputType angle_out = ctrl->angle->run(angle_in);
     /*
      * 出力
      */
     out.thrust = alt_out.thrust;
-    out.torque_x = 0;
-    out.torque_y = 0;
-    out.torque_z = 0;
+    out.torque_x = angle_out.p;
+    out.torque_y = angle_out.q;
+    out.torque_z = angle_out.r;
     return out;
 }
 

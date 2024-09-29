@@ -13,15 +13,15 @@ struct DroneHeadingControlInputType {
 };
 
 struct DroneHeadingControlOutputType {
-    double angular_rate_r;
-    DroneHeadingControlOutputType() : angular_rate_r(0) {}
-    DroneHeadingControlOutputType(double angular_rate_r_val) : angular_rate_r(angular_rate_r_val) {}
+    double target_yaw_rate;
+    DroneHeadingControlOutputType() : target_yaw_rate(0) {}
+    DroneHeadingControlOutputType(double angular_rate_r_val) : target_yaw_rate(angular_rate_r_val) {}
 };
 
 class DroneHeadingController {
 private:
     double delta_time;
-    double pid_param_max_yaw_rate;
+    double yaw_rate_max;
     std::unique_ptr<DronePidControl> heading_control;
     DroneHeadingControlOutputType prev_out = {};
     double simulation_time = 0;
@@ -51,7 +51,7 @@ public:
     {
         delta_time = loader.getParameter("SIMULATION_DELTA_TIME");
         head_control_cycle = loader.getParameter("HEAD_CONTROL_CYCLE");
-        pid_param_max_yaw_rate = loader.getParameter("PID_PARAM_MAX_YAW_RATE");
+        yaw_rate_max = RPM2EULER_RATE(loader.getParameter("PID_YAW_RPM_MAX"));
         heading_control = std::make_unique<DronePidControl>(
             loader.getParameter("PID_YAW_Kp"), 
             loader.getParameter("PID_YAW_Ki"), 
@@ -70,8 +70,8 @@ public:
             // Calculate the shortest path to the target angle
             double shortest_diff = shortest_angle(current_angle, target_angle);
 
-            out.angular_rate_r = heading_control->calculate(current_angle + shortest_diff, current_angle);
-            out.angular_rate_r = flight_controller_get_limit_value(out.angular_rate_r, 0, -pid_param_max_yaw_rate, pid_param_max_yaw_rate);
+            out.target_yaw_rate = heading_control->calculate(current_angle + shortest_diff, current_angle);
+            out.target_yaw_rate = flight_controller_get_limit_value(out.target_yaw_rate, 0, -yaw_rate_max, yaw_rate_max);
         }
         simulation_time += delta_time;
         return out;
