@@ -28,4 +28,9 @@ PID_POS_VX_Kd           1.0
 PID_POS_VY_Kp           1.0
 PID_POS_VY_Ki           0.0
 PID_POS_VY_Kd           1.0
+HEAD_CONTROL_CYCLE      0.0
+PID_PARAM_MAX_YAW_RATE  10.0
+PID_YAW_Kp              1.0
+PID_YAW_Ki              0.0
+PID_YAW_Kd              1.0
 

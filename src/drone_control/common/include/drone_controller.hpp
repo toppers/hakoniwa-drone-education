@@ -3,6 +3,7 @@
 
 #include "drone_alt_controller.hpp"
 #include "drone_pos_controller.hpp"
+#include "drone_heading_controller.hpp"
 #include "hako_controller_param_loader.hpp"
 #include <stdexcept>
 #include <memory>
@@ -11,6 +12,7 @@ class DroneController {
 public:
     std::unique_ptr<DroneAltController> alt;
     std::unique_ptr<DronePosController> pos;
+    std::unique_ptr<DroneHeadingController> head;
     HakoControllerParamLoader loader;
     
     DroneController() : 
@@ -23,6 +25,7 @@ public:
         }
         alt = std::make_unique<DroneAltController>(loader);
         pos = std::make_unique<DronePosController>(loader);
+        head = std::make_unique<DroneHeadingController>(loader);
     }
 };
 

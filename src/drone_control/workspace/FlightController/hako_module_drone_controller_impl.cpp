@@ -50,7 +50,8 @@ mi_drone_control_out_t hako_module_drone_controller_impl_run(mi_drone_control_in
     /*
      * 機首方向制御
      */
-    //TODO
+    DroneHeadingControlInputType head_in(euler, target_angle);
+    DroneHeadingControlOutputType head_out = ctrl->head->run(head_in);
     /*
      * 水平制御
      */
