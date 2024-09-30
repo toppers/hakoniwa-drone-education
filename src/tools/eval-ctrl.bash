@@ -80,6 +80,22 @@ jq --argjson value ${VAL} '.CONVERT_TO_DEGREE = $value' ./tmp1.json > ${CONFIG_P
 rm -f ./tmp1.json
 
 
+if [ "$TKEY" = "Rx" ] || [ "$TKEY" = "Ry" ]
+then
+    module_name="AngleController"
+else
+    module_name="FlightController"
+fi
+new_path="../src/drone_control/cmake-build/workspace/${module_name}"
+drone_config_file="${DRONE_CONFIG_PATH}/drone_config_0.json"
+cp ${drone_config_file} ./tmp1.json
+# --arg を使って文字列として渡す
+jq --arg new_path "$new_path" \
+    --arg module_name "$module_name" \
+    '.controller.moduleName = $module_name | .controller.moduleDirectory = $new_path' \
+    ./tmp1.json > ${drone_config_file}
+rm tmp1.json
+
 # start hakoniwa
 ${BIN_PATH}/hako-px4sim 127.0.0.1 4560 ext &
 HAKO_PID=$!
@@ -121,4 +137,5 @@ ${PYTHON_BIN} ${TOOL_PATH}/control_evaluate.py ./drone_log0/drone_dynamics.csv .
 
 wait ${HAKO_PID} ${EVAL_PID}
 
+rm -f tmp.json
 echo "INFO: DONE"
