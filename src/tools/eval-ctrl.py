@@ -132,23 +132,23 @@ def do_control(client, v1 = 0, v2 = 0, height=3.0, type = 'angular'):
             if type == 'angular':
                 data['axis'][2] = target_values.get_ctrl_value('Rx')
             elif type == 'speed':
-                data['axis'][3] = -target_values.get_ctrl_value('Vx')
+                data['axis'][3] = target_values.get_ctrl_value('Vx')
         elif v1 < 0:
             if type == 'angular':
-                data['axis'][2] = -target_values.get_ctrl_value('Rx')
+                data['axis'][2] = target_values.get_ctrl_value('Rx')
             elif type == 'speed':
                 data['axis'][3] = target_values.get_ctrl_value('Vx')
 
         if v2 > 0:
             if type == 'angular':
-                data['axis'][3] = -target_values.get_ctrl_value('Ry')
+                data['axis'][3] = target_values.get_ctrl_value('Ry')
             elif type == 'speed':
                 data['axis'][2] = target_values.get_ctrl_value('Vy')
         elif v2 < 0:
             if type == 'angular':
                 data['axis'][3] = target_values.get_ctrl_value('Ry')
             elif type == 'speed':
-                data['axis'][2] = -target_values.get_ctrl_value('Vy')
+                data['axis'][2] = target_values.get_ctrl_value('Vy')
         #print("axis2: ", data['axis'][2])
         #print("axis3: ", data['axis'][3])
         #print("data: ", data)

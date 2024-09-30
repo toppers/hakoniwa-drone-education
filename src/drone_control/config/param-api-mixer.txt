@@ -20,7 +20,7 @@ PID_ALT_SPD_Kd          1.0
 # 水平制御
 POS_CONTROL_CYCLE       0.0
 SPD_CONTROL_CYCLE       0.0
-PID_POS_MAX_SPD         10.0
+PID_POS_MAX_SPD         20.0
 
 ## 水平位置制御のPIDパラメータ
 PID_POS_X_Kp            1.0
@@ -32,10 +32,10 @@ PID_POS_Y_Kd            1.0
 
 # 水平速度制御のPIDパラメータ
 PID_POS_VX_Kp           1.0
-PID_POS_VX_Ki           0.0
+PID_POS_VX_Ki           0.1
 PID_POS_VX_Kd           1.0
 PID_POS_VY_Kp           1.0
-PID_POS_VY_Ki           0.0
+PID_POS_VY_Ki           0.1
 PID_POS_VY_Kd           1.0
 
 # 姿勢角制御
