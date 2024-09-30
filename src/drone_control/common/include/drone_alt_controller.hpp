@@ -3,10 +3,12 @@
 
 #include "drone_pid_control.hpp"
 #include "flight_controller_types.hpp"
+#include "frame_convertor.hpp"
 #include "hako_controller_param_loader.hpp"
 #include <memory>
 
 struct DroneALtInputType {
+    FlightControllerInputEulerType euler;
     FlightControllerInputPositionType pos;
     FlightControllerInputVelocityType spd;
     double target_altitude;
@@ -71,7 +73,12 @@ public:
             /*
              * position control
              */
-            double throttle_power = spd_control->calculate(target_spd, in.spd.w);
+            //機体座標系の速度を地上座標系に変換
+            EulerType  e = {in.euler.x, in.euler.y, in.euler.z};
+            VectorType v = {in.spd.u, in.spd.v, in.spd.w};
+            VectorType g_v = ground_vector_from_body(v, e);
+            //地上座標系の速度でPID制御
+            double throttle_power = spd_control->calculate(target_spd, g_v.z);
             throttle_power = flight_controller_get_limit_value(throttle_power, 0, -max_power, max_power);
             /*
              * thrust
