@@ -51,8 +51,8 @@ mi_drone_control_out_t hako_module_drone_controller_impl_run(mi_drone_control_in
     /*
      * 姿勢角度制御
      */
-    double target_roll = DEGREE2RADIAN(in->target.attitude.roll);
-    double target_pitch = DEGREE2RADIAN(in->target.attitude.pitch);
+    double target_roll = in->target.attitude.roll;
+    double target_pitch = in->target.attitude.pitch;
     double target_yaw_rate = head_out.target_yaw_rate;
     DroneAngleInputType angle_in(euler, angular_rate, target_roll, target_pitch, target_yaw_rate);
     DroneAngleOutputType angle_out = ctrl->angle->run(angle_in);
