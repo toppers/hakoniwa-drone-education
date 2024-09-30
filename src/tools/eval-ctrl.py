@@ -57,24 +57,17 @@ def button_event(client, index):
     data['button'][index] = False
     client.putGameJoystickData(data)
 
-def takeoff(client, height):
+def takeoff(client, height=3.0):
     print("START TAKEOFF: ", height)
     pose = client.simGetVehiclePose()
     while (pose.position.z_val) < height:
         pose = client.simGetVehiclePose()
         data = client.getGameJoystickData()
         data['axis'] = list(data['axis']) 
-        data['axis'][1] = -0.5
-        #data['axis'][0] = 1.0 #heading
-        #data['axis'][2] = 1.0 #vy
-        #data['axis'][3] = 1.0 #vx
+        data['axis'][1] = height
         client.putGameJoystickData(data)
         hakopy.usleep(30000)
 
-    data = client.getGameJoystickData()
-    data['axis'] = list(data['axis']) 
-    data['axis'][1] = 0
-    client.putGameJoystickData(data)
     print("DONE")
 
 def reply_and_wait_res(command):
@@ -110,26 +103,25 @@ def almost_equal_deg(target_deg, real_deg, diff_deg):
     else:
         return False
 
-def stop_control(client):
+def stop_control(client, height):
     while True:
         data = client.getGameJoystickData()
         data['axis'] = list(data['axis'])
-        data['axis'][0] = 0.0 #heading
-        data['axis'][1] = 0.0 #up/down
-        data['axis'][2] = 0.0
-        data['axis'][3] = 0.0
+        data['axis'][0] = 0.0    #heading
+        data['axis'][1] = height #up/down
+        data['axis'][2] = 0.0    #roll
+        data['axis'][3] = 0.0    #pitch
         client.putGameJoystickData(data)
         hakopy.usleep(30000)
 
-def do_control(client, v1 = 0, v2 = 0, type = 'angular'):
+def do_control(client, v1 = 0, v2 = 0, height=3.0, type = 'angular'):
     global target_values
     print(f"START CONTROL: v1({v1}) v2({v2})")
     while True:
         data = client.getGameJoystickData()
         data['axis'] = list(data['axis'])
         data['axis'][0] = 0.0 #heading
-        data['axis'][1] = 0.0 #up/down
-        #data['axis'][2] = 0.0 #roll
+        data['axis'][1] = height #up/down
         #print(f"v1: {v1}, v2: {v2}")
         #print("vx: ",  target_values.get_ctrl_value('Vx'))
         #print("vy: ",  target_values.get_ctrl_value('Vy'))
@@ -159,6 +151,7 @@ def do_control(client, v1 = 0, v2 = 0, type = 'angular'):
                 data['axis'][2] = -target_values.get_ctrl_value('Vy')
         #print("axis2: ", data['axis'][2])
         #print("axis3: ", data['axis'][3])
+        #print("data: ", data)
         client.putGameJoystickData(data)
         hakopy.usleep(30000)
 
@@ -172,28 +165,25 @@ client = None
 class TargetValues:
     def __init__(self):
         self.values = {}
-        self.max_values = {}
         self.stop_time_usec = -1
 
     def set_stop_time(self, value: int):
         self.stop_time_usec = value
     
-    def set_target(self, key, value, max_value=None):
+    def set_target(self, key, value):
         self.values[key] = float(value)
-        if max_value is not None:
-            self.max_values[key] = max_value[key]
         print(f"Target {key}: {self.values[key]}")
 
     def get_target_value(self, key):
-        if key in self.values and key in self.max_values:
+        if key in self.values:
             return self.values[key]
         else:
             print(f"Invalid key or missing max value: {key}")
             return None
 
     def get_ctrl_value(self, key):
-        if key in self.values and key in self.max_values:
-            return self.values[key] / self.max_values[key]
+        if key in self.values:
+            return self.values[key]
         else:
             print(f"Invalid key or missing max value: {key}")
             return None
@@ -234,8 +224,8 @@ def my_on_manual_timing_control(context):
     print("INFO: on_manual_timing_control enter")
 
     # takeoff
+    height = 3.0
     if (target_values.has_key('X')):
-        height = 3
         if (target_values.has_key('Z')):
             evaluation_start_time = hakopy.simulation_time() * 1e-06
             height = -target_values.values['Z']
@@ -245,7 +235,7 @@ def my_on_manual_timing_control(context):
     else:
         # start
         button_event(client, 0)
-        takeoff(client, 3)
+        takeoff(client, height)
 
     if (target_values.has_key('Z')) == False:
         evaluation_start_time = hakopy.simulation_time() * 1e-06
@@ -254,9 +244,9 @@ def my_on_manual_timing_control(context):
         f.write(str(evaluation_start_time))
     
     if (target_values.has_key('Rx')):
-        do_control(client, target_values.values['Rx'], -target_values.values['Ry'], 'angular')
+        do_control(client, target_values.values['Rx'], -target_values.values['Ry'], height, 'angular')
     elif (target_values.has_key('Vx')):
-        do_control(client, target_values.values['Vx'], target_values.values['Vy'], 'speed')
+        do_control(client, target_values.values['Vx'], target_values.values['Vy'], height, 'speed')
     elif (target_values.has_key('Z')):
         pass
     elif (target_values.has_key('X')):
@@ -268,7 +258,7 @@ def my_on_manual_timing_control(context):
         print("EVALUATION_START_TIME: ", evaluation_start_time)
         with open('/tmp/v.txt', 'w') as f:
             f.write(str(evaluation_start_time))
-        stop_control(client)
+        stop_control(client, height)
 
     #for _ in range(0,3):
     #    # sleep 1sec
@@ -301,15 +291,11 @@ def main():
 
     max_value = {}
     if (sys.argv[3].split(':')[0] == 'Rx') or (sys.argv[3].split(':')[0] == 'Ry'):
-        max_value['Rx'] = 20
-        max_value['Ry'] = 20
-        target_values.set_target(sys.argv[3].split(':')[0], sys.argv[3].split(':')[1], max_value)
-        target_values.set_target(sys.argv[4].split(':')[0], sys.argv[4].split(':')[1], max_value)
+        target_values.set_target(sys.argv[3].split(':')[0], sys.argv[3].split(':')[1])
+        target_values.set_target(sys.argv[4].split(':')[0], sys.argv[4].split(':')[1])
     elif (sys.argv[3].split(':')[0] == 'Vx') or (sys.argv[3].split(':')[0] == 'Vy'):
-        max_value['Vx'] = 10
-        max_value['Vy'] = 10
-        target_values.set_target(sys.argv[3].split(':')[0], sys.argv[3].split(':')[1], max_value)
-        target_values.set_target(sys.argv[4].split(':')[0], sys.argv[4].split(':')[1], max_value)
+        target_values.set_target(sys.argv[3].split(':')[0], sys.argv[3].split(':')[1])
+        target_values.set_target(sys.argv[4].split(':')[0], sys.argv[4].split(':')[1])
     elif (sys.argv[3].split(':')[0] == 'Z'):
         target_values.set_target(sys.argv[3].split(':')[0], sys.argv[3].split(':')[1])
         target_values.set_target(sys.argv[4].split(':')[0], sys.argv[4].split(':')[1])
