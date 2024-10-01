@@ -102,23 +102,34 @@ def joystick_control(client, v1=0, v2=0, v3=0, height=3.0, control_type='angular
     global target_values
     print(f"START CONTROL: v1({v1}) v2({v2}) v3({v3})")
 
-
-    def update_joystick_data(data, v1, v2, v3, height, control_type):
-        data['axis'] = list(data['axis'])
-        data['axis'][HEADING_AXIS] = v3 if control_type == 'angular' else 0.0
-        data['axis'][UP_DOWN_AXIS] = height
-        data['axis'][ROLL_AXIS] = v1 if control_type == 'angular' else v2
-        data['axis'][PITCH_AXIS] = v2 if control_type == 'angular' else v1
-        return data
+    data = client.getGameJoystickData()
+    data['axis'] = list(data['axis'])
+    data['axis'][HEADING_AXIS] = v3 if control_type == 'angular' else 0.0
+    data['axis'][UP_DOWN_AXIS] = height
+    data['axis'][ROLL_AXIS] = v1 if control_type == 'angular' else v2
+    data['axis'][PITCH_AXIS] = v2 if control_type == 'angular' else v1
+    client.putGameJoystickData(data)
 
     while True:
-        data = client.getGameJoystickData()
-        data = update_joystick_data(data, v1, v2, v3, height, control_type)
-        client.putGameJoystickData(data)
         hakopy.usleep(30000)
-
         if should_stop():
             break
+
+def joystick_control_alt_spd(client, vz):
+    global target_values
+    print(f"START CONTROL: vz({vz})")
+
+    data = client.getGameJoystickData()
+    data['axis'] = list(data['axis'])
+    data['axis'][HEADING_AXIS] = 0.0
+    data['axis'][UP_DOWN_AXIS] = vz
+    data['axis'][ROLL_AXIS] = 0
+    data['axis'][PITCH_AXIS] = 0
+    client.putGameJoystickData(data)
+    while True:
+        hakopy.usleep(30000)
+        if should_stop():
+            break    
 
 pdu_manager = None
 client = None
@@ -171,8 +182,11 @@ def is_joystick_control():
     else:
         return True
 
-def is_height_control():
+def is_alt_control():
     return (target_values.first_key == 'Z')
+
+def is_alt_spd_control():
+    return (target_values.first_key == 'Vz')
 
 def joystick_takeoff(client, height):
     button_event(client, 0)
@@ -188,7 +202,7 @@ def joystick_takeoff(client, height):
     print("DONE")
 
 def api_takeoff(client, height):
-    if is_height_control():
+    if is_alt_control():
         height = -target_values.value('Z')
 
     # do takeoff
@@ -199,7 +213,7 @@ def api_takeoff(client, height):
     pdu_cmd['yaw_deg'] = client._get_yaw_degree(client.default_drone_name)
     reply_and_wait_res(command)
 
-    if is_height_control():
+    if is_alt_control():
         hakopy.usleep(10000000)
 
 def save_evaluation_start_time(evaluation_start_time):
@@ -215,12 +229,15 @@ def my_on_manual_timing_control(context):
 
     # takeoff
     height = 3.0
-    if is_height_control():
+    if is_alt_control() or is_alt_spd_control():
         evaluation_start_time = hakopy.simulation_time() * 1e-06
     else:
         evaluation_start_time = None
 
-    if is_joystick_control():
+    if is_alt_spd_control():
+        # nothing to do
+        pass
+    elif is_joystick_control():
         joystick_takeoff(client, height)
     else:
         api_takeoff(client, height)
@@ -231,11 +248,13 @@ def my_on_manual_timing_control(context):
     save_evaluation_start_time(evaluation_start_time)
 
     # do control
-    if (target_values.has_key('Rx')):
+    if is_alt_spd_control():
+        joystick_control_alt_spd(client, target_values.value('Vz'))
+    elif (target_values.has_key('Rx')):
         joystick_control(client, target_values.value('Rx'), target_values.value('Ry'), target_values.value('Rz'), height, 'angular')
     elif (target_values.has_key('Vx')):
         joystick_control(client, target_values.value('Vx'), target_values.value('Vy'), target_values.value('Vz'), height, 'speed')
-    elif not is_height_control():
+    elif not is_alt_control():
         api_control(client, target_values.value('X'), target_values.value('Y'), target_values.value('S'))
 
     if is_joystick_control():
