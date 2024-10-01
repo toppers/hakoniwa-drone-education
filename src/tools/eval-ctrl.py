@@ -115,6 +115,9 @@ def should_stop():
     stop_time = target_values.stop_time_usec
     return (stop_time > 0) and (hakopy.simulation_time() >= stop_time)
 
+# ここで設定した値が、そのまま、制御側に渡るので、座標系の変換は不要
+# NED座標系で渡す。
+# TODO API側は、ROS座標系なので微妙な気はしてはいるが。。
 def joystick_control(client, v1=0, v2=0, v3=0, height=3.0, control_type='angular'):
     global target_values
     print(f"START CONTROL: v1({v1}) v2({v2}) v3({v3})")

@@ -41,7 +41,7 @@ mi_drone_control_out_t hako_module_drone_controller_impl_run(mi_drone_control_in
     /*
      * 高度制御
      */
-    DroneALtInputType alt_in(pos, velocity, target_pos_z);
+    DroneAltInputType alt_in(pos, velocity, target_pos_z);
     DroneAltOutputType alt_out = ctrl->alt->run(alt_in);
     /*
      * 機首方向制御
