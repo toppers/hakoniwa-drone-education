@@ -42,9 +42,9 @@ EXEC_SIM_TIME=5
 
 HAKO_PID=
 EVAL_PID=
-if [ $# -ne 3 -a $# -ne 4 ]
+if [ $# -ne 4 -a $# -ne 5 ]
 then
-    echo "Usage: $0 <stop_time> <tkey:tvalue> <key:value> <S:targetSpeed>"
+    echo "Usage: $0 <stop_time> <tkey:tvalue> <key:value> <key:value> <S:targetSpeed>"
     exit 1
 fi
 if [ ${1} -gt 0 ]
@@ -55,20 +55,24 @@ else
 fi
 
 SPEED_KEY_VALUE=
-if [ $# -eq 4 ]
+if [ $# -eq 5 ]
 then
-    SPEED_KEY_VALUE=${4}
+    SPEED_KEY_VALUE=${5}
 fi
 
 TKEY_VALUE=${2}
-KEY_VALUE=${3}
+KEY_VALUE1=${3}
+KEY_VALUE2=${4}
 TKEY=`echo ${TKEY_VALUE} | awk -F: '{print $1}'`
 TVALUE=`echo ${TKEY_VALUE} | awk -F: '{print $2}'`
 
-KEY=`echo ${KEY_VALUE} | awk -F: '{print $1}'`
-VALUE=`echo ${KEY_VALUE} | awk -F: '{print $2}'`
+KEY1=`echo ${KEY_VALUE1} | awk -F: '{print $1}'`
+VALUE1=`echo ${KEY_VALUE1} | awk -F: '{print $2}'`
 
-if [ "$TKEY" = "Rx" ] || [ "$TKEY" = "Ry" ]
+KEY2=`echo ${KEY_VALUE2} | awk -F: '{print $1}'`
+VALUE2=`echo ${KEY_VALUE2} | awk -F: '{print $2}'`
+
+if [ "$TKEY" = "Rx" ] || [ "$TKEY" = "Ry" ] || [ "$TKEY" = "Rz" ]
 then
     VAL=true
 else
@@ -80,10 +84,10 @@ jq --argjson value ${VAL} '.CONVERT_TO_DEGREE = $value' ./tmp1.json > ${CONFIG_P
 rm -f ./tmp1.json
 
 
-if [ "$TKEY" = "Rx" ] || [ "$TKEY" = "Ry" ]
+if [ "$TKEY" = "Rx" ] || [ "$TKEY" = "Ry" ] || [ "$TKEY" = "Rz" ]
 then
     module_name="AngleController"
-elif [ "$TKEY" = "Vx" ] || [ "$TKEY" = "Vy" ]
+elif [ "$TKEY" = "Vx" ] || [ "$TKEY" = "Vy" ] || [ "$TKEY" = "Vz" ]
 then
     module_name="SpeedController"
 else
@@ -104,7 +108,7 @@ ${BIN_PATH}/hako-px4sim 127.0.0.1 4560 ext &
 HAKO_PID=$!
 
 # start eval-ctrl
-${PYTHON_BIN} ${TOOL_PATH}/eval-ctrl.py ${HAKO_CUSTOM_JSON_PATH} ${STOP_TIME} ${TKEY_VALUE} ${KEY_VALUE} ${SPEED_KEY_VALUE} &
+${PYTHON_BIN} ${TOOL_PATH}/eval-ctrl.py ${HAKO_CUSTOM_JSON_PATH} ${STOP_TIME} ${TKEY_VALUE} ${KEY_VALUE1} ${KEY_VALUE2} ${SPEED_KEY_VALUE} &
 EVAL_PID=$!
 
 sleep 1

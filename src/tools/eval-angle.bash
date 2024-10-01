@@ -38,9 +38,9 @@ function handler()
 }
 
 # 引数のチェック
-if [ $# -ne 2 -a $# -ne 3 ]
+if [ $# -ne 3 -a $# -ne 4 ]
 then
-    echo "Usage: $0 <Rx:angle> <Ry:angle> [stop]"
+    echo "Usage: $0 <Rx:angle> <Ry:angle> <Rz:angle> [stop]"
     exit 1
 fi
 
@@ -48,15 +48,16 @@ fi
 ARG1=${1}
 ARG2=${2}
 ARG3=${3}
+ARG4=${4}
 
 # eval-ctrlをバックグラウンドで実行し、そのPIDを待つ
 WAIT_PID=
-if [ $# -eq 2 ]
+if [ $# -eq 3 ]
 then
-    bash ${TOOL_PATH}/eval-ctrl.bash -1 ${ARG1} ${ARG2} &
+    bash ${TOOL_PATH}/eval-ctrl.bash -1 ${ARG1} ${ARG2} ${ARG3} &
     WAIT_PID=$!
 else
-    bash ${TOOL_PATH}/eval-ctrl.bash ${ARG3} ${ARG1} ${ARG2} &
+    bash ${TOOL_PATH}/eval-ctrl.bash ${ARG4} ${ARG1} ${ARG2} ${ARG3} &
     WAIT_PID=$!
 fi
 

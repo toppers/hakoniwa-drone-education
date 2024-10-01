@@ -10,36 +10,32 @@ import os
 import time
 
 config_path = ''
+HEADING_AXIS = 0
+UP_DOWN_AXIS = 1
+ROLL_AXIS = 2
+PITCH_AXIS = 3
 
 def my_on_initialize(context):
     global config_path
     robot_name = 'DroneTransporter'
     hako_binary_path = os.getenv('HAKO_BINARY_PATH', '/usr/local/lib/hakoniwa/hako_binary/offset')
     pdu_manager = hako_pdu.HakoPduManager(hako_binary_path, config_path)
-    pdu = pdu_manager.get_pdu(robot_name, pdu_info.HAKO_AVATOR_CHANNLE_ID_COLLISION)
-    pdu_data = pdu.get()
-    pdu_data['collision'] = False
-    pdu_data['contact_num'] = 0
-    pdu.write()
 
-    pdu = pdu_manager.get_pdu(robot_name, pdu_info.HAKO_AVATOR_CHANNEL_ID_DISTURB)
-    pdu_data = pdu.get()
-    pdu.write()
-    pdu = pdu_manager.get_pdu(robot_name, pdu_info.HAKO_AVATOR_CHANNEL_ID_CAMERA_DATA)
-    pdu_data = pdu.get()
-    pdu.write()
-    pdu = pdu_manager.get_pdu(robot_name, pdu_info.HAKO_AVATOR_CHANNEL_ID_CAMERA_INFO)
-    pdu_data = pdu.get()
-    pdu.write()
-    pdu = pdu_manager.get_pdu(robot_name, pdu_info.HAKO_AVATOR_CHANNEL_ID_LIDAR_DATA)
-    pdu_data = pdu.get()
-    pdu.write()
-    pdu = pdu_manager.get_pdu(robot_name, pdu_info.HAKO_AVATOR_CHANNEL_ID_LIDAR_POS)
-    pdu_data = pdu.get()
-    pdu.write()
-    pdu = pdu_manager.get_pdu(robot_name, pdu_info.HAKO_AVATOR_CHANNEL_ID_STAT_MAG)
-    pdu_data = pdu.get()
-    pdu.write()
+    pdu_channels = [
+        pdu_info.HAKO_AVATOR_CHANNLE_ID_COLLISION,
+        pdu_info.HAKO_AVATOR_CHANNEL_ID_DISTURB,
+        pdu_info.HAKO_AVATOR_CHANNEL_ID_CAMERA_DATA,
+        pdu_info.HAKO_AVATOR_CHANNEL_ID_CAMERA_INFO,
+        pdu_info.HAKO_AVATOR_CHANNEL_ID_LIDAR_DATA,
+        pdu_info.HAKO_AVATOR_CHANNEL_ID_LIDAR_POS,
+        pdu_info.HAKO_AVATOR_CHANNEL_ID_STAT_MAG,
+    ]
+
+    for channel in pdu_channels:
+        pdu = pdu_manager.get_pdu(robot_name, channel)
+        pdu_data = pdu.get()
+        pdu.write()
+
     return 0
 
 def my_on_reset(context):
@@ -64,7 +60,7 @@ def takeoff(client, height=3.0):
         pose = client.simGetVehiclePose()
         data = client.getGameJoystickData()
         data['axis'] = list(data['axis']) 
-        data['axis'][1] = height
+        data['axis'][UP_DOWN_AXIS] = height
         client.putGameJoystickData(data)
         hakopy.usleep(30000)
 
@@ -107,97 +103,68 @@ def stop_control(client, height):
     while True:
         data = client.getGameJoystickData()
         data['axis'] = list(data['axis'])
-        data['axis'][0] = 0.0    #heading
-        data['axis'][1] = height #up/down
-        data['axis'][2] = 0.0    #roll
-        data['axis'][3] = 0.0    #pitch
+        data['axis'][HEADING_AXIS] = 0.0    #heading
+        data['axis'][UP_DOWN_AXIS] = height #up/down
+        data['axis'][ROLL_AXIS] = 0.0    #roll
+        data['axis'][PITCH_AXIS] = 0.0    #pitch
         client.putGameJoystickData(data)
         hakopy.usleep(30000)
 
-def do_control(client, v1 = 0, v2 = 0, height=3.0, type = 'angular'):
+
+def should_stop():
+    stop_time = target_values.stop_time_usec
+    return (stop_time > 0) and (hakopy.simulation_time() >= stop_time)
+
+def joystick_control(client, v1=0, v2=0, v3=0, height=3.0, control_type='angular'):
     global target_values
-    print(f"START CONTROL: v1({v1}) v2({v2})")
+    print(f"START CONTROL: v1({v1}) v2({v2}) v3({v3})")
+
+
+    def update_joystick_data(data, v1, v2, v3, height, control_type):
+        data['axis'] = list(data['axis'])
+        data['axis'][HEADING_AXIS] = v3 if control_type == 'angular' else 0.0
+        data['axis'][UP_DOWN_AXIS] = height
+        data['axis'][ROLL_AXIS] = v1 if control_type == 'angular' else v2
+        data['axis'][PITCH_AXIS] = v2 if control_type == 'angular' else v1
+        return data
+
     while True:
         data = client.getGameJoystickData()
-        data['axis'] = list(data['axis'])
-        data['axis'][0] = 0.0 #heading
-        data['axis'][1] = height #up/down
-        #print(f"v1: {v1}, v2: {v2}")
-        #print("vx: ",  target_values.get_ctrl_value('Vx'))
-        #print("vy: ",  target_values.get_ctrl_value('Vy'))
-
-        data['axis'][2] = 0.0
-        data['axis'][3] = 0.0
-        if v1 > 0:
-            if type == 'angular':
-                data['axis'][2] = target_values.get_ctrl_value('Rx')
-            elif type == 'speed':
-                data['axis'][3] = target_values.get_ctrl_value('Vx')
-        elif v1 < 0:
-            if type == 'angular':
-                data['axis'][2] = target_values.get_ctrl_value('Rx')
-            elif type == 'speed':
-                data['axis'][3] = target_values.get_ctrl_value('Vx')
-
-        if v2 > 0:
-            if type == 'angular':
-                data['axis'][3] = target_values.get_ctrl_value('Ry')
-            elif type == 'speed':
-                data['axis'][2] = target_values.get_ctrl_value('Vy')
-        elif v2 < 0:
-            if type == 'angular':
-                data['axis'][3] = target_values.get_ctrl_value('Ry')
-            elif type == 'speed':
-                data['axis'][2] = target_values.get_ctrl_value('Vy')
-        #print("axis2: ", data['axis'][2])
-        #print("axis3: ", data['axis'][3])
-        #print("data: ", data)
+        data = update_joystick_data(data, v1, v2, v3, height, control_type)
         client.putGameJoystickData(data)
         hakopy.usleep(30000)
 
-        stop_time = target_values.stop_time_usec
-        if (stop_time > 0) and (hakopy.simulation_time() >= stop_time):
-            break 
+        if should_stop():
+            break
 
 pdu_manager = None
 client = None
-
 class TargetValues:
     def __init__(self):
         self.values = {}
         self.stop_time_usec = -1
+        self.first_key = None
 
     def set_stop_time(self, value: int):
         self.stop_time_usec = value
     
     def set_target(self, key, value):
+        if self.first_key is None:
+            self.first_key = key
         self.values[key] = float(value)
-        print(f"Target {key}: {self.values[key]}")
-
-    def get_target_value(self, key):
-        if key in self.values:
-            return self.values[key]
-        else:
-            print(f"Invalid key or missing max value: {key}")
-            return None
-
-    def get_ctrl_value(self, key):
-        if key in self.values:
-            return self.values[key]
-        else:
-            print(f"Invalid key or missing max value: {key}")
-            return None
+        print(f"Target {key}: {value}")
 
     def has_key(self, key):
-        if key in self.values:
-            return True
-        else:
-            return False
+        return key in self.values
 
+    def value(self, key):
+        if self.has_key(key):
+            return self.values[key]
+        return None
 
 target_values = TargetValues()
 
-def pos_control(client, X = 0, Y = 0, speed = 5):
+def api_control(client, X = 0, Y = 0, speed = 5):
     global target_values
     print(f"START CONTROL: X({X}) Y({Y}) S({speed})")
     #call api
@@ -212,10 +179,33 @@ def pos_control(client, X = 0, Y = 0, speed = 5):
     print("reply done")
     while True:
         hakopy.usleep(30000)
+        if should_stop():
+            break
 
-        stop_time = target_values.stop_time_usec
-        if (stop_time > 0) and (hakopy.simulation_time() >= stop_time):
-            break 
+def is_joystick_control():
+    if (target_values.has_key('X')):
+        return False
+    else:
+        return True
+
+def is_height_control():
+    return (target_values.first_key == 'Z')
+
+def joystick_takeoff(client, height):
+    button_event(client, 0)
+    takeoff(client, height)
+
+def api_takeoff(client, height):
+    if is_height_control():
+        height = -target_values.value('Z')
+    takeoff_wait(client, height)
+    if is_height_control():
+        hakopy.usleep(10000000)
+
+def save_evaluation_start_time(evaluation_start_time):
+    print("EVALUATION_START_TIME: ", evaluation_start_time)
+    with open('/tmp/v.txt', 'w') as f:
+        f.write(str(evaluation_start_time))
 
 def my_on_manual_timing_control(context):
     global pdu_manager
@@ -225,44 +215,35 @@ def my_on_manual_timing_control(context):
 
     # takeoff
     height = 3.0
-    if (target_values.has_key('X')):
-        if (target_values.has_key('Z')):
-            evaluation_start_time = hakopy.simulation_time() * 1e-06
-            height = -target_values.values['Z']
-        takeoff_wait(client, height)
-        if (target_values.has_key('Z')):
-            hakopy.usleep(10000000)
-    else:
-        # start
-        button_event(client, 0)
-        takeoff(client, height)
-
-    if (target_values.has_key('Z')) == False:
+    if is_height_control():
         evaluation_start_time = hakopy.simulation_time() * 1e-06
-    print("EVALUATION_START_TIME: ", evaluation_start_time)
-    with open('/tmp/v.txt', 'w') as f:
-        f.write(str(evaluation_start_time))
-    
-    if (target_values.has_key('Rx')):
-        do_control(client, target_values.values['Rx'], -target_values.values['Ry'], height, 'angular')
-    elif (target_values.has_key('Vx')):
-        do_control(client, target_values.values['Vx'], target_values.values['Vy'], height, 'speed')
-    elif (target_values.has_key('Z')):
-        pass
-    elif (target_values.has_key('X')):
-        pos_control(client, target_values.values['X'], target_values.values['Y'], target_values.values['S'])
+    else:
+        evaluation_start_time = None
 
-    if (target_values.has_key('X')) == False:
+    if is_joystick_control():
+        joystick_takeoff(client, height)
+    else:
+        api_takeoff(client, height)
+
+    if evaluation_start_time is None:
+        evaluation_start_time = hakopy.simulation_time() * 1e-06
+
+    save_evaluation_start_time(evaluation_start_time)
+
+    # do control
+    if (target_values.has_key('Rx')):
+        joystick_control(client, target_values.value('Rx'), target_values.value('Ry'), target_values.value('Rz'), height, 'angular')
+    elif (target_values.has_key('Vx')):
+        joystick_control(client, target_values.value('Vx'), target_values.value('Vy'), target_values.value('Vz'), height, 'speed')
+    elif not is_height_control():
+        api_control(client, target_values.value('X'), target_values.value('Y'), target_values.value('S'))
+
+    if is_joystick_control():
         print("INFO: start stop control")
         evaluation_start_time = hakopy.simulation_time() * 1e-06
-        print("EVALUATION_START_TIME: ", evaluation_start_time)
-        with open('/tmp/v.txt', 'w') as f:
-            f.write(str(evaluation_start_time))
+        save_evaluation_start_time(evaluation_start_time)
         stop_control(client, height)
 
-    #for _ in range(0,3):
-    #    # sleep 1sec
-    #    hakopy.usleep(1000000)
     print("INFO: on_manual_timing_control exit")
     return 0
 
@@ -278,8 +259,8 @@ def main():
     global config_path
     global target_values
 
-    if len(sys.argv) != 5 and len(sys.argv) != 6:
-        print(f"Usage: {sys.argv[0]} <config_path> <stop_time> <key:value> <key:value> [S:TargetSpeed]")
+    if len(sys.argv) != 6 and len(sys.argv) != 7:
+        print(f"Usage: {sys.argv[0]} <config_path> <stop_time> <tkey:tvalue> <key:value> <key:value> [S:TargetSpeed]")
         return 1
 
     asset_name = 'DronePlantModel'
@@ -288,25 +269,14 @@ def main():
 
     stop_time = int(sys.argv[2])
     target_values.set_stop_time(stop_time)
+    target_values.set_target(sys.argv[3].split(':')[0], sys.argv[3].split(':')[1])
+    target_values.set_target(sys.argv[4].split(':')[0], sys.argv[4].split(':')[1])
+    target_values.set_target(sys.argv[5].split(':')[0], sys.argv[5].split(':')[1])
 
-    max_value = {}
-    if (sys.argv[3].split(':')[0] == 'Rx') or (sys.argv[3].split(':')[0] == 'Ry'):
-        target_values.set_target(sys.argv[3].split(':')[0], sys.argv[3].split(':')[1])
-        target_values.set_target(sys.argv[4].split(':')[0], sys.argv[4].split(':')[1])
-    elif (sys.argv[3].split(':')[0] == 'Vx') or (sys.argv[3].split(':')[0] == 'Vy'):
-        target_values.set_target(sys.argv[3].split(':')[0], sys.argv[3].split(':')[1])
-        target_values.set_target(sys.argv[4].split(':')[0], sys.argv[4].split(':')[1])
-    elif (sys.argv[3].split(':')[0] == 'Z'):
-        target_values.set_target(sys.argv[3].split(':')[0], sys.argv[3].split(':')[1])
-        target_values.set_target(sys.argv[4].split(':')[0], sys.argv[4].split(':')[1])
-        target_values.set_target(sys.argv[5].split(':')[0], sys.argv[5].split(':')[1])
-    elif (sys.argv[3].split(':')[0] == 'X') or (sys.argv[3].split(':')[0] == 'Y'):
-        target_values.set_target(sys.argv[3].split(':')[0], sys.argv[3].split(':')[1])
-        target_values.set_target(sys.argv[4].split(':')[0], sys.argv[4].split(':')[1])
-        if len(sys.argv) == 6:
-            target_values.set_target(sys.argv[5].split(':')[0], sys.argv[5].split(':')[1])
-        else:
-            target_values.set_target('S', 5)
+    if len(sys.argv) == 7:
+        target_values.set_target(sys.argv[6].split(':')[0], sys.argv[6].split(':')[1])
+    else:
+        target_values.set_target('S', 5)
 
     # connect to the HakoSim simulator
     client = hakosim.MultirotorClient(config_path)

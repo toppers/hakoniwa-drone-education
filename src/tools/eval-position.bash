@@ -48,9 +48,9 @@ function handler()
 
 
 # 引数のチェック
-if [ $# -ne 3 -a $# -ne 4 ]
+if [ $# -ne 4 -a $# -ne 5 ]
 then
-    echo "Usage: $0 <X:x> <Y:y> <S:speed> [stop]"
+    echo "Usage: $0 <X:x> <Y:y> <Z:z> <S:speed> [stop]"
     exit 1
 fi
 
@@ -59,17 +59,18 @@ ARG1=${1}
 ARG2=${2}
 ARG3=${3}
 ARG4=${4}
+ARG4=${5}
 
 KEY=$(echo $ARG1 | awk -F: '{print $1}')
 
 # eval-ctrlをバックグラウンドで実行し、そのPIDを待つ
 WAIT_PID=
-if [ $# -eq 3 ]
+if [ $# -eq 4 ]
 then
-    bash ${TOOL_PATH}/eval-ctrl.bash -1 ${ARG1} ${ARG2} ${ARG3} &
+    bash ${TOOL_PATH}/eval-ctrl.bash -1 ${ARG1} ${ARG2} ${ARG3} ${ARG4} &
     WAIT_PID=$!
 else
-    bash ${TOOL_PATH}/eval-ctrl.bash ${ARG4} ${ARG1} ${ARG2} ${ARG3} &
+    bash ${TOOL_PATH}/eval-ctrl.bash ${ARG5} ${ARG1} ${ARG2} ${ARG3} ${ARG4} &
     WAIT_PID=$!
 fi
 
