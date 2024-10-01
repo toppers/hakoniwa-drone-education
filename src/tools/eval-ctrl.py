@@ -189,7 +189,6 @@ def is_alt_spd_control():
     return (target_values.first_key == 'Vz')
 
 def joystick_takeoff(client, height):
-    button_event(client, 0)
     print("JOYSTICK TAKEOFF: ", height)
     pose = client.simGetVehiclePose()
     while (pose.position.z_val) < height:
@@ -227,6 +226,9 @@ def my_on_manual_timing_control(context):
     global target_values
     print("INFO: on_manual_timing_control enter")
 
+    # initialize for joystick control
+    if is_joystick_control():
+        button_event(client, 0)
     # takeoff
     height = 3.0
     if is_alt_control() or is_alt_spd_control():
