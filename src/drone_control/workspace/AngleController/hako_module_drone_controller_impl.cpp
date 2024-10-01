@@ -37,6 +37,7 @@ mi_drone_control_out_t hako_module_drone_controller_impl_run(mi_drone_control_in
     FlightControllerInputAngularRateType angular_rate = {in->p, in->q, in->r};
 
     double target_pos_z = in->target.throttle.power;
+    double target_yaw = in->target.direction_velocity.r;
 
     /*
      * 高度制御
@@ -46,7 +47,7 @@ mi_drone_control_out_t hako_module_drone_controller_impl_run(mi_drone_control_in
     /*
      * 機首方向制御
      */
-    DroneHeadingControlInputType head_in(euler, 0.0);
+    DroneHeadingControlInputType head_in(euler, target_yaw);
     DroneHeadingControlOutputType head_out = ctrl->head->run(head_in);
     /*
      * 姿勢角度制御
