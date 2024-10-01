@@ -87,9 +87,12 @@ rm -f ./tmp1.json
 if [ "$TKEY" = "Rx" ] || [ "$TKEY" = "Ry" ] || [ "$TKEY" = "Rz" ]
 then
     module_name="AngleController"
-elif [ "$TKEY" = "Vx" ] || [ "$TKEY" = "Vy" ] || [ "$TKEY" = "Vz" ]
+elif [ "$TKEY" = "Vx" ] || [ "$TKEY" = "Vy" ]
 then
     module_name="SpeedController"
+elif [ "$TKEY" = "Vz" ]
+then
+    module_name="AltSpeedController"
 else
     module_name="FlightController"
 fi

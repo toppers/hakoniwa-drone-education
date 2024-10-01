@@ -53,18 +53,6 @@ def button_event(client, index):
     data['button'][index] = False
     client.putGameJoystickData(data)
 
-def takeoff(client, height=3.0):
-    print("START TAKEOFF: ", height)
-    pose = client.simGetVehiclePose()
-    while (pose.position.z_val) < height:
-        pose = client.simGetVehiclePose()
-        data = client.getGameJoystickData()
-        data['axis'] = list(data['axis']) 
-        data['axis'][UP_DOWN_AXIS] = height
-        client.putGameJoystickData(data)
-        hakopy.usleep(30000)
-
-    print("DONE")
 
 def reply_and_wait_res(command):
     ret = command.write()
@@ -84,14 +72,6 @@ def reply_and_wait_res(command):
         #print("result: ",  pdu['header']['result'])
         hakopy.usleep(30000)
     return True
-
-def takeoff_wait(client, height):
-    print("INFO: takeoff")
-    command, pdu_cmd = client.get_packet(pdu_info.HAKO_AVATOR_CHANNEL_ID_CMD_TAKEOFF, client.get_vehicle_name(client.default_drone_name))
-    pdu_cmd['height'] = height
-    pdu_cmd['speed'] = 5
-    pdu_cmd['yaw_deg'] = client._get_yaw_degree(client.default_drone_name)
-    return reply_and_wait_res(command)
 
 def almost_equal_deg(target_deg, real_deg, diff_deg):
     if abs(target_deg - real_deg) <= diff_deg:
@@ -196,12 +176,29 @@ def is_height_control():
 
 def joystick_takeoff(client, height):
     button_event(client, 0)
-    takeoff(client, height)
+    print("JOYSTICK TAKEOFF: ", height)
+    pose = client.simGetVehiclePose()
+    while (pose.position.z_val) < height:
+        pose = client.simGetVehiclePose()
+        data = client.getGameJoystickData()
+        data['axis'] = list(data['axis']) 
+        data['axis'][UP_DOWN_AXIS] = height
+        client.putGameJoystickData(data)
+        hakopy.usleep(30000)
+    print("DONE")
 
 def api_takeoff(client, height):
     if is_height_control():
         height = -target_values.value('Z')
-    takeoff_wait(client, height)
+
+    # do takeoff
+    print("INFO: API TAKEOFF")
+    command, pdu_cmd = client.get_packet(pdu_info.HAKO_AVATOR_CHANNEL_ID_CMD_TAKEOFF, client.get_vehicle_name(client.default_drone_name))
+    pdu_cmd['height'] = height
+    pdu_cmd['speed'] = 5
+    pdu_cmd['yaw_deg'] = client._get_yaw_degree(client.default_drone_name)
+    reply_and_wait_res(command)
+
     if is_height_control():
         hakopy.usleep(10000000)
 
