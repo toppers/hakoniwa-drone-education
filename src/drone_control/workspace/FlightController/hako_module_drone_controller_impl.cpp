@@ -55,7 +55,7 @@ mi_drone_control_out_t hako_module_drone_controller_impl_run(mi_drone_control_in
     /*
      * 水平制御
      */
-    DronePosInputType pos_in(pos, euler, target_pos_x, target_pos_y, target_velocity);
+    DronePosInputType pos_in(pos, velocity, euler, target_pos_x, target_pos_y, target_velocity);
     DronePosOutputType pos_out = ctrl->pos->run(pos_in);
     /*
      * 姿勢角度制御

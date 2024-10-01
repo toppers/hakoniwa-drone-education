@@ -34,6 +34,7 @@ function handler()
 
     # 最後にプロット集計
     python ${TOOL_PATH}/plots.py
+    rm -f *.png
 }
 
 # 引数のチェック

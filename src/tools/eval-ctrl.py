@@ -204,7 +204,7 @@ def pos_control(client, X = 0, Y = 0, speed = 5):
     pose = client.simGetVehiclePose()
     command, pdu_cmd = client.get_packet(pdu_info.HAKO_AVATOR_CHANNEL_ID_CMD_MOVE, client.get_vehicle_name(client.default_drone_name))
     pdu_cmd['x'] = X
-    pdu_cmd['y'] = Y
+    pdu_cmd['y'] = -Y # convert NED frame to ROS frame
     pdu_cmd['z'] = pose.position.z_val
     pdu_cmd['speed'] = speed
     pdu_cmd['yaw_deg'] = 0
@@ -284,7 +284,7 @@ def main():
 
     asset_name = 'DronePlantModel'
     config_path = sys.argv[1]
-    delta_time_usec = 3000
+    delta_time_usec = 1000
 
     stop_time = int(sys.argv[2])
     target_values.set_stop_time(stop_time)

@@ -14,13 +14,13 @@ function handler()
         mv plot.png plot_z.png
     fi
 
-    # Rx軸のプロット
+    # Vx軸のプロット
     python ${TOOL_PATH}/hako_TimelineAnalyzer.py ./drone_log0/drone_dynamics.csv --columns Vx --diff
     if [ $? -eq 0 ]; then
         mv plot.png plot_vx.png
     fi
 
-    # Ry軸のプロット
+    # Vy軸のプロット
     python ${TOOL_PATH}/hako_TimelineAnalyzer.py ./drone_log0/drone_dynamics.csv --columns Vy --diff
     if [ $? -eq 0 ]; then
         mv plot.png plot_vy.png
@@ -44,6 +44,7 @@ function handler()
 
     # 最後にプロット集計
     python ${TOOL_PATH}/plots.py
+    rm -f *.png
 
 }
 

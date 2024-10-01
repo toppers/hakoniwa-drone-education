@@ -9,13 +9,14 @@
 
 struct DronePosInputType {
     FlightControllerInputPositionType pos;
+    FlightControllerInputVelocityType velocity;
     FlightControllerInputEulerType euler;
     double target_x;
     double target_y;
     double target_spd;
-    DronePosInputType() : pos(), euler(), target_x(0), target_y(0), target_spd(0) {}
-    DronePosInputType(FlightControllerInputPositionType p, FlightControllerInputEulerType e, double t_x, double t_y, double spd)
-        : pos(p), euler(e), target_x(t_x), target_y(t_y), target_spd(spd) {}
+    DronePosInputType() : pos(), velocity(), euler(), target_x(0), target_y(0), target_spd(0) {}
+    DronePosInputType(FlightControllerInputPositionType p, FlightControllerInputVelocityType v, FlightControllerInputEulerType e, double t_x, double t_y, double spd)
+        : pos(p), velocity(v), euler(e), target_x(t_x), target_y(t_y), target_spd(spd) {}
 };
 
 struct DronePosOutputType {
@@ -77,6 +78,7 @@ private:
                 val.x = (val.x / magnitude) * in.target_spd;
                 val.y = (val.y / magnitude) * in.target_spd;
             }
+            out.velocity = in.velocity;
             out.target_vx = val.x;
             out.target_vy = val.y;
         }
