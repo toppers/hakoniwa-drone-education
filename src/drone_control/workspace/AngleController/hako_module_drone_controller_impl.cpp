@@ -36,7 +36,11 @@ mi_drone_control_out_t hako_module_drone_controller_impl_run(mi_drone_control_in
     FlightControllerInputVelocityType velocity = {in->u, in->v, -in->w};
     FlightControllerInputAngularRateType angular_rate = {in->p, in->q, in->r};
 
-    double target_pos_z = in->target.throttle.power;
+    /*
+     * 目標値はNED座標系で入力される。
+     * ただし、Z軸はわかりやすさを重視して符号を反転する。
+     */
+    double target_pos_z = -in->target.throttle.power;
     double target_yaw = in->target.direction_velocity.r;
 
     /*

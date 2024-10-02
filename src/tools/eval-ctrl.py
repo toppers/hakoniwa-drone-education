@@ -84,7 +84,7 @@ def stop_control(client, height):
         data = client.getGameJoystickData()
         data['axis'] = list(data['axis'])
         data['axis'][HEADING_AXIS] = 0.0    #heading
-        data['axis'][UP_DOWN_AXIS] = height #up/down
+        data['axis'][UP_DOWN_AXIS] = float(height) #up/down
         data['axis'][ROLL_AXIS] = 0.0    #roll
         data['axis'][PITCH_AXIS] = 0.0    #pitch
         client.putGameJoystickData(data)
@@ -95,19 +95,24 @@ def should_stop():
     stop_time = target_values.stop_time_usec
     return (stop_time > 0) and (hakopy.simulation_time() >= stop_time)
 
-# ここで設定した値が、そのまま、制御側に渡るので、座標系の変換は不要
-# NED座標系で渡す。
-# TODO API側は、ROS座標系なので微妙な気はしてはいるが。。
-def joystick_control(client, v1=0, v2=0, v3=0, height=3.0, control_type='angular'):
+# ここで設定した値が、そのまま、制御側に渡る
+# 入力はROS座標系なので、NED座標系に変換する
+def joystick_control(client, x=0, y=0, z=0, height=3.0, control_type='angular'):
     global target_values
-    print(f"START CONTROL: v1({v1}) v2({v2}) v3({v3})")
+    print(f"START CONTROL(ROS Frame): x({x}) y({y}) z({z})")
+    x = float(x)
+    y = float(y)
+    z = float(z)
+    height = float(height)
 
     data = client.getGameJoystickData()
+    # USER INPUT は ROS座標系。
+    # NED座標系で渡す必要があるので、変換する。
     data['axis'] = list(data['axis'])
-    data['axis'][HEADING_AXIS] = v3 if control_type == 'angular' else 0.0
-    data['axis'][UP_DOWN_AXIS] = height
-    data['axis'][ROLL_AXIS] = v1 if control_type == 'angular' else v2
-    data['axis'][PITCH_AXIS] = v2 if control_type == 'angular' else v1
+    data['axis'][HEADING_AXIS] = -z if control_type == 'angular' else 0.0
+    data['axis'][UP_DOWN_AXIS] = -height
+    data['axis'][ROLL_AXIS] = x if control_type == 'angular' else -y
+    data['axis'][PITCH_AXIS] = -y if control_type == 'angular' else x
     client.putGameJoystickData(data)
 
     while True:
@@ -117,7 +122,7 @@ def joystick_control(client, v1=0, v2=0, v3=0, height=3.0, control_type='angular
 
 def joystick_control_alt_spd(client, vz):
     global target_values
-    print(f"START CONTROL: vz({vz})")
+    print(f"START CONTROL(ROS Frame): vz({vz})")
 
     data = client.getGameJoystickData()
     data['axis'] = list(data['axis'])
@@ -160,7 +165,7 @@ target_values = TargetValues()
 
 def api_control(client, X = 0, Y = 0, speed = 5):
     global target_values
-    print(f"START CONTROL: X({X}) Y({Y}) S({speed})")
+    print(f"START CONTROL(ROS Frame): X({X}) Y({Y}) S({speed})")
     #call api
     pose = client.simGetVehiclePose()
     command, pdu_cmd = client.get_packet(pdu_info.HAKO_AVATOR_CHANNEL_ID_CMD_MOVE, client.get_vehicle_name(client.default_drone_name))
@@ -189,13 +194,13 @@ def is_alt_spd_control():
     return (target_values.first_key == 'Vz')
 
 def joystick_takeoff(client, height):
-    print("JOYSTICK TAKEOFF: ", height)
+    print("JOYSTICK TAKEOFF(ROS Frame): ", height)
     pose = client.simGetVehiclePose()
     while (pose.position.z_val) < height:
         pose = client.simGetVehiclePose()
         data = client.getGameJoystickData()
         data['axis'] = list(data['axis']) 
-        data['axis'][UP_DOWN_AXIS] = height
+        data['axis'][UP_DOWN_AXIS] = float(-height) #NED座標系
         client.putGameJoystickData(data)
         hakopy.usleep(30000)
     print("DONE")
