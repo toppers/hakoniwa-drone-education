@@ -32,11 +32,10 @@ mi_drone_control_out_t hako_module_drone_controller_impl_run(mi_drone_control_in
      * 補足：z軸は、わかりやすさを重視しして符号を反転する。
      */
     FlightControllerInputEulerType euler = {in->euler_x, in->euler_y, in->euler_z};
-    FlightControllerInputPositionType pos = {in->pos_x, in->pos_y, -in->pos_z};
     FlightControllerInputVelocityType velocity = {in->u, in->v, -in->w};
     FlightControllerInputAngularRateType angular_rate = {in->p, in->q, in->r};
 
-    double target_spd_z = in->target.throttle.power;
+    double target_spd_z = -in->target.throttle.power;
 
     /*
      * 高度制御

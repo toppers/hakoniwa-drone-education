@@ -122,7 +122,7 @@ def joystick_control_alt_spd(client, vz):
     data = client.getGameJoystickData()
     data['axis'] = list(data['axis'])
     data['axis'][HEADING_AXIS] = 0.0
-    data['axis'][UP_DOWN_AXIS] = vz
+    data['axis'][UP_DOWN_AXIS] = -vz # ROS -> NED座標系
     data['axis'][ROLL_AXIS] = 0
     data['axis'][PITCH_AXIS] = 0
     client.putGameJoystickData(data)
