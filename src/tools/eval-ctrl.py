@@ -164,9 +164,9 @@ def api_control(client, X = 0, Y = 0, speed = 5):
     #call api
     pose = client.simGetVehiclePose()
     command, pdu_cmd = client.get_packet(pdu_info.HAKO_AVATOR_CHANNEL_ID_CMD_MOVE, client.get_vehicle_name(client.default_drone_name))
-    pdu_cmd['x'] = X
-    pdu_cmd['y'] = -Y # convert NED frame to ROS frame
-    pdu_cmd['z'] = pose.position.z_val
+    pdu_cmd['x'] = X # USER INPUT IS ROS frame
+    pdu_cmd['y'] = Y # USER INPUT IS ROS frame
+    pdu_cmd['z'] = pose.position.z_val # PDU is ROS frame
     pdu_cmd['speed'] = speed
     pdu_cmd['yaw_deg'] = 0
     reply_and_wait_res(command)
@@ -201,9 +201,6 @@ def joystick_takeoff(client, height):
     print("DONE")
 
 def api_takeoff(client, height):
-    if is_alt_control():
-        height = -target_values.value('Z')
-
     # do takeoff
     print("INFO: API TAKEOFF")
     command, pdu_cmd = client.get_packet(pdu_info.HAKO_AVATOR_CHANNEL_ID_CMD_TAKEOFF, client.get_vehicle_name(client.default_drone_name))
