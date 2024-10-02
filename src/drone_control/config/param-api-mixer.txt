@@ -74,3 +74,7 @@ PID_YAW_Kd              0.0
 PID_YAW_RATE_Kp         0.1
 PID_YAW_RATE_Ki         0.0
 PID_YAW_RATE_Kd         0.1
+
+# ラジオコントロール
+YAW_DELTA_VALUE_DEG     2.0
+ALT_DELTA_VALUE_M       0.1
