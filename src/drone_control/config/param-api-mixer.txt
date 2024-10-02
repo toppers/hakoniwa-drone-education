@@ -23,20 +23,20 @@ SPD_CONTROL_CYCLE       0.0
 PID_POS_MAX_SPD         20.0
 
 ## 水平位置制御のPIDパラメータ
-PID_POS_X_Kp            1.0
+PID_POS_X_Kp            5.0
 PID_POS_X_Ki            0.0
-PID_POS_X_Kd            1.0
-PID_POS_Y_Kp            1.0
+PID_POS_X_Kd            10.0
+PID_POS_Y_Kp            5.0
 PID_POS_Y_Ki            0.0
-PID_POS_Y_Kd            1.0
+PID_POS_Y_Kd            10.0
 
 # 水平速度制御のPIDパラメータ
-PID_POS_VX_Kp           1.0
+PID_POS_VX_Kp           10.0
 PID_POS_VX_Ki           0.1
-PID_POS_VX_Kd           1.0
-PID_POS_VY_Kp           1.0
+PID_POS_VX_Kd           10.0
+PID_POS_VY_Kp           10.0
 PID_POS_VY_Ki           0.1
-PID_POS_VY_Kd           1.0
+PID_POS_VY_Kd           10.0
 
 # 姿勢角制御
 HEAD_CONTROL_CYCLE          0.0
@@ -68,9 +68,9 @@ PID_PITCH_RATE_Kd       0.0
 
 ## ヨー角度とヨー角速度制御のPIDパラメータ
 PID_YAW_RPM_MAX         10.0
-PID_YAW_Kp              10.1
-PID_YAW_Ki              0.1
-PID_YAW_Kd              10.1
-PID_YAW_RATE_Kp         1.01
+PID_YAW_Kp              0.1
+PID_YAW_Ki              0.0
+PID_YAW_Kd              0.0
+PID_YAW_RATE_Kp         0.1
 PID_YAW_RATE_Ki         0.0
-PID_YAW_RATE_Kd         1.01
+PID_YAW_RATE_Kd         0.1
