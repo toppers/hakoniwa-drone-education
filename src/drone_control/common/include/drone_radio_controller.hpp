@@ -61,7 +61,7 @@ public:
             std::cout << "r_altitude: " << r_altitude << std::endl;
         }
     }
-    void update_target_altitude(double v) {
+    double update_target_altitude(double v) {
         if (alt_time >= alt_control_cycle) {
             alt_time = 0;
             r_altitude += v * alt_delta_value_m;
@@ -71,17 +71,19 @@ public:
             }
         }
         alt_time += this->delta_time;
+        return r_altitude;
     }
     
     // Function to update target yaw
-    void update_target_yaw(double v) {
+    double update_target_yaw(double v) {
         if (yaw_time >= head_control_cycle) {
             yaw_time = 0;
             r_yaw += v * yaw_delta_value_deg;
         }
         //std::cout << "r_yaw: " << r_yaw << std::endl;
         yaw_time += this->delta_time;
-    }    
+        return r_yaw;
+    }
 };
 
 #endif /* _DRONE_CONTROLLER_HPP_ */

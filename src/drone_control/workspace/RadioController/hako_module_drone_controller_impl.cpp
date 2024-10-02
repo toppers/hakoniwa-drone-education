@@ -40,8 +40,9 @@ mi_drone_control_out_t hako_module_drone_controller_impl_run(mi_drone_control_in
      * 目標値は、NED座標系で入る。
      * Z軸だけ、わかりやすさのため符号を反転している
      */
-    double target_yaw      =  in->target.direction_velocity.r; //TODO
-    double target_pos_z    = -in->target_pos_z; //TODO
+    ctrl->save_for_initial_position(pos.z);
+    double target_yaw      =  ctrl->update_target_yaw(in->target.direction_velocity.r);
+    double target_pos_z    =  ctrl->update_target_altitude(in->target.throttle.power);
     double target_vx       =  in->target.attitude.pitch;
     double target_vy       =  in->target.attitude.roll;
 
