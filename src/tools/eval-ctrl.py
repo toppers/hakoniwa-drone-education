@@ -7,7 +7,10 @@ import hakopy
 import hako_pdu
 import pdu_info
 import os
-import time
+import numpy as np
+import pandas as pd
+from utils.signal import signal_generate
+from utils.logger import Logger
 
 config_path = ''
 HEADING_AXIS = 0
@@ -92,6 +95,7 @@ def stop_control(client, height):
 
 
 def should_stop():
+    global target_values
     stop_time = target_values.stop_time_usec
     return (stop_time > 0) and (hakopy.simulation_time() >= stop_time)
 
@@ -139,21 +143,35 @@ def joystick_control_spd(client, x=0, y=0, z=0, height=3.0, slp_usec = 30000):
         if should_stop():
             break
 
-def joystick_control_alt_spd(client, vz, slp_usec = 30000):
+def joystick_control_alt_spd(client, vz, slp_usec=30000, logger = None):
     global target_values
-    print(f"START CONTROL(ROS Frame): vz({vz})")
+    if not isinstance(vz, list):
+        vz = [vz]
+
+    index = 0
+    vz_length = len(vz)
 
     while True:
+        current_vz = vz[index]
+
         data = client.getGameJoystickData()
         data['axis'] = list(data['axis'])
         data['axis'][HEADING_AXIS] = 0.0
-        data['axis'][UP_DOWN_AXIS] = -vz # ROS -> NED座標系
+        data['axis'][UP_DOWN_AXIS] = -current_vz  # ROS -> NED座標系
         data['axis'][ROLL_AXIS] = 0
         data['axis'][PITCH_AXIS] = 0
         client.putGameJoystickData(data)
+
+        if logger is not None:
+            # ログデータを記録
+            logger.log(hakopy.simulation_time(), -current_vz)
+            if index >= vz_length - 1:
+                logger.save()
         hakopy.usleep(slp_usec)
+
+        index = (index + 1) % vz_length
         if should_stop():
-            break    
+            break
 
 pdu_manager = None
 client = None
@@ -272,6 +290,10 @@ def my_on_manual_timing_control(context):
 
     # do control
     if is_alt_spd_control():
+        #TODO FIX ME
+        #my_logger = Logger(filename='out.csv')
+        #values = signal_generate(interval = 0.001, total_time= 10, offset = target_values.value('Vz'), type = 'sine')
+        #joystick_control_alt_spd(client, values, slp_usec=1000, logger=my_logger)
         joystick_control_alt_spd(client, target_values.value('Vz'))
     elif (target_values.has_key('Rx')):
         joystick_control_angular(client, target_values.value('Rx'), target_values.value('Ry'), target_values.value('Rz'), height)
