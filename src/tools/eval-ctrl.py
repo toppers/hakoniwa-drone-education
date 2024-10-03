@@ -97,42 +97,61 @@ def should_stop():
 
 # ここで設定した値が、そのまま、制御側に渡る
 # 入力はROS座標系なので、NED座標系に変換する
-def joystick_control(client, x=0, y=0, z=0, height=3.0, control_type='angular'):
+def joystick_control_angular(client, x=0, y=0, z=0, height=3.0, slp_usec = 30000):
     global target_values
     print(f"START CONTROL(ROS Frame): x({x}) y({y}) z({z})")
     x = float(x)
     y = float(y)
     z = float(z)
     height = float(height)
-
-    data = client.getGameJoystickData()
-    # USER INPUT は ROS座標系。
-    # NED座標系で渡す必要があるので、変換する。
-    data['axis'] = list(data['axis'])
-    data['axis'][HEADING_AXIS] = -z if control_type == 'angular' else 0.0
-    data['axis'][UP_DOWN_AXIS] = -height
-    data['axis'][ROLL_AXIS] = x if control_type == 'angular' else -y
-    data['axis'][PITCH_AXIS] = -y if control_type == 'angular' else x
-    client.putGameJoystickData(data)
-
     while True:
-        hakopy.usleep(30000)
+        data = client.getGameJoystickData()
+        # USER INPUT は ROS座標系。
+        # NED座標系で渡す必要があるので、変換する。
+        data['axis'] = list(data['axis'])
+        data['axis'][HEADING_AXIS] = -z
+        data['axis'][UP_DOWN_AXIS] = -height
+        data['axis'][ROLL_AXIS]    =  x
+        data['axis'][PITCH_AXIS]   = -y
+        client.putGameJoystickData(data)
+        hakopy.usleep(slp_usec)
         if should_stop():
             break
 
-def joystick_control_alt_spd(client, vz):
+def joystick_control_spd(client, x=0, y=0, z=0, height=3.0, slp_usec = 30000):
+    global target_values
+    print(f"START CONTROL(ROS Frame): x({x}) y({y}) z({z})")
+    x = float(x)
+    y = float(y)
+    z = float(z)
+    height = float(height)
+    while True:
+        data = client.getGameJoystickData()
+        # USER INPUT は ROS座標系。
+        # NED座標系で渡す必要があるので、変換する。
+        data['axis'] = list(data['axis'])
+        data['axis'][HEADING_AXIS] = 0.0
+        data['axis'][UP_DOWN_AXIS] = -height
+        data['axis'][ROLL_AXIS]    = -y
+        data['axis'][PITCH_AXIS]   =  x
+        client.putGameJoystickData(data)
+        hakopy.usleep(slp_usec)
+        if should_stop():
+            break
+
+def joystick_control_alt_spd(client, vz, slp_usec = 30000):
     global target_values
     print(f"START CONTROL(ROS Frame): vz({vz})")
 
-    data = client.getGameJoystickData()
-    data['axis'] = list(data['axis'])
-    data['axis'][HEADING_AXIS] = 0.0
-    data['axis'][UP_DOWN_AXIS] = -vz # ROS -> NED座標系
-    data['axis'][ROLL_AXIS] = 0
-    data['axis'][PITCH_AXIS] = 0
-    client.putGameJoystickData(data)
     while True:
-        hakopy.usleep(30000)
+        data = client.getGameJoystickData()
+        data['axis'] = list(data['axis'])
+        data['axis'][HEADING_AXIS] = 0.0
+        data['axis'][UP_DOWN_AXIS] = -vz # ROS -> NED座標系
+        data['axis'][ROLL_AXIS] = 0
+        data['axis'][PITCH_AXIS] = 0
+        client.putGameJoystickData(data)
+        hakopy.usleep(slp_usec)
         if should_stop():
             break    
 
@@ -193,7 +212,7 @@ def is_alt_control():
 def is_alt_spd_control():
     return (target_values.first_key == 'Vz')
 
-def joystick_takeoff(client, height):
+def joystick_takeoff(client, height, slp_usec = 30000):
     print("JOYSTICK TAKEOFF(ROS Frame): ", height)
     pose = client.simGetVehiclePose()
     while (pose.position.z_val) < height:
@@ -202,7 +221,7 @@ def joystick_takeoff(client, height):
         data['axis'] = list(data['axis']) 
         data['axis'][UP_DOWN_AXIS] = float(-height) #NED座標系
         client.putGameJoystickData(data)
-        hakopy.usleep(30000)
+        hakopy.usleep(slp_usec)
     print("DONE")
 
 def api_takeoff(client, height):
@@ -255,9 +274,9 @@ def my_on_manual_timing_control(context):
     if is_alt_spd_control():
         joystick_control_alt_spd(client, target_values.value('Vz'))
     elif (target_values.has_key('Rx')):
-        joystick_control(client, target_values.value('Rx'), target_values.value('Ry'), target_values.value('Rz'), height, 'angular')
+        joystick_control_angular(client, target_values.value('Rx'), target_values.value('Ry'), target_values.value('Rz'), height)
     elif (target_values.has_key('Vx')):
-        joystick_control(client, target_values.value('Vx'), target_values.value('Vy'), target_values.value('Vz'), height, 'speed')
+        joystick_control_spd(client, target_values.value('Vx'), target_values.value('Vy'), target_values.value('Vz'), height)
     elif not is_alt_control():
         api_control(client, target_values.value('X'), target_values.value('Y'), target_values.value('S'))
 
