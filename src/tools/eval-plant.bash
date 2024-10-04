@@ -38,21 +38,20 @@ then
     exit 1
 fi
 
-EXEC_SIM_TIME=5
-
 HAKO_PID=
 EVAL_PID=
-if [ $# -ne 5 ]
+if [ $# -ne 6 ]
 then
-    echo "Usage: $0 <stop_time> <tkey:tvalue> <key:value> <key:value> <key:value>"
+    echo "Usage: $0 <stop_time> <frequency> <tkey:tvalue> <key:value> <key:value> <key:value>"
     exit 1
 fi
 
 STOP_TIME=${1}
-TKEY_VALUE=${2}
-KEY_VALUE1=${3}
-KEY_VALUE2=${4}
-KEY_VALUE3=${5}
+FREQ=${2}
+TKEY_VALUE=${3}
+KEY_VALUE1=${4}
+KEY_VALUE2=${5}
+KEY_VALUE3=${6}
 TKEY=`echo ${TKEY_VALUE} | awk -F: '{print $1}'`
 TVALUE=`echo ${TKEY_VALUE} | awk -F: '{print $2}'`
 
@@ -82,7 +81,7 @@ ${BIN_PATH}/hako-px4sim 127.0.0.1 4560 ext &
 HAKO_PID=$!
 
 # start eval-ctrl
-${PYTHON_BIN} ${TOOL_PATH}/eval-plant.py ${HAKO_CUSTOM_JSON_PATH} ${STOP_TIME} ${TKEY_VALUE} ${KEY_VALUE1} ${KEY_VALUE2} ${KEY_VALUE3} &
+${PYTHON_BIN} ${TOOL_PATH}/eval-plant.py ${HAKO_CUSTOM_JSON_PATH} ${STOP_TIME} ${FREQ} ${TKEY_VALUE} ${KEY_VALUE1} ${KEY_VALUE2} ${KEY_VALUE3} &
 EVAL_PID=$!
 
 sleep 3
@@ -90,14 +89,10 @@ sleep 3
 # hako start
 hako-cmd start
 
-#sleep ${EXEC_SIM_TIME}
-
 wait $EVAL_PID
 
 # kill hakoniwa
 kill -s TERM ${HAKO_PID}
 
-
-#wait ${HAKO_PID} ${EVAL_PID}
 wait ${HAKO_PID}
 echo "INFO: DONE"

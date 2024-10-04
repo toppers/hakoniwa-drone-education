@@ -3,3 +3,4 @@ control
 numpy
 sympy
 pandas
+scikit-learn

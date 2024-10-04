@@ -61,8 +61,8 @@ def validate_and_merge_time_columns(df_list):
 parser = argparse.ArgumentParser(description="Plot columns from a CSV file over time.")
 parser.add_argument("file_paths", nargs='+', help="Path(s) to the CSV file(s)")
 parser.add_argument("--columns", nargs='+', help="Column name(s) to plot", required=True)
-parser.add_argument("--start_time", type=int, default=0, help="Start time for plotting (in seconds)")
-parser.add_argument("--duration", type=int, default=sys.maxsize, help="Duration to plot from start time (in seconds)")
+parser.add_argument("--start_time", type=float, default=0, help="Start time for plotting (in seconds)")
+parser.add_argument("--duration", type=float, default=sys.maxsize, help="Duration to plot from start time (in seconds)")
 parser.add_argument("--diff", action='store_true', help="Calculate time differences")
 args = parser.parse_args()
 

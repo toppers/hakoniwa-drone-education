@@ -20,6 +20,7 @@ pdu_manager = None
 client = None
 delta_time_usec = 1000
 stop_time_sec = 10
+in_frequency = 1
 
 def my_on_initialize(context):
     global config_path
@@ -48,7 +49,8 @@ def my_on_manual_timing_control(context):
     global target_values
     global delta_time_usec
     global stop_time_sec
-    logger = Logger(filename='out.csv')
+    global in_frequency
+    logger = Logger(filename='in.csv')
     button_event(client, 0)
 
     thrust   = target_values.value('T')
@@ -70,7 +72,7 @@ def my_on_manual_timing_control(context):
 
     step_index = 0
     stop_time_usec = stop_time_sec * 1000000
-    values = signal_generate(interval = 1.0/delta_time_usec, total_time= stop_time_sec, offset = off_value, type = 'sine', frequency=1.0)
+    values = signal_generate(interval = 1.0/delta_time_usec, total_time= stop_time_sec, offset = off_value, type = 'sine', frequency=in_frequency)
     print(f"START CONTROL: thrust({thrust}) torque_x({torque_x}) torque_y({torque_y} torque_z({torque_z})")
     while True:
         data = client.getGameJoystickData()
@@ -104,18 +106,20 @@ def main():
     global config_path
     global target_values
     global stop_time_sec
+    global in_frequency
     
-    if len(sys.argv) != 7:
-        print(f"Usage: {sys.argv[0]} <config_path> <stop_time_sec> <tkey:tvalue> <key:value> <key:value> <key:value>")
+    if len(sys.argv) != 8:
+        print(f"Usage: {sys.argv[0]} <config_path> <stop_time_sec> <freq> <tkey:tvalue> <key:value> <key:value> <key:value>")
         return 1
 
     asset_name = 'DronePlantEvalModel'
     config_path = sys.argv[1]
     stop_time_sec = int(sys.argv[2])
+    in_frequency = float(sys.argv[3])
     delta_time_usec = 1000
 
     target_values = TargetValues()
-    for i in range(3, 7):
+    for i in range(4, 8):
         target_values.set_target(sys.argv[i].split(':')[0], sys.argv[i].split(':')[1])
 
     # connect to the HakoSim simulator
