@@ -11,12 +11,11 @@ import numpy as np
 import pandas as pd
 from utils.signal import signal_generate
 from utils.logger import Logger
+from utils.target_value import TargetValues
+from utils.constants import HEADING_AXIS, UP_DOWN_AXIS, ROLL_AXIS, PITCH_AXIS
+from utils.misc import button_event, save_evaluation_start_time, my_on_reset, send_and_wait, stop_control, should_stop
 
 config_path = ''
-HEADING_AXIS = 0
-UP_DOWN_AXIS = 1
-ROLL_AXIS = 2
-PITCH_AXIS = 3
 
 def my_on_initialize(context):
     global config_path
@@ -36,68 +35,11 @@ def my_on_initialize(context):
 
     for channel in pdu_channels:
         pdu = pdu_manager.get_pdu(robot_name, channel)
-        pdu_data = pdu.get()
+        _ = pdu.get()
         pdu.write()
 
     return 0
 
-def my_on_reset(context):
-    return 0
-
-
-def button_event(client, index):
-    data = client.getGameJoystickData()
-    data['button'] = list(data['button'])
-
-    hakopy.usleep(500000)
-    data['button'][index] = True
-    client.putGameJoystickData(data)
-    hakopy.usleep(500000)
-    data['button'][index] = False
-    client.putGameJoystickData(data)
-
-
-def reply_and_wait_res(command):
-    ret = command.write()
-    if ret == False:
-        print('"ERROR: hako_asset_pdu_write')
-        return False
-    while True:
-        pdu = command.read()
-        if pdu == None:
-            print('ERROR: hako_asset_pdu_read')
-            return 0
-        if pdu['header']['result'] == 1:
-            pdu['header']['result'] = 0
-            command.write()
-            print('DONE')
-            break
-        #print("result: ",  pdu['header']['result'])
-        hakopy.usleep(30000)
-    return True
-
-def almost_equal_deg(target_deg, real_deg, diff_deg):
-    if abs(target_deg - real_deg) <= diff_deg:
-        return True
-    else:
-        return False
-
-def stop_control(client, height):
-    while True:
-        data = client.getGameJoystickData()
-        data['axis'] = list(data['axis'])
-        data['axis'][HEADING_AXIS] = 0.0    #heading
-        data['axis'][UP_DOWN_AXIS] = float(height) #up/down
-        data['axis'][ROLL_AXIS] = 0.0    #roll
-        data['axis'][PITCH_AXIS] = 0.0    #pitch
-        client.putGameJoystickData(data)
-        hakopy.usleep(30000)
-
-
-def should_stop():
-    global target_values
-    stop_time = target_values.stop_time_usec
-    return (stop_time > 0) and (hakopy.simulation_time() >= stop_time)
 
 # ここで設定した値が、そのまま、制御側に渡る
 # 入力はROS座標系なので、NED座標系に変換する
@@ -119,7 +61,7 @@ def joystick_control_angular(client, x=0, y=0, z=0, height=3.0, slp_usec = 30000
         data['axis'][PITCH_AXIS]   = -y
         client.putGameJoystickData(data)
         hakopy.usleep(slp_usec)
-        if should_stop():
+        if should_stop(target_values.stop_time_usec):
             break
 
 def joystick_control_spd(client, x=0, y=0, z=0, height=3.0, slp_usec = 30000):
@@ -140,7 +82,7 @@ def joystick_control_spd(client, x=0, y=0, z=0, height=3.0, slp_usec = 30000):
         data['axis'][PITCH_AXIS]   =  x
         client.putGameJoystickData(data)
         hakopy.usleep(slp_usec)
-        if should_stop():
+        if should_stop(target_values.stop_time_usec):
             break
 
 def joystick_control_alt_spd(client, vz, slp_usec=30000, logger = None):
@@ -170,34 +112,11 @@ def joystick_control_alt_spd(client, vz, slp_usec=30000, logger = None):
         hakopy.usleep(slp_usec)
 
         index = (index + 1) % vz_length
-        if should_stop():
+        if should_stop(target_values.stop_time_usec):
             break
 
 pdu_manager = None
 client = None
-class TargetValues:
-    def __init__(self):
-        self.values = {}
-        self.stop_time_usec = -1
-        self.first_key = None
-
-    def set_stop_time(self, value: int):
-        self.stop_time_usec = value
-    
-    def set_target(self, key, value):
-        if self.first_key is None:
-            self.first_key = key
-        self.values[key] = float(value)
-        print(f"Target {key}: {value}")
-
-    def has_key(self, key):
-        return key in self.values
-
-    def value(self, key):
-        if self.has_key(key):
-            return self.values[key]
-        return None
-
 target_values = TargetValues()
 
 def api_control(client, X = 0, Y = 0, speed = 5):
@@ -211,11 +130,11 @@ def api_control(client, X = 0, Y = 0, speed = 5):
     pdu_cmd['z'] = pose.position.z_val # PDU is ROS frame
     pdu_cmd['speed'] = speed
     pdu_cmd['yaw_deg'] = 0
-    reply_and_wait_res(command)
+    send_and_wait(command)
     print("reply done")
     while True:
         hakopy.usleep(30000)
-        if should_stop():
+        if should_stop(target_values.stop_time_usec):
             break
 
 def is_joystick_control():
@@ -249,15 +168,11 @@ def api_takeoff(client, height):
     pdu_cmd['height'] = height
     pdu_cmd['speed'] = 5
     pdu_cmd['yaw_deg'] = client._get_yaw_degree(client.default_drone_name)
-    reply_and_wait_res(command)
+    send_and_wait(command)
 
     if is_alt_control():
         hakopy.usleep(10000000)
 
-def save_evaluation_start_time(evaluation_start_time):
-    print("EVALUATION_START_TIME: ", evaluation_start_time)
-    with open('/tmp/v.txt', 'w') as f:
-        f.write(str(evaluation_start_time))
 
 def my_on_manual_timing_control(context):
     global pdu_manager
