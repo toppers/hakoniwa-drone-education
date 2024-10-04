@@ -19,7 +19,7 @@ def signal_generate(interval, total_time, offset=0, type='sine', frequency=1.0, 
     """
     # Create a time array
     time_points = np.arange(0, total_time, interval)
-
+    print(f"interval: {interval} total_time: {total_time} len: {len(time_points)}")
     if type == 'sine':
         # Period for sine wave
         period = 1 / frequency
