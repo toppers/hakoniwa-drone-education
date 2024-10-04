@@ -72,7 +72,7 @@ def my_on_manual_timing_control(context):
 
     step_index = 0
     stop_time_usec = stop_time_sec * 1000000
-    values = signal_generate(interval = 1.0/delta_time_usec, total_time= stop_time_sec, offset = off_value, type = 'sine', frequency=in_frequency)
+    values = signal_generate(interval = 1.0/float(delta_time_usec), total_time= stop_time_sec, offset = off_value, type = 'sine', frequency=in_frequency)
     print(f"START CONTROL: thrust({thrust}) torque_x({torque_x}) torque_y({torque_y} torque_z({torque_z})")
     while True:
         data = client.getGameJoystickData()

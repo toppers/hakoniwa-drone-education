@@ -23,6 +23,7 @@ def signal_generate(interval, total_time, offset=0, type='sine', frequency=1.0, 
     if type == 'sine':
         # Period for sine wave
         period = 1 / frequency
+        print("period: ", period)
         # Generate sine wave and apply offset
         sine_values = np.sin(2 * np.pi * time_points / period) + offset
         return sine_values.tolist()
