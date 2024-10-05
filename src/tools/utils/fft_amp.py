@@ -32,10 +32,20 @@ def perform_fft(signal, sample_spacing=1.0):
     amplitude = 2.0/N * np.abs(yf[:N//2])  # 振幅
     return xf, amplitude
 
-# 与えられた周波数に最も近い振幅を見つける関数
-def get_amplitude_at_frequency(xf, amplitude, target_freq):
-    idx = (np.abs(xf - target_freq)).argmin()  # target_freqに最も近いインデックスを取得
-    return xf[idx], amplitude[idx]
+# 線形補間を使って指定された周波数での振幅を推定
+def interpolate_amplitude(xf, amplitude, target_freq):
+    # target_freqより下の周波数とtarget_freqより上の周波数を見つける
+    lower_idx = np.where(xf < target_freq)[0][-1]
+    upper_idx = np.where(xf > target_freq)[0][0]
+    
+    # 周波数と振幅の値
+    freq_lower, amp_lower = xf[lower_idx], amplitude[lower_idx]
+    freq_upper, amp_upper = xf[upper_idx], amplitude[upper_idx]
+    
+    # 線形補間の式: (y2 - y1) / (x2 - x1) = (y - y1) / (x - x1)
+    amplitude_at_target = amp_lower + (amp_upper - amp_lower) * (target_freq - freq_lower) / (freq_upper - freq_lower)
+    
+    return amplitude_at_target
 
 # 振幅ゲイン（dB）を計算する関数
 def calculate_amplitude_gain(input_amplitude, output_amplitude):
@@ -54,7 +64,6 @@ def main():
     parser.add_argument('--duration', type=float, required=True, help='Duration of the time range in seconds.')
     parser.add_argument('--target_frequency', type=float, required=True, help='Target frequency to analyze.')
     parser.add_argument('--input_max_value', type=float, required=True, help='input signal max value.')
-
 
     args = parser.parse_args()
 
@@ -83,9 +92,9 @@ def main():
     xf_input, amplitude_input = perform_fft(input_signal, sample_spacing)
     xf_output, amplitude_output = perform_fft(output_signal, sample_spacing)
 
-    # 指定された周波数での入力振幅と出力振幅を取得
-    freq_input, amp_input_at_freq = get_amplitude_at_frequency(xf_input, amplitude_input, args.target_frequency)
-    freq_output, amp_output_at_freq = get_amplitude_at_frequency(xf_output, amplitude_output, args.target_frequency)
+    # 線形補間で指定された周波数での入力振幅と出力振幅を推定
+    amp_input_at_freq = interpolate_amplitude(xf_input, amplitude_input, args.target_frequency)
+    amp_output_at_freq = interpolate_amplitude(xf_output, amplitude_output, args.target_frequency)
 
     # 振幅ゲインを計算
     amplitude_gain_db = calculate_amplitude_gain(amp_input_at_freq, amp_output_at_freq)
