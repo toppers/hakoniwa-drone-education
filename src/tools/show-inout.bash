@@ -13,8 +13,8 @@ OUT_FILE_PATH=${4}
 COLNAME=${5}
 
 # filoter
-python ../src/tools/filter_data.py ${IN_FILE_PATH}  ${START_TIME} ${DURATION} value input.csv
+python ../src/tools/filter_data.py ${IN_FILE_PATH}  ${START_TIME} ${DURATION} c1 input.csv
 python ../src/tools/filter_data.py ${OUT_FILE_PATH} ${START_TIME} ${DURATION} ${COLNAME} output.csv
 
 # plot
-python ../src/tools/hako_TimelineAnalyzer.py  input.csv output.csv  --diff --columns input.value output.${COLNAME}  --diff --duration ${DURATION}
+python ../src/tools/hako_TimelineAnalyzer.py  input.csv output.csv  --diff --columns input.c1 output.${COLNAME}  --diff --duration ${DURATION}

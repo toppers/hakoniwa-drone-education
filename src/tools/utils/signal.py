@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.signal import chirp
 
-def signal_generate(interval, total_time, offset=0, type='sine', frequency=1.0, chirp_f0=0, chirp_f1=1):
+def signal_generate(interval, total_time, offset=0, type='sine', frequency=1.0, amp = 1.0, chirp_f0=0, chirp_f1=1):
     """
     Generates different types of signals including sine and chirp.
     
@@ -25,7 +25,7 @@ def signal_generate(interval, total_time, offset=0, type='sine', frequency=1.0, 
         period = 1 / frequency
         print("period: ", period)
         # Generate sine wave and apply offset
-        sine_values = np.sin(2 * np.pi * time_points / period) + offset
+        sine_values = amp * np.sin(2 * np.pi * time_points / period) + offset
         return sine_values.tolist()
     
     elif type == 'chirp':

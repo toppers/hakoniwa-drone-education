@@ -40,18 +40,19 @@ fi
 
 HAKO_PID=
 EVAL_PID=
-if [ $# -ne 6 ]
+if [ $# -ne 7 ]
 then
-    echo "Usage: $0 <stop_time> <frequency> <tkey:tvalue> <key:value> <key:value> <key:value>"
+    echo "Usage: $0 <stop_time> <frequency> <amp> <c1:value> <c2:value> <c3:value> <c4:value>"
     exit 1
 fi
 
 STOP_TIME=${1}
 FREQ=${2}
-TKEY_VALUE=${3}
-KEY_VALUE1=${4}
-KEY_VALUE2=${5}
-KEY_VALUE3=${6}
+AMP=${3}
+TKEY_VALUE=${4}
+KEY_VALUE1=${5}
+KEY_VALUE2=${6}
+KEY_VALUE3=${7}
 TKEY=`echo ${TKEY_VALUE} | awk -F: '{print $1}'`
 TVALUE=`echo ${TKEY_VALUE} | awk -F: '{print $2}'`
 
@@ -81,7 +82,7 @@ ${BIN_PATH}/hako-px4sim 127.0.0.1 4560 ext &
 HAKO_PID=$!
 
 # start eval-ctrl
-${PYTHON_BIN} ${TOOL_PATH}/eval-plant.py ${HAKO_CUSTOM_JSON_PATH} ${STOP_TIME} ${FREQ} ${TKEY_VALUE} ${KEY_VALUE1} ${KEY_VALUE2} ${KEY_VALUE3} &
+${PYTHON_BIN} ${TOOL_PATH}/eval-plant.py ${HAKO_CUSTOM_JSON_PATH} ${STOP_TIME} ${FREQ} ${AMP} ${TKEY_VALUE} ${KEY_VALUE1} ${KEY_VALUE2} ${KEY_VALUE3} &
 EVAL_PID=$!
 
 sleep 3

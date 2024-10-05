@@ -4,12 +4,19 @@ class Logger:
     def __init__(self, filename='out.csv'):
         self.data_cache = []
         self.filename = filename
+        self.columns = ["timestamp", "value"]  # デフォルトのカラム名を設定
 
-    def log(self, timestamp, value):
-        # データをキャッシュに保存
-        self.data_cache.append([timestamp, value])
+    def set_columns(self, columns):
+        """カラム名を設定するメソッド"""
+        self.columns = columns
+
+    def log(self, *values):
+        """ログに複数の値を記録する"""
+        if len(values) != len(self.columns):
+            raise ValueError(f"Expected {len(self.columns)} values, but got {len(values)}")
+        self.data_cache.append(values)
 
     def save(self):
-        # pandasのDataFrameに変換し、CSVファイルに保存
-        df = pd.DataFrame(self.data_cache, columns=["timestamp", "value"])
+        """キャッシュをCSVに保存する"""
+        df = pd.DataFrame(self.data_cache, columns=self.columns)
         df.to_csv(self.filename, index=False)

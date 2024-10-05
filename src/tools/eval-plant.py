@@ -21,6 +21,7 @@ client = None
 delta_time_usec = 1000
 stop_time_sec = 10
 in_frequency = 1
+in_amplitude = 1
 
 def my_on_initialize(context):
     global config_path
@@ -51,41 +52,33 @@ def my_on_manual_timing_control(context):
     global stop_time_sec
     global in_frequency
     logger = Logger(filename='in.csv')
+    logger.set_columns(["timestamp", "c1", "c2", "c3", "c4"])
     button_event(client, 0)
 
-    thrust   = target_values.value('T')
-    torque_x = target_values.value('Tx')
-    torque_y = target_values.value('Ty')
-    torque_z = target_values.value('Tz')
+    c1 = target_values.value('c1')
+    c2 = target_values.value('c2')
+    c3 = target_values.value('c3')
+    c4 = target_values.value('c4')
 
-    key_index = UP_DOWN_AXIS
-    off_value = thrust
-    if target_values.first_key == 'Tx':
-        key_index = ROLL_AXIS
-        off_value = torque_x
-    elif target_values.first_key == 'Ty':
-        key_index = PITCH_AXIS
-        off_value = torque_y
-    elif target_values.first_key == 'Tz':
-        key_index = HEADING_AXIS
-        off_value = torque_z
+    offsets = [ c1, c2, c3, c4 ]
+
+    values_list = []
+    for off in offsets:
+        values = signal_generate(interval = 1.0/float(delta_time_usec), total_time= stop_time_sec, offset = off, type = 'sine', frequency=in_frequency, amp = in_amplitude)
+        values_list.append(values)
 
     step_index = 0
     stop_time_usec = stop_time_sec * 1000000
-    values = signal_generate(interval = 1.0/float(delta_time_usec), total_time= stop_time_sec, offset = off_value, type = 'sine', frequency=in_frequency)
-    print(f"START CONTROL: thrust({thrust}) torque_x({torque_x}) torque_y({torque_y} torque_z({torque_z})")
+    print(f"START CONTROL: c1({c1}) c2({c2}) c3({c3}) c4({c4})")
     while True:
         data = client.getGameJoystickData()
         data['axis'] = list(data['axis'])
         for index in range(0, 4):
-            if index == key_index:
-                data['axis'][key_index] = values[step_index]
-            else:
-                data['axis'][index] = 0.0
+            data['axis'][index] = values_list[index][step_index]
         client.putGameJoystickData(data)
 
-        logger.log(hakopy.simulation_time(), values[step_index])
-        step_index = (step_index + 1) % len(values)
+        logger.log(hakopy.simulation_time(), data['axis'][0], data['axis'][1], data['axis'][2], data['axis'][3])
+        step_index = (step_index + 1) % len(values_list[0])
         #print(f"index: {step_index} value: {values[step_index]}")
         hakopy.usleep(delta_time_usec)
         if should_stop(stop_time_usec):
@@ -107,19 +100,21 @@ def main():
     global target_values
     global stop_time_sec
     global in_frequency
+    global in_amplitude
     
-    if len(sys.argv) != 8:
-        print(f"Usage: {sys.argv[0]} <config_path> <stop_time_sec> <freq> <tkey:tvalue> <key:value> <key:value> <key:value>")
+    if len(sys.argv) != 9:
+        print(f"Usage: {sys.argv[0]} <config_path> <stop_time_sec> <freq> <amp> <c1:value> <c2:value> <c3:value> <c4:value>")
         return 1
 
     asset_name = 'DronePlantEvalModel'
     config_path = sys.argv[1]
     stop_time_sec = int(sys.argv[2])
     in_frequency = float(sys.argv[3])
+    in_amplitude = float(sys.argv[4])
     delta_time_usec = 1000
 
     target_values = TargetValues()
-    for i in range(4, 8):
+    for i in range(5, 9):
         target_values.set_target(sys.argv[i].split(':')[0], sys.argv[i].split(':')[1])
 
     # connect to the HakoSim simulator
