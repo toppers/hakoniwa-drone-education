@@ -95,7 +95,7 @@ def main():
 
     # 指定したカラムに対してFFTを実行
     signal1 = filtered_df1[column1].values
-    signal2 = filtered_df2[column2].values
+    signal2 = -filtered_df2[column2].values #TODO
 
     # サンプル間隔を動的に計算
     sample_spacing = (filtered_df1['timestamp'].iloc[1] - filtered_df1['timestamp'].iloc[0]).total_seconds()
@@ -105,7 +105,9 @@ def main():
     xf2, amplitude2, phase2 = perform_fft(signal2, sample_spacing)
 
     # 位相差を計算
-    phase_diff = phase1 - phase2
+    phase_diff = phase2 - phase1
+    # 位相差を -180 度から 180 度の範囲に正規化する
+    phase_diff = (phase_diff + 180) % 360 - 180
 
     # 結果を保存
     fft_df = pd.DataFrame({
