@@ -42,10 +42,9 @@ mi_drone_control_out_t hako_module_drone_controller_impl_run(mi_drone_control_in
      */
     ctrl->save_for_initial_position(pos.z);
     double target_yaw      =  ctrl->update_target_yaw(in->target.direction_velocity.r);
-    double target_pos_z    =  ctrl->update_target_altitude(in->target.throttle.power);
-    double target_vx       =  in->target.attitude.pitch;
-    double target_vy       =  in->target.attitude.roll;
-
+    double target_pos_z    =  ctrl->update_target_altitude(-in->target.throttle.power);
+    double target_vx       =  -in->target.attitude.pitch * ctrl->get_pos_max_spd();
+    double target_vy       =  in->target.attitude.roll  * ctrl->get_pos_max_spd();
     /*
      * 高度制御
      */

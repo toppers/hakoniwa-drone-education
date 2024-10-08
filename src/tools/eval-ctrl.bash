@@ -38,7 +38,7 @@ then
     exit 1
 fi
 
-EXEC_SIM_TIME=5
+EXEC_SIM_TIME=3
 
 HAKO_PID=
 EVAL_PID=
@@ -114,7 +114,7 @@ HAKO_PID=$!
 ${PYTHON_BIN} ${TOOL_PATH}/eval-ctrl.py ${HAKO_CUSTOM_JSON_PATH} ${STOP_TIME} ${TKEY_VALUE} ${KEY_VALUE1} ${KEY_VALUE2} ${SPEED_KEY_VALUE} &
 EVAL_PID=$!
 
-sleep 1
+sleep 3
 
 # hako start
 hako-cmd start

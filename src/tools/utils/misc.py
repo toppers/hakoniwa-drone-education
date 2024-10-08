@@ -59,7 +59,7 @@ def stop_control(client, height):
         data = client.getGameJoystickData()
         data['axis'] = list(data['axis'])
         data['axis'][HEADING_AXIS] = 0.0    #heading
-        data['axis'][UP_DOWN_AXIS] = float(height) #up/down
+        data['axis'][UP_DOWN_AXIS] = float(-height) #NED座標系
         data['axis'][ROLL_AXIS] = 0.0    #roll
         data['axis'][PITCH_AXIS] = 0.0    #pitch
         client.putGameJoystickData(data)

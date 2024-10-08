@@ -152,7 +152,7 @@ def is_alt_spd_control():
 def joystick_takeoff(client, height, slp_usec = 30000):
     print("JOYSTICK TAKEOFF(ROS Frame): ", height)
     pose = client.simGetVehiclePose()
-    while (pose.position.z_val) < height:
+    while (pose.position.z_val) < (height - 0.1):
         pose = client.simGetVehiclePose()
         data = client.getGameJoystickData()
         data['axis'] = list(data['axis']) 

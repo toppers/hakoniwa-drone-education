@@ -17,6 +17,7 @@ private:
     double head_control_cycle;
     double alt_delta_value_m;
     double yaw_delta_value_deg;
+    double pos_max_spd;
 
     //altitude control
     bool r_altitude_initialized = false;
@@ -52,6 +53,11 @@ public:
         alt_control_cycle = loader.getParameter("PID_ALT_CONTROL_CYCLE");
         alt_delta_value_m = loader.getParameter("ALT_DELTA_VALUE_M");
         yaw_delta_value_deg = loader.getParameter("YAW_DELTA_VALUE_DEG");
+        pos_max_spd = loader.getParameter("PID_POS_MAX_SPD");
+    }
+    double get_pos_max_spd()
+    {
+        return pos_max_spd;
     }
     void save_for_initial_position(double altitude)
     {
@@ -65,7 +71,7 @@ public:
         if (alt_time >= alt_control_cycle) {
             alt_time = 0;
             r_altitude += v * alt_delta_value_m;
-            //std::cout << "v: " << v << "r_altitude: " << r_altitude << "alt_delta_value_m: " << alt_delta_value_m << std::endl;
+            //std::cout << "v: " << v << "r_altitude: " << r_altitude << " v: " << v << std::endl;
             if (r_altitude < 0) {
                 r_altitude = 0;
             }
