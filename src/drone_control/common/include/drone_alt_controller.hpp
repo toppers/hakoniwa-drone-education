@@ -57,6 +57,7 @@ private:
              */
             double target_spd = pos_control->calculate(in.target_altitude, in.pos.z);
             out.target_spd = flight_controller_get_limit_value(target_spd, 0, -max_spd, max_spd);
+            pos_prev_out = out;
         }
         out.euler = in.euler;
         out.spd = in.spd;
@@ -103,6 +104,7 @@ public:
              * thrust
              */
             out.thrust = (mass * gravity) + (throttle_gain * throttle_power);
+            spd_prev_out = out;
         }
         spd_simulation_time += delta_time;
         return out;

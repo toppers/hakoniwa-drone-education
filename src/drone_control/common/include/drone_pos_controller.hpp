@@ -81,6 +81,7 @@ private:
             out.velocity = in.velocity;
             out.target_vx = val.x;
             out.target_vy = val.y;
+            spd_prev_out = out;
         }
         pos_simulation_time += delta_time;
         return out;
@@ -135,6 +136,7 @@ public:
             //前後の場合は、ピッチ角を回転させる必要がある。ただし、回転方向は逆にする必要がある
             out.target_pitch = -speed_control_vx->calculate(in.target_vx, in.velocity.u);
             out.target_pitch = flight_controller_get_limit_value(out.target_pitch, 0, -max_pitch_deg, max_pitch_deg);
+            pos_prev_out = out;
         }
         spd_simulation_time += delta_time;
         return out;

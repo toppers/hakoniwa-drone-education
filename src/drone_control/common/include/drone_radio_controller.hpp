@@ -49,7 +49,7 @@ public:
         //params
         delta_time = loader.getParameter("SIMULATION_DELTA_TIME");
         head_control_cycle = loader.getParameter("HEAD_CONTROL_CYCLE");
-        alt_control_cycle = loader.getParameter("ALT_CONTROL_CYCLE");
+        alt_control_cycle = loader.getParameter("PID_ALT_CONTROL_CYCLE");
         alt_delta_value_m = loader.getParameter("ALT_DELTA_VALUE_M");
         yaw_delta_value_deg = loader.getParameter("YAW_DELTA_VALUE_DEG");
     }

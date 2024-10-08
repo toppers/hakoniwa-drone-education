@@ -72,6 +72,7 @@ public:
 
             out.target_yaw_rate = heading_control->calculate(current_angle + shortest_diff, current_angle);
             out.target_yaw_rate = flight_controller_get_limit_value(out.target_yaw_rate, 0, -yaw_rate_max, yaw_rate_max);
+            prev_out = out;
         }
         simulation_time += delta_time;
         return out;

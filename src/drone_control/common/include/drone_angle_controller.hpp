@@ -87,6 +87,7 @@ private:
             //copy current angular rate for next control
             out.angular_rate = in.angular_rate;
             angular_simulation_time = 0;
+            angle_prev_out = out;
         }
         this->angular_simulation_time += this->delta_time;
         return out;
