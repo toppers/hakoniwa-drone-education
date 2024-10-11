@@ -1,0 +1,61 @@
+{
+  "total_time": 100.0,
+  "simulation": {
+    "simulation_time_step": 0.001,
+    "type": "plant",
+    "signals": {
+      "step1": {
+        "type": "step",
+        "parameters": {
+          "description": "Initial offsets for hovering control.",
+          "comment": "offsets are c1, c2, c3, c4 for hovering",
+          "offsets": [1448, 1448, 1448, 1448]
+        }
+      },
+      "step2": {
+        "type": "step",
+        "parameters": {
+          "description": "Offsets for upward movement.",
+          "comment": "offsets are c1, c2, c3, c4 for up",
+          "offsets": [1548, 1548, 1548, 1548]
+        }
+      },
+      "sine1": {
+        "type": "sine",
+        "parameters": {
+          "amp": [ 200, 200, 200, 200 ],
+          "freq": [ 1, 1, 1, 1 ],
+          "offsets": [1448, 1448, 1448, 1448]
+        }
+      },
+      "chirp1": {
+        "type": "chirp",
+        "parameters": {
+          "chirp_f0": [ 1, 1, 1, 1 ],
+          "chirp_f1": [ 0.1, 0.1, 0.1, 0.1 ],
+          "offsets": [1448, 1448, 1448, 1448]
+        }
+      }
+    },
+    "signal_input_timings": [
+      {
+        "name": "step1",
+        "duration": 200.0
+      },
+      {
+        "name": "step2",
+        "duration": 200.0
+      }
+    ]
+  },
+  "evaluation": {
+    "timings": {
+      "start": 500,
+      "duration": 500
+    },
+    "target": {
+      "log_file": "drone_dynamics.csv",
+      "quantity": "Vz"
+    }
+  }
+}
