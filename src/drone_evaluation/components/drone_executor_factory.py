@@ -39,9 +39,9 @@ class DroneExecutorFactory:
             if controller_type == 'angle':
                 return DroneControllerExecutorAngle(client, logger, self.params['simulation']['height'], simulation_time_step)
             elif controller_type == 'spd':
-                return DroneControllerExecutorAngle(client, logger, self.params['simulation']['height'], simulation_time_step)
+                return DroneControllerExecutorSpd(client, logger, self.params['simulation']['height'], simulation_time_step)
             elif controller_type == 'spd_z':
-                return DroneControllerExecutorPos(client, logger)
+                return DroneControllerExecutorSpdZ(client, logger)
             elif controller_type == 'pos':
                 return DroneControllerExecutorPos(client, logger, self.params['simulation']['height'], self.params['simulation']['speed'])
             elif controller_type == 'pos_z':
