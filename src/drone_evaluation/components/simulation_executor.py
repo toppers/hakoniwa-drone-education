@@ -33,7 +33,8 @@ class SimulationExecutor:
         self.client = client
 
         # drone executor
-        self.logger = Logger(filename='out.csv')
+        self.logger = Logger(filename=self.evaluation_params['evaluation']['input_data']['log_file'], 
+                             cache_len=self.evaluation_params['evaluation']['input_data']['cache_len'])
         exec_factory = DroneExecutorFactory(self.loader)
         self.drone_executor = exec_factory.create_executor(self.client, self.logger)
 
@@ -129,3 +130,4 @@ class SimulationExecutor:
             print("INFO signal_generators num: ", len(signal_generators))
             self.run_duration(signal_generators, signal_duration_sec)
 
+        self.logger.save()
