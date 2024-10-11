@@ -65,16 +65,30 @@ class SimulationExecutor:
         except json.JSONDecodeError:
             raise ValueError(f"The file at {filepath} is not a valid JSON file.")
 
-    def run_duration(self, signal_generator: ISignalGenerator, duration_sec: float):
+    def run_duration(self, signal_generators: list[ISignalGenerator], duration_sec: float):
         start_time_usec = hakopy.simulation_time()
         duration_usec = int(duration_sec * 1000000)
         end_time_usec = start_time_usec + duration_usec
         current_time_usec = start_time_usec
-        signals = signal_generator.generate_signal(self.delta_time_sec, duration_sec)
+
+        # create signal
+        signals_sequence = []
+        for signal_generator in signal_generators:
+            signal_sequence = signal_generator.generate_signal(self.delta_time_sec, duration_sec)
+            signals_sequence.append(signal_sequence)
+
+        # Check if all signal sequences have the same length
+        sequence_len = len(signals_sequence[0])
+        if not all(len(seq) == sequence_len for seq in signals_sequence):
+            raise ValueError("All signal sequences must have the same length.")
+
+        index = 0
         while current_time_usec < end_time_usec:
+            signals = [signal_sequence[index] for signal_sequence in signals_sequence]
             self.drone_executor.run(current_time_usec, signals)
             hakopy.usleep(self.delta_time_usec)
             current_time_usec = hakopy.simulation_time()
+            index = (index + 1) % sequence_len
 
     def run(self):
         # takeoff
@@ -84,8 +98,8 @@ class SimulationExecutor:
         for sigina_input_timing in self.evaluation_params['simulation']['signal_input_timings']:
             signal_name = sigina_input_timing['name']
             signal_duration_sec = sigina_input_timing['duration_sec']
-            signal_generator = self.signal_factory.create_signal_generator(signal_name)
-            self.run_duration(signal_generator, signal_duration_sec)
+            signal_generators = self.signal_factory.create_signal_generator(signal_name)
+            self.run_duration(signal_generators, signal_duration_sec)
 
 
 simulation_executor = None
