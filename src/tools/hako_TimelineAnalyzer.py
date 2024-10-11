@@ -114,4 +114,5 @@ plt.ylabel('Values')  # y軸のラベル
 plt.grid(True)  # グリッドの表示
 plt.legend()  # 凡例の表示
 plt.savefig('plot.png')
+plt.show()
 plt.close()

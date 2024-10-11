@@ -13,6 +13,16 @@ def joystick_takeoff(client, height, slp_usec = 30000):
         client.putGameJoystickData(data)
         hakopy.usleep(slp_usec)
 
+def joystick_init(client):
+    data = client.getGameJoystickData()
+    data['button'] = list(data['button'])
+
+    hakopy.usleep(500000)
+    data['button'][0] = True
+    client.putGameJoystickData(data)
+    hakopy.usleep(500000)
+    data['button'][0] = False
+    client.putGameJoystickData(data)
 
 def api_send_and_wait(command):
     ret = command.write()
@@ -41,3 +51,4 @@ def api_takeoff(client, height):
     pdu_cmd['speed'] = 5
     pdu_cmd['yaw_deg'] = client._get_yaw_degree(client.default_drone_name)
     api_send_and_wait(command)
+

@@ -102,6 +102,7 @@ class SimulationExecutor:
 
         # Check if all signal sequences have the same length
         sequence_len = len(signals_sequence[0])
+        print("INFO sequence_len: ", sequence_len)
         if not all(len(seq) == sequence_len for seq in signals_sequence):
             raise ValueError("All signal sequences must have the same length.")
 
@@ -115,12 +116,16 @@ class SimulationExecutor:
 
     def run(self):
         # takeoff
+        print("INFO: start takeoff")
         self.drone_executor.takeoff()
 
         # do simulation
         for sigina_input_timing in self.evaluation_params['simulation']['signal_input_timings']:
             signal_name = sigina_input_timing['name']
             signal_duration_sec = sigina_input_timing['duration_sec']
+            print("INFO: signal_name: ", signal_name)
+            print("INFO: signal_duration_sec: ", signal_duration_sec)
             signal_generators = self.signal_factory.create_signal_generator(signal_name)
+            print("INFO signal_generators num: ", len(signal_generators))
             self.run_duration(signal_generators, signal_duration_sec)
 

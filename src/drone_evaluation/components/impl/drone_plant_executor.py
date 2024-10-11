@@ -1,4 +1,5 @@
 from drone_evaluation.components.idrone_executor import IDroneExecutor
+from drone_evaluation.components.impl.drone_executor import joystick_init
 
 class DronePlantExecutor(IDroneExecutor):
     def __init__(self, client, logger):
@@ -7,8 +8,7 @@ class DronePlantExecutor(IDroneExecutor):
         self.logger.set_columns(["timestamp", "c1", "c2", "c3", "c4"])
 
     def takeoff(self):
-        #nothing to do
-        pass
+        joystick_init(self.client)
 
     def run(self, simulation_time, signals):
         data = self.client.getGameJoystickData()

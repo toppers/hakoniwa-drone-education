@@ -1,6 +1,6 @@
 from drone_evaluation.components.idrone_executor import IDroneExecutor
 from drone_evaluation.components.impl.drone_contants import HEADING_AXIS, UP_DOWN_AXIS, ROLL_AXIS, PITCH_AXIS
-from drone_evaluation.components.impl.drone_controller_executor import joystick_takeoff
+from drone_evaluation.components.impl.drone_executor import joystick_takeoff, joystick_init
 
 class DroneControllerExecutorSpd(IDroneExecutor):
     def __init__(self, client, logger, height, slp_usec):
@@ -11,6 +11,7 @@ class DroneControllerExecutorSpd(IDroneExecutor):
         self.logger.set_columns(["timestamp", "target_vx", "target_vy"])
 
     def takeoff(self):
+        joystick_init(self.client)
         joystick_takeoff(self.client, self.height, self.slp_usec)
 
     def _run(self, simulation_time, ros_vx, ros_vy):
