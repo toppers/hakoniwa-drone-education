@@ -1,4 +1,4 @@
-from ..idrone_executor import IDroneExecutor
+from drone_evaluation.components.idrone_executor import IDroneExecutor
 
 class DronePlantExecutor(IDroneExecutor):
     def __init__(self, client, logger):

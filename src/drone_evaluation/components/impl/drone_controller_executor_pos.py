@@ -1,6 +1,6 @@
-from ..idrone_executor import IDroneExecutor
-from drone_contants import HEADING_AXIS, UP_DOWN_AXIS, ROLL_AXIS, PITCH_AXIS
-from drone_controller_executor import api_takeoff, api_send_and_wait
+from drone_evaluation.components.idrone_executor import IDroneExecutor
+from drone_evaluation.components.impl.drone_contants import HEADING_AXIS, UP_DOWN_AXIS, ROLL_AXIS, PITCH_AXIS
+from drone_evaluation.components.impl.drone_controller_executor import api_takeoff, api_send_and_wait
 import pdu_info
 
 class DroneControllerExecutorPos(IDroneExecutor):

@@ -40,11 +40,11 @@
     "signal_input_timings": [
       {
         "name": "step1",
-        "duration": 200.0
+        "duration_sec": 200.0
       },
       {
         "name": "step2",
-        "duration": 200.0
+        "duration_sec": 200.0
       }
     ]
   },

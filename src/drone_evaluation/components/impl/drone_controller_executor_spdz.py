@@ -1,5 +1,5 @@
-from ..idrone_executor import IDroneExecutor
-from drone_contants import HEADING_AXIS, UP_DOWN_AXIS, ROLL_AXIS, PITCH_AXIS
+from drone_evaluation.components.idrone_executor import IDroneExecutor
+from drone_evaluation.components.impl.drone_contants import HEADING_AXIS, UP_DOWN_AXIS, ROLL_AXIS, PITCH_AXIS
 
 class DroneControllerExecutorSpdZ(IDroneExecutor):
     def __init__(self, client, logger):

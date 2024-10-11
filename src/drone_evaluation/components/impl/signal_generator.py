@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.signal import chirp
-from ..isignal_generator import ISignalGenerator
+from drone_evaluation.components.isignal_generator import ISignalGenerator
 
 class SineSignalGenerator(ISignalGenerator):
     def __init__(self, frequency=1.0, amp=1.0, offset=0.0):

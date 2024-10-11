@@ -3,15 +3,8 @@ from impl.signal_generator import SineSignalGenerator, ChirpSignalGenerator, Ste
 
 
 class SignalFactory:
-    def __init__(self, param_loader):
-        """
-        Initializes the SignalFactory with an InputParamLoader instance.
-        
-        Parameters:
-        param_loader (InputParamLoader): Instance of InputParamLoader to load parameters from.
-        """
-        self.param_loader = param_loader
-        self.params = self.param_loader.load_params()
+    def __init__(self, params):
+        self.params = params
 
     def create_signal_generator(self, signal_name):
         """

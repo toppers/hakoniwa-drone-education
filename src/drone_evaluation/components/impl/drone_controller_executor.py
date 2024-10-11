@@ -1,6 +1,6 @@
 import hakopy
 import pdu_info
-from drone_contants import UP_DOWN_AXIS
+from drone_evaluation.components.impl.drone_contants import UP_DOWN_AXIS
 
 def joystick_takeoff(client, height, slp_usec = 30000):
     print("JOYSTICK TAKEOFF(ROS Frame): ", height)
