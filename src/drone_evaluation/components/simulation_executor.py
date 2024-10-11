@@ -3,8 +3,8 @@
 
 import hakosim
 import hakopy
-import hako_pdu
 import pdu_info
+import hako_pdu
 import os
 import json
 from input_param_loader import InputParamLoader
@@ -53,6 +53,30 @@ class SimulationExecutor:
             print(f"ERROR: hako_asset_register() returns {ret}.")
             return False
         return True
+
+    def create_pdu(self):
+        robot_name = self.client.default_drone_name
+        hako_binary_path = os.getenv('HAKO_BINARY_PATH', '/usr/local/lib/hakoniwa/hako_binary/offset')
+        pdu_manager = hako_pdu.HakoPduManager(hako_binary_path, self.pdu_config_path)
+
+        pdu_channels = [
+            pdu_info.HAKO_AVATOR_CHANNLE_ID_COLLISION,
+            pdu_info.HAKO_AVATOR_CHANNEL_ID_DISTURB,
+            pdu_info.HAKO_AVATOR_CHANNEL_ID_CAMERA_DATA,
+            pdu_info.HAKO_AVATOR_CHANNEL_ID_CAMERA_INFO,
+            pdu_info.HAKO_AVATOR_CHANNEL_ID_LIDAR_DATA,
+            pdu_info.HAKO_AVATOR_CHANNEL_ID_LIDAR_POS,
+            pdu_info.HAKO_AVATOR_CHANNEL_ID_STAT_MAG,
+        ]
+
+        for channel in pdu_channels:
+            pdu = pdu_manager.get_pdu(robot_name, channel)
+            _ = pdu.get()
+            pdu.write()
+
+    def start(self):
+        ret = hakopy.start()
+        return ret
 
     def _load_json(self, filepath):
         try:
