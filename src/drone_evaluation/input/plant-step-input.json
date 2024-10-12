@@ -1,6 +1,6 @@
 {
   "simulation": {
-    "simulation_time_step": 0.003,
+    "simulation_time_step": 0.001,
     "type": "plant",
     "signals": {
       "step1": {

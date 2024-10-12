@@ -1,6 +1,6 @@
 {
   "simulation": {
-    "simulation_time_step": 0.003,
+    "simulation_time_step": 0.001,
     "type": "controller",
     "controller_type": "pos_z",
     "speed": 5.0,
