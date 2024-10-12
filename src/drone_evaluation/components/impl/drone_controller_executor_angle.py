@@ -16,13 +16,14 @@ class DroneControllerExecutorAngle(IDroneExecutor):
 
     def run(self, simulation_time, signals):
         data = self.client.getGameJoystickData()
-        ros_rx =  signals[0]
-        ros_ry = -signals[1]
-        ros_rz = -signals[2]
+        ned_rx =  signals[0]
+        ned_ry = -signals[1]
+        ned_rz = -signals[2]
         data['axis'] = list(data['axis'])
-        data['axis'][HEADING_AXIS]  =  ros_rz   #target_rz
+        data['axis'][HEADING_AXIS]  =  ned_rz   #target_rz
         data['axis'][UP_DOWN_AXIS]  = -self.height
-        data['axis'][ROLL_AXIS]     =  ros_rx   #target_rx
-        data['axis'][PITCH_AXIS]    =  ros_ry   #target_ry
-        self.logger.log(simulation_time, ros_rx, ros_ry, ros_rz)
+        data['axis'][ROLL_AXIS]     =  ned_rx   #target_rx
+        data['axis'][PITCH_AXIS]    =  ned_ry   #target_ry
+        self.client.putGameJoystickData(data)
+        self.logger.log(simulation_time, ned_rx, ned_ry, ned_rz)
 

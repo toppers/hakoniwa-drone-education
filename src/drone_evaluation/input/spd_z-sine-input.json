@@ -1,0 +1,38 @@
+{
+  "simulation": {
+    "simulation_time_step": 0.003,
+    "type": "controller",
+    "controller_type": "spd_z",
+    "signals": {
+      "sine": {
+        "type": "sine",
+        "parameters": {
+          "comment": "target speed z : 10 m/sec",
+          "amp": [ 1 ],
+          "freq": [ 1 ],
+          "offsets": [ 10 ]
+        }
+      }
+    },
+    "signal_input_timings": [
+      {
+        "name": "sine",
+        "duration_sec": 400.0
+      }
+    ]
+  },
+  "evaluation": {
+    "timings": {
+      "start": 200,
+      "duration": 100
+    },
+    "input_data": {
+      "log_file": "in.csv",
+      "cache_len": 1024
+    },
+    "output_data": {
+      "log_file": "drone_dynamics.csv",
+      "quantity": "Vz"
+    }
+  }
+}

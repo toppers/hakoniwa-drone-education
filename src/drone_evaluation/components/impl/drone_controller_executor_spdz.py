@@ -13,11 +13,12 @@ class DroneControllerExecutorSpdZ(IDroneExecutor):
 
     def run(self, simulation_time, signals):
         data = self.client.getGameJoystickData()
-        ros_vz = -signals[0]
+        ned_vz = -signals[0]
         data['axis'] = list(data['axis'])
         data['axis'][HEADING_AXIS] = 0.0
-        data['axis'][UP_DOWN_AXIS] = ros_vz  # ROS -> NED座標系
+        data['axis'][UP_DOWN_AXIS] = ned_vz  # ROS -> NED座標系
         data['axis'][ROLL_AXIS]    = 0
         data['axis'][PITCH_AXIS]   = 0
-        self.logger.log(simulation_time, ros_vz)
+        self.client.putGameJoystickData(data)
+        self.logger.log(simulation_time, ned_vz)
 

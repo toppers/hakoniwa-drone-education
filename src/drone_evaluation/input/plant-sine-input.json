@@ -1,6 +1,6 @@
 {
   "simulation": {
-    "simulation_time_step": 0.003,
+    "simulation_time_step": 0.001,
     "type": "plant",
     "signals": {
       "step1": {
@@ -14,8 +14,8 @@
       "sine": {
         "type": "sine",
         "parameters": {
-          "amp": [ 0.1, 0.1, 0.1, 0.1 ],
-          "freq": [ 1, 1, 1, 1 ],
+          "amp": [ 1, 1, 1, 1 ],
+          "freq": [ 0.01, 0.01, 0.01, 0.01 ],
           "offsets": [ 1448, 1448, 1448, 1448 ]
         }
       }

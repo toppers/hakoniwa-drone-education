@@ -14,17 +14,18 @@ class DroneControllerExecutorSpd(IDroneExecutor):
         joystick_init(self.client)
         joystick_takeoff(self.client, self.height, self.slp_usec)
 
-    def _run(self, simulation_time, ros_vx, ros_vy):
+    def _run(self, simulation_time, ned_vx, ned_vy):
         data = self.client.getGameJoystickData()
         data['axis'] = list(data['axis'])
         data['axis'][HEADING_AXIS]  =  0.0
         data['axis'][UP_DOWN_AXIS]  = -self.height
-        data['axis'][ROLL_AXIS]     =  ros_vy   #target_vy
-        data['axis'][PITCH_AXIS]    =  ros_vx   #target_vx
+        data['axis'][ROLL_AXIS]     =  ned_vy   #target_vy
+        data['axis'][PITCH_AXIS]    =  ned_vx   #target_vx
+        self.client.putGameJoystickData(data)
 
     def run(self, simulation_time, signals):
-        ros_vx =  signals[0]
-        ros_vy = -signals[1]
-        self._run([ros_vx, ros_vy])
-        self.logger.log(simulation_time, ros_vx, ros_vy)
+        ned_vx =  signals[0]
+        ned_vy = -signals[1]
+        self._run([ned_vx, ned_vy])
+        self.logger.log(simulation_time, ned_vx, ned_vy)
 

@@ -30,7 +30,7 @@ class DroneConfigUpdater:
         elif controller_type == 'spd':
             module_name = 'SpeedController'
         elif controller_type == 'spd_z':
-            module_name = 'AltSpdController'
+            module_name = 'AltSpeedController'
         elif controller_type == 'pos':
             module_name = 'FlightController'
         elif controller_type == 'pos_z':

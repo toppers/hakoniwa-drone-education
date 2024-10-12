@@ -2,7 +2,7 @@
     "name": "DroneTransporter",
     "simulation": {
       "lockstep": true,
-      "timeStep": 0.003,
+      "timeStep": 0.001,
       "logOutputDirectory": ".",
       "logOutput": {
         "sensors": {
@@ -35,7 +35,7 @@
     },
     "components": {
       "droneDynamics": {
-        "physicsEquation": "BodyFrame",
+        "physicsEquation": "BodyFrameRK4",
         "collision_detection": false,
         "manual_control": false,
         "airFrictionCoefficient": [
