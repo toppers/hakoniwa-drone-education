@@ -1,0 +1,44 @@
+{
+  "simulation": {
+    "simulation_time_step": 0.003,
+    "type": "plant",
+    "signals": {
+      "step1": {
+        "type": "step",
+        "parameters": {
+          "description": "Initial offsets for hovering control.",
+          "comment": "offsets are c1, c2, c3, c4 for hovering",
+          "offsets": [1448, 1448, 1448, 1448]
+        }
+      },
+      "sine": {
+        "type": "sine",
+        "parameters": {
+          "amp": [ 0.1, 0.1, 0.1, 0.1 ],
+          "freq": [ 1, 1, 1, 1 ],
+          "offsets": [ 1448, 1448, 1448, 1448 ]
+        }
+      }
+    },
+    "signal_input_timings": [
+      {
+        "name": "sine",
+        "duration_sec": 1000.0
+      }
+    ]
+  },
+  "evaluation": {
+    "timings": {
+      "start": 200,
+      "duration": 100
+    },
+    "input_data": {
+      "log_file": "in.csv",
+      "cache_len": 1024
+    },
+    "output_data": {
+      "log_file": "drone_dynamics.csv",
+      "quantity": "Vz"
+    }
+  }
+}

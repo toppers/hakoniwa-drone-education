@@ -18,6 +18,7 @@ class SignalFactory:
         """
         signals = self.params['simulation']['signals']
         if signal_name not in signals:
+            print(f"ERROR: can not find {signal_name} on simulation.signals")
             return None
 
         signal_params = signals[signal_name]

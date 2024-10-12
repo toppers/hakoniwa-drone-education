@@ -1,9 +1,13 @@
 import pandas as pd
+import os
 
 class Logger:
     def __init__(self, filename='in.csv', cache_len=1024):
         self.data_cache = []
         self.filename = filename
+        # ファイルが存在していたら削除する
+        if os.path.exists(self.filename):
+            os.remove(self.filename)
         self.cache_len = cache_len  # キャッシュサイズを設定
         self.columns = ["timestamp", "value"]  # デフォルトのカラム名を設定
 
