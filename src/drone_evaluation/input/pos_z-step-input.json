@@ -1,0 +1,37 @@
+{
+  "simulation": {
+    "simulation_time_step": 0.003,
+    "type": "controller",
+    "controller_type": "pos_z",
+    "speed": 5.0,
+    "signals": {
+      "step1": {
+        "type": "step",
+        "parameters": {
+          "comment": "target pos z : 10 m",
+          "offsets": [ 10 ]
+        }
+      }
+    },
+    "signal_input_timings": [
+      {
+        "name": "step1",
+        "duration_sec": 20.0
+      }
+    ]
+  },
+  "evaluation": {
+    "timings": {
+      "start": 10,
+      "duration": 10
+    },
+    "input_data": {
+      "log_file": "in.csv",
+      "cache_len": 1024
+    },
+    "output_data": {
+      "log_file": "drone_dynamics.csv",
+      "quantity": "Z"
+    }
+  }
+}

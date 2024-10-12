@@ -32,10 +32,11 @@ class DroneConfigUpdater:
         elif controller_type == 'spd_z':
             module_name = 'AltSpeedController'
         elif controller_type == 'pos':
-            module_name = 'FlightController'
+            module_name = 'PositionController'
         elif controller_type == 'pos_z':
-            module_name = 'FlightController'
+            module_name = 'PositionController'
 
+        self.params['components']['droneDynamics'].pop('out_of_bounds_reset', None)
         self.params['controller']['direct_rotor_control'] = False
         self.params['controller']['moduleDirectory'] = self.base_path + module_name
         self.params['controller']['moduleName'] = module_name
