@@ -103,7 +103,8 @@ class SimulationExecutor:
 
         # Check if all signal sequences have the same length
         sequence_len = len(signals_sequence[0])
-        print("INFO sequence_len: ", sequence_len)
+        print("INFO: start_time_usec: ", start_time_usec)
+        print("INFO: sequence_len   : ", sequence_len)
         if not all(len(seq) == sequence_len for seq in signals_sequence):
             raise ValueError("All signal sequences must have the same length.")
 

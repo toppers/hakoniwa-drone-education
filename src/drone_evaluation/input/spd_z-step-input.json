@@ -15,22 +15,32 @@
     "signal_input_timings": [
       {
         "name": "step1",
-        "duration_sec": 400.0
+        "duration_sec": 20.0
       }
     ]
   },
   "evaluation": {
-    "timings": {
-      "start": 200,
-      "duration": 100
+    "step_evaluation": {
+      "config_params": {
+        "AXIS": "Vz",
+        "INVERT_AXIS": true,
+        "EVALUATION_START_TIME": 1.0,
+        "CONVERT_TO_DEGREE": false
+      },
+      "target_params": {
+          "TARGET_TR": 40.0,
+          "TARGET_TD": 10.0,
+          "TARGET_OS": 0.5,
+          "TARGET_TS": 50.0,
+          "TARGET_VALUE": 10.0
+      }
     },
     "input_data": {
       "log_file": "in.csv",
       "cache_len": 1024
     },
     "output_data": {
-      "log_file": "drone_dynamics.csv",
-      "quantity": "Vz"
+      "log_file": "drone_log0/drone_dynamics.csv"
     }
   }
 }
