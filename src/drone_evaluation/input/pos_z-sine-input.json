@@ -25,7 +25,6 @@
   "evaluation": {
     "freq_evaluation": {
         "freq": 1,
-        "output_inverse": false,
         "start_time": 100.0
     },
     "input_data": {

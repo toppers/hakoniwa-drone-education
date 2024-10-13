@@ -99,7 +99,7 @@ class FFTAnalyzer:
         plt.savefig(output_plot_file)
         plt.show()
 
-    def analyze_signals(self, input_file1, input_file2, start_time, freq, input_file1_label, input_file2_label, output_inverse=False, max_val=2896):
+    def analyze_signals(self, input_file1, input_file2, start_time, freq, input_file1_label, input_file2_label, input_inverse=False, output_inverse=False, max_val=2896):
         """
         Load, filter, perform FFT, and calculate gain and phase difference for two signals.
 
@@ -128,7 +128,9 @@ class FFTAnalyzer:
         filtered_df1 = filtered_df1[:-1]
         filtered_df2 = filtered_df2[:-1]
 
-        # Invert output signal if specified
+        # Invert signal if specified
+        if input_inverse:
+            filtered_df1[input_file1_label] = -filtered_df1[input_file1_label]
         if output_inverse:
             filtered_df2[input_file2_label] = -filtered_df2[input_file2_label]
 
@@ -174,11 +176,12 @@ if __name__ == "__main__":
         freq        = config_data['evaluation']['freq_evaluation']['freq']
         input_file1_label = config_data['evaluation']['input_data']['axis']
         input_file2_label = config_data['evaluation']['output_data']['axis']
+        input_inverse = config_data['evaluation']['freq_evaluation'].get('input_inverse', False)
         output_inverse = config_data['evaluation']['freq_evaluation'].get('output_inverse', False)
         input_max_val = config_data['evaluation']['input_data']['max_val']
 
         # Analyze signals and get results
         gain, phase = analyzer.analyze_signals(input_file1, input_file2, start_time, freq, 
-                                               input_file1_label, input_file2_label, output_inverse=output_inverse, max_val=input_max_val)
+                                               input_file1_label, input_file2_label, input_inverse=input_inverse, output_inverse=output_inverse, max_val=input_max_val)
         print(f"Gain at {freq} Hz: {gain:.2f} dB")
         print(f"Phase difference at {freq} Hz: {phase:.2f} degrees")
