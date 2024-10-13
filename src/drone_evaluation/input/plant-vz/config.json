@@ -1,0 +1,10 @@
+{
+    "type": "plant",
+    "amp": 1.0,
+    "offset": 1448,
+    "input_array_len": 4,
+    "in_axis": "c1",
+    "out_axis": "Vz",
+    "input_inverse": false,
+    "output_inverse": true
+}
