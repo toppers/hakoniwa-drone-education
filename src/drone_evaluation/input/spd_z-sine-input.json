@@ -17,22 +17,25 @@
     "signal_input_timings": [
       {
         "name": "sine",
-        "duration_sec": 400.0
+        "duration_sec": 120.0
       }
     ]
   },
   "evaluation": {
-    "timings": {
-      "start": 200,
-      "duration": 100
+    "freq_evaluation": {
+        "freq": 1,
+        "output_inverse": false,
+        "start_time": 100.0
     },
     "input_data": {
       "log_file": "in.csv",
+      "axis": "target_vz",
+      "max_val": 1,
       "cache_len": 1024
     },
     "output_data": {
-      "log_file": "drone_dynamics.csv",
-      "quantity": "Vz"
+      "axis": "Vz",
+      "log_file": "drone_log0/drone_dynamics.csv"
     }
   }
 }

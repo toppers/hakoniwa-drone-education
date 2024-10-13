@@ -15,7 +15,7 @@
         "type": "sine",
         "parameters": {
           "amp": [ 1, 1, 1, 1 ],
-          "freq": [ 0.01, 0.01, 0.01, 0.01 ],
+          "freq": [ 1, 1, 1, 1 ],
           "offsets": [ 1448, 1448, 1448, 1448 ]
         }
       }
@@ -23,22 +23,25 @@
     "signal_input_timings": [
       {
         "name": "sine",
-        "duration_sec": 1000.0
+        "duration_sec": 120.0
       }
     ]
   },
   "evaluation": {
-    "timings": {
-      "start": 200,
-      "duration": 100
+    "freq_evaluation": {
+        "freq": 1,
+        "output_inverse": true,
+        "start_time": 100.0
     },
     "input_data": {
       "log_file": "in.csv",
+      "axis": "c1",
+      "max_val": 2896,
       "cache_len": 1024
     },
     "output_data": {
-      "log_file": "drone_dynamics.csv",
-      "quantity": "Vz"
+      "axis": "Vz",
+      "log_file": "drone_log0/drone_dynamics.csv"
     }
   }
 }
