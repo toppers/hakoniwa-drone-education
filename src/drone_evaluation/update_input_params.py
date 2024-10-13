@@ -47,7 +47,7 @@ sine_input['evaluation']['output_data']['axis'] = config['out_axis']
 if 'controller_type' in config:
     sine_input['simulation']['controller_type'] = config['controller_type']
 
-sine_input['simulation']['signal_input_timings'][0]['duration_sec'] = selected_row['duration']
+sine_input['simulation']['signal_input_timings'][0]['duration_sec'] = selected_row['start_time'] + selected_row['duration'] + 100
 sine_input['evaluation']['freq_evaluation']['freq'] = selected_row['freq']
 sine_input['evaluation']['freq_evaluation']['output_inverse'] = config['output_inverse']
 sine_input['evaluation']['freq_evaluation']['start_time'] = selected_row['start_time']

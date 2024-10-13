@@ -4,6 +4,7 @@ from scipy.fft import fft, fftfreq
 import matplotlib.pyplot as plt
 import json
 import sys
+import math
 
 class FFTAnalyzer:
     def __init__(self):
@@ -110,7 +111,9 @@ class FFTAnalyzer:
             freq (float): Frequency for which to calculate gain and phase.
             input_file1_label (str): Label for the input signal in the CSV file.
             input_file2_label (str): Label for the output signal in the CSV file.
+            input_inverse (bool): Whether to invert the input signal.
             output_inverse (bool): Whether to invert the output signal.
+            max_val (float): Maximum value for normalization.
 
         Returns:
             (float, float): Gain in dB and phase difference at the specified frequency.
@@ -124,9 +127,16 @@ class FFTAnalyzer:
         filtered_df1 = self.filter_by_time(df1, start_time, end_time)
         filtered_df2 = self.filter_by_time(df2, start_time, end_time)
 
+        # Check if filtered data is empty or has insufficient rows
+        if len(filtered_df1) < 2 or len(filtered_df2) < 2:
+            print("Filtered data is insufficient for FFT analysis. Please check the time range or input data.")
+            sys.exit(1)
+
         # Remove last row if it contains garbage data
-        filtered_df1 = filtered_df1[:-1]
-        filtered_df2 = filtered_df2[:-1]
+        if len(filtered_df1) > 1:
+            filtered_df1 = filtered_df1[:-1]
+        if len(filtered_df2) > 1:
+            filtered_df2 = filtered_df2[:-1]
 
         # Invert signal if specified
         if input_inverse:
@@ -183,5 +193,4 @@ if __name__ == "__main__":
         # Analyze signals and get results
         gain, phase = analyzer.analyze_signals(input_file1, input_file2, start_time, freq, 
                                                input_file1_label, input_file2_label, input_inverse=input_inverse, output_inverse=output_inverse, max_val=input_max_val)
-        print(f"Gain at {freq} Hz: {gain:.2f} dB")
-        print(f"Phase difference at {freq} Hz: {phase:.2f} degrees")
+        print(f"{freq}, {math.log10(freq):.2f}, {gain:.2f}, {phase:.2f}")
