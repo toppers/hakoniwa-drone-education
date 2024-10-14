@@ -16,7 +16,7 @@ if [ "${LINE_NUM}" -lt 0 ]; then
 fi
 
 mkdir -p test-results/${DIRNAME}
-echo "freq, log_freq, gain, phase" > test-results//${DIRNAME}/result.csv
+echo "freq, log_freq, gain, phase, phase1_at_freq, phase2_at_freq" > test-results//${DIRNAME}/result.csv
 for i in $(seq "${LINE_NUM}"); do
     index=$((i - 1))
     echo "index: ${index}"
@@ -26,4 +26,8 @@ for i in $(seq "${LINE_NUM}"); do
     bash -x ../src/drone_evaluation/evaluate.bash sine-input-updated.json
     python ../src/drone_evaluation/freq_evaluator.py ./sine-input-updated.json \
         >> test-results//${DIRNAME}/result.csv
+    mkdir -p test-results//${DIRNAME}/${index}
+    mv sine-input-updated.json test-results/${DIRNAME}/${index}/
+    mv in.csv test-results/${DIRNAME}/${index}/
+    mv drone_log0 test-results//${DIRNAME}/${index}/
 done

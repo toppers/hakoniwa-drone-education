@@ -71,7 +71,6 @@ class FFTAnalyzer:
         phase2 = phase2[:min_length]
 
         phase_diff = phase2 - phase1
-        phase_diff = (phase_diff + 180) % 360 - 180  # Normalize to range [-180, 180]
         return phase_diff
 
     def plot_results(self, xf, amplitude, phase_diff, output_plot_file):
@@ -84,6 +83,7 @@ class FFTAnalyzer:
         plt.subplot(2, 1, 1)
         plt.plot(xf, amplitude, label='Amplitude')
         plt.xlabel('Frequency (Hz)')
+        plt.xscale('log')
         plt.ylabel('Amplitude')
         plt.title('Amplitude Spectrum')
         plt.legend()
@@ -92,6 +92,46 @@ class FFTAnalyzer:
         plt.subplot(2, 1, 2)
         plt.plot(xf, phase_diff, label='Phase Difference', color='r')
         plt.xlabel('Frequency (Hz)')
+        plt.xscale('log')
+        plt.ylabel('Phase Difference (degrees)')
+        plt.title('Phase Difference Spectrum')
+        plt.legend()
+
+        plt.tight_layout()
+        plt.savefig(output_plot_file)
+        plt.show()
+
+    def plot_phase_results(self, xf, phase1, phase2, phase_diff, output_plot_file, freq):
+        """
+        Plot amplitude and phase difference with a vertical line at specified frequency
+        """
+        plt.figure(figsize=(12, 6))
+
+        # Plot input phase
+        plt.subplot(2, 1, 1)
+        plt.plot(xf, phase1, label='input')
+        plt.axvline(x=freq, color='g', linestyle='--', label=f'{freq} Hz')  # 縦線を追加
+        plt.xlabel('Frequency (Hz)')
+        plt.xscale('log')
+        plt.ylabel('input')
+        plt.title('Input Spectrum')
+        plt.legend()
+
+        # Plot output phase
+        plt.subplot(2, 1, 2)
+        plt.plot(xf, phase2, label='output', color='r')
+        plt.axvline(x=freq, color='g', linestyle='--', label=f'{freq} Hz')  # 縦線を追加
+        plt.xlabel('Frequency (Hz)')
+        plt.xscale('log')
+        plt.ylabel('output')
+        plt.title('Output Spectrum')
+        plt.legend()
+
+        # Plot phase difference
+        plt.subplot(2, 1, 2)
+        plt.plot(xf, phase_diff, label='Phase Difference', color='r')
+        plt.xlabel('Frequency (Hz)')
+        plt.xscale('log')
         plt.ylabel('Phase Difference (degrees)')
         plt.title('Phase Difference Spectrum')
         plt.legend()
@@ -164,9 +204,20 @@ class FFTAnalyzer:
 
         # Interpolate gain and phase at the specified frequency
         gain_at_freq = np.interp(freq, xf1, gain_db)
-        phase_at_freq = np.interp(freq, xf1, phase_diff)
+        #phase_at_freq = np.interp(freq, xf1, phase_diff)
 
-        return gain_at_freq, phase_at_freq
+        phase1 = phase1[:min_length]
+        phase2 = phase2[:min_length]
+        phase1_at_freq = np.interp(freq, xf1, phase1)
+        phase2_at_freq = np.interp(freq, xf1, phase2)
+        phase_at_freq = phase2_at_freq - phase1_at_freq
+        if phase_at_freq > 0:
+            phase_at_freq -= 360
+        #print("phase1_at_freq: ", phase1_at_freq)
+        #print("phase2_at_freq: ", phase2_at_freq)
+        #self.plot_phase_results(xf1, phase1, phase2, phase2-phase1, './plot.png', freq)
+
+        return gain_at_freq, phase_at_freq, phase1_at_freq, phase2_at_freq
 
 # Example usage
 if __name__ == "__main__":
@@ -191,6 +242,8 @@ if __name__ == "__main__":
         input_max_val = config_data['evaluation']['input_data']['max_val']
 
         # Analyze signals and get results
-        gain, phase = analyzer.analyze_signals(input_file1, input_file2, start_time, freq, 
+        #print("input_file1: ", input_file1)
+        #print("input_file2: ", input_file2)
+        gain, phase, phase1_at_freq, phase2_at_freq = analyzer.analyze_signals(input_file1, input_file2, start_time, freq, 
                                                input_file1_label, input_file2_label, input_inverse=input_inverse, output_inverse=output_inverse, max_val=input_max_val)
-        print(f"{freq}, {math.log10(freq):.2f}, {gain:.2f}, {phase:.2f}")
+        print(f"{freq}, {math.log10(freq):.2f}, {gain:.2f}, {phase:.2f}, {phase1_at_freq:.2f}, {phase2_at_freq:.2f}")
