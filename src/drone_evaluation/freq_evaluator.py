@@ -140,6 +140,50 @@ class FFTAnalyzer:
         plt.savefig(output_plot_file)
         plt.show()
 
+    def almost_equal(self, value, target, tolerance):
+        """
+        Check if a value is approximately equal to a target within a given tolerance.
+
+        Args:
+            value (float): The value to check.
+            target (float): The target value.
+            tolerance (float): The acceptable range of difference from the target.
+
+        Returns:
+            bool: True if the value is within the tolerance of the target, False otherwise.
+        """
+        return target - tolerance <= value <= target + tolerance
+
+
+    def update_signal(self, target_degree, tolerance, sample_spacing):
+        # Perform FFT on the initial signal
+        xf1, amplitude1, phase1 = self.perform_fft(self.signal1, sample_spacing)
+        phase1_at_freq = np.interp(freq, xf1, phase1)
+        shift_count = 0
+        max_shifts = len(self.signal1)
+
+        while self.almost_equal(phase1_at_freq, target_degree, tolerance) == False and shift_count < max_shifts:
+            # Perform FFT
+            xf1, amplitude1, phase1 = self.perform_fft(self.signal1, sample_spacing)
+
+            # Interpolate to find the phase at the specified frequency
+            phase1_at_freq = np.interp(freq, xf1, phase1)
+            #print(f"{shift_count}: angle: {phase1_at_freq}")
+
+            if self.almost_equal(phase1_at_freq, target_degree, tolerance) == False:
+                # Shift the signal to the left by one sample
+                c = int(1/freq)
+                if c == 0:
+                    c = 1
+                self.signal1 = np.roll(self.signal1, -c)
+                self.signal2 = np.roll(self.signal2, -c)
+                shift_count += c
+            else:
+                break
+
+        if shift_count >= max_shifts:
+            print("Could not find a shift that brings the phase to 90 degrees. Proceeding with available data.")
+
     def analyze_signals(self, input_file1, input_file2, start_time, freq, input_file1_label, input_file2_label, input_inverse=False, output_inverse=False, max_val=2896):
         """
         Load, filter, perform FFT, and calculate gain and phase difference for two signals.
@@ -164,6 +208,7 @@ class FFTAnalyzer:
 
         # Filter by time
         end_time = df1['timestamp'].iloc[-1]
+        start_time = pd.Timestamp(start_time, unit='s')
         filtered_df1 = self.filter_by_time(df1, start_time, end_time)
         filtered_df2 = self.filter_by_time(df2, start_time, end_time)
 
@@ -184,13 +229,16 @@ class FFTAnalyzer:
         if output_inverse:
             filtered_df2[input_file2_label] = -filtered_df2[input_file2_label]
 
-        # Perform FFT on both signals
+        # Start shifting process to make phase1 reach 90 degrees
+        self.signal1 = self.normalize_signal(filtered_df1[input_file1_label].values, max_val)
+        self.signal2 = filtered_df2[input_file2_label].values
         sample_spacing = (filtered_df1['timestamp'].iloc[1] - filtered_df1['timestamp'].iloc[0]).total_seconds()
-        signal1 = self.normalize_signal(filtered_df1[input_file1_label].values, max_val)
-        signal2 = filtered_df2[input_file2_label].values
 
-        xf1, amplitude1, phase1 = self.perform_fft(signal1, sample_spacing)
-        xf2, amplitude2, phase2 = self.perform_fft(signal2, sample_spacing)
+        #self.update_signal(target_degree=90, tolerance= 1, sample_spacing=sample_spacing)
+
+
+        xf1, amplitude1, phase1 = self.perform_fft(self.signal1, sample_spacing)
+        xf2, amplitude2, phase2 = self.perform_fft(self.signal2, sample_spacing)
 
         # Ensure xf1 and gain_db have the same length
         min_length = min(len(xf1), len(amplitude1), len(amplitude2))
@@ -204,19 +252,14 @@ class FFTAnalyzer:
 
         # Interpolate gain and phase at the specified frequency
         gain_at_freq = np.interp(freq, xf1, gain_db)
-        #phase_at_freq = np.interp(freq, xf1, phase_diff)
-
-        phase1 = phase1[:min_length]
-        phase2 = phase2[:min_length]
-        phase1_at_freq = np.interp(freq, xf1, phase1)
-        phase2_at_freq = np.interp(freq, xf1, phase2)
+        phase1_at_freq = np.interp(freq, xf1, phase1[:min_length])
+        phase2_at_freq = np.interp(freq, xf1, phase2[:min_length])
         phase_at_freq = phase2_at_freq - phase1_at_freq
+
+        # Allow phase difference greater than -360 degrees
         if phase_at_freq > 0:
             phase_at_freq -= 360
-        #print("phase1_at_freq: ", phase1_at_freq)
-        #print("phase2_at_freq: ", phase2_at_freq)
-        #self.plot_phase_results(xf1, phase1, phase2, phase2-phase1, './plot.png', freq)
-
+        #phase_at_freq = (phase_at_freq + 180) % 360 - 180
         return gain_at_freq, phase_at_freq, phase1_at_freq, phase2_at_freq
 
 # Example usage
