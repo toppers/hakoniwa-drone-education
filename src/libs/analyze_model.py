@@ -194,6 +194,7 @@ def plot_bode_and_margins(num, den):
     plt.axhline(-180, color='k', linestyle='--')
 
     plt.savefig('bode_plot.png')
+    plt.show()
     plt.close()
 
 # 極をプロットする関数
@@ -212,6 +213,7 @@ def plot_poles(num, den):
     plt.xlabel('Real')
     plt.ylabel('Imaginary')
     plt.savefig('poles_plot.png')
+    plt.show()
     plt.close()
 
 
@@ -265,6 +267,7 @@ def plot_step_response(num, den):
     
     plt.legend()
     plt.savefig('step_plot.png')
+    plt.show()
     plt.close()
 
 
@@ -282,6 +285,31 @@ def plot_impulse_response(num, den):
     plt.ylabel('Amplitude')
     plt.grid(True)
     plt.savefig('impulse_plot.png')
+    plt.show()
+    plt.close()
+
+
+# ナイキスト線図をプロットする関数
+def plot_nyquist(num, den):
+    # システムの伝達関数を定義
+    system = ctrl.TransferFunction(num, den)
+    
+    # ナイキスト線図のプロット
+    ctrl.nyquist(system)
+    
+    # 半径1の円を追加
+    circle = plt.Circle((0, 0), 1, color='r', fill=False, linestyle='--', label='|L(s)|=1')
+    plt.gca().add_artist(circle)
+    
+    # グラフの設定
+    plt.title('Nyquist Plot')
+    plt.grid(True)
+    plt.gca().set_aspect('equal', 'box')  # 均等なスケールにする
+    plt.legend()
+    
+    # 図を保存して表示
+    plt.savefig('nyquist_plot_with_circle.png')
+    plt.show()
     plt.close()
 
 class PDEvaluator:
@@ -351,7 +379,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Bode, Step, Impulse, and Pole-Zero Plotter from transfer function JSON file")
     parser.add_argument('file_path', type=str, help="Path to the transfer function JSON file")
     parser.add_argument('func_type', type=str, choices=['ps', 'ws', 'ls', 'eds'], default='ls', help="Type of transfer function type")
-    parser.add_argument('--mode', type=str, choices=['bode', 'step', 'impulse', 'poles', 'pd' ], default='bode', help="Type of response to plot (bode, step, impulse, poles)")
+    parser.add_argument('--mode', type=str, choices=['bode', 'step', 'impulse', 'poles', 'pd', 'ny' ], default='bode', help="Type of response to plot (bode, step, impulse, poles, ny)")
     args = parser.parse_args()
 
     transfer_function_data = args.file_path
@@ -395,4 +423,6 @@ if __name__ == "__main__":
         plot_poles(num, den)
     elif args.mode == 'pd':
         calc_pd(tfd)
+    elif args.mode == 'ny':
+        plot_nyquist(num, den)
 
