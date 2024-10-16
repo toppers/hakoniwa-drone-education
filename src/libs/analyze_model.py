@@ -201,7 +201,8 @@ def plot_bode_and_margins(num, den):
 def plot_poles(num, den):
     system = ctrl.TransferFunction(num, den)
     poles = system.poles()
-    print(f"システムの極: {poles}")
+    for pole in poles:
+        print(f"システムの極: Real={pole.real:.4f}, Imag={pole.imag:.4f}")
 
     # 極をプロット
     plt.figure()
