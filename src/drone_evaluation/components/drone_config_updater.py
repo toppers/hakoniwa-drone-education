@@ -13,6 +13,9 @@ class DroneConfigUpdater:
         except json.JSONDecodeError:
             raise ValueError(f"The file at {self.file_path} is not a valid JSON file.")
 
+    def set_simulation_time_step(self, simulation_time_step):
+        self.params['simulation']['timeStep'] = simulation_time_step
+
     def set_plant_module(self):
         module_name = 'PlantController'
         self.params['controller'].pop('mixer', None)  # mixerを削除
@@ -95,6 +98,8 @@ def main():
     else:
         updater.set_controller_module(eval_config['simulation']['controller_type'])
     
+    updater.set_simulation_time_step(eval_config['simulation']['simulation_time_step'])
+
     # 設定をファイルに保存
     updater.save(args.output_file)
     print(f"Configuration saved to {args.output_file}")

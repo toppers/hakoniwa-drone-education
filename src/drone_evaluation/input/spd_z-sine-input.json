@@ -8,7 +8,7 @@
         "type": "sine",
         "parameters": {
           "comment": "target speed z : 10 m/sec",
-          "amp": [ 1 ],
+          "amp": [ 0.1 ],
           "freq": [ 1 ],
           "offsets": [ 10 ]
         }

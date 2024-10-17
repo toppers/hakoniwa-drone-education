@@ -19,6 +19,7 @@ selected_row = csv_data.iloc[row_index]
 start_time = float(selected_row['start_time'])
 duration = float(selected_row['duration'])
 freq = float(selected_row['freq'])
+simulation_time_step = float(selected_row['simulation_time_step'])
 
 # config.jsonの読み込み
 with open(config_file, 'r') as f:
@@ -42,6 +43,7 @@ sine_input['simulation']['signals']['sine']['parameters']['offsets'] = [
 ]
 
 # config.jsonの内容を反映
+sine_input['simulation']['simulation_time_step'] = simulation_time_step
 sine_input['simulation']['type'] = config['type']
 sine_input['evaluation']['input_data']['axis'] = config['in_axis']
 sine_input['evaluation']['output_data']['axis'] = config['out_axis']
