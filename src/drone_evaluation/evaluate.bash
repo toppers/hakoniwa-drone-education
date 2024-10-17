@@ -25,7 +25,7 @@ function handler()
 }
 trap handler SIGTERM
 
-VALUE=$(jq '.simulation.simulation_time_step' ../src/drone_evaluation/input/spd_z-sine-input.json)
+VALUE=$(jq '.simulation.simulation_time_step' ${SCENARIO_CONFIG})
 python ../src/drone_evaluation/update_control_params.py ${HAKO_CONTROLLER_PARAM_FILE} SIMULATION_DELTA_TIME $VALUE
 
 python ../src/drone_evaluation/components/drone_config_updater.py \
