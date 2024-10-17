@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -ne 1 ]; then
-    echo "Usage: $0 <dir>"
+    echo "Usage: $0 <input_dir>"
     exit 1
 fi
 
@@ -16,6 +16,7 @@ if [ "${LINE_NUM}" -lt 0 ]; then
 fi
 
 mkdir -p test-results/${DIRNAME}
+rm -rf test-results/${DIRNAME}/*
 echo "freq, log_freq, gain, phase, phase1_at_freq, phase2_at_freq" > test-results//${DIRNAME}/result.csv
 for i in $(seq "${LINE_NUM}"); do
     index=$((i - 1))
@@ -26,8 +27,9 @@ for i in $(seq "${LINE_NUM}"); do
     bash -x ../src/drone_evaluation/evaluate.bash sine-input-updated.json
     python ../src/drone_evaluation/freq_evaluator.py ./sine-input-updated.json \
         >> test-results//${DIRNAME}/result.csv
-    mkdir -p test-results//${DIRNAME}/${index}
-    mv sine-input-updated.json test-results/${DIRNAME}/${index}/
-    mv in.csv test-results/${DIRNAME}/${index}/
-    mv drone_log0 test-results//${DIRNAME}/${index}/
+    FREQ="freq_$( tail -n ${i} ../src/drone_evaluation/input/controller-spd_z/test_pattern.csv | awk -F, '{print $1}')"
+    mkdir -p test-results//${DIRNAME}/${FREQ}
+    mv sine-input-updated.json test-results/${DIRNAME}/${FREQ}/
+    mv in.csv test-results/${DIRNAME}/${FREQ}/
+    mv drone_log0 test-results//${DIRNAME}/${FREQ}/
 done
