@@ -6,6 +6,7 @@ from scipy.interpolate import CubicSpline
 import json
 import sys
 import math
+from scipy.signal import find_peaks
 
 class FFTAnalyzer:
     def __init__(self):
@@ -73,6 +74,30 @@ class FFTAnalyzer:
 
         phase_diff = phase2 - phase1
         return phase_diff
+
+    def find_peaks_in_signal(self, signal, height=None, distance=None):
+        """
+        Find peaks in the signal using scipy's find_peaks function
+        """
+        peaks, _ = find_peaks(signal, height=height, distance=distance)
+        return peaks
+
+    def calculate_peak_time_differences(self, timestamps, peaks):
+        """
+        Calculate the time differences between consecutive peaks
+        """
+        peak_times = timestamps[peaks]
+        time_diffs = np.diff(peak_times).astype('timedelta64[ms]').astype(float) / 1000  # Convert to seconds
+        return time_diffs
+
+    def calculate_average_period(self, time_diffs):
+        """
+        Calculate the average period from time differences between peaks
+        """
+        if len(time_diffs) > 0:
+            return np.mean(time_diffs)
+        else:
+            return None
 
     def plot_results(self, xf, amplitude, phase_diff, output_plot_file):
         """
@@ -185,6 +210,41 @@ class FFTAnalyzer:
         if shift_count >= max_shifts:
             print("Could not find a shift that brings the phase to 90 degrees. Proceeding with available data.")
 
+    def calc_phase_diff(self, filtered_df1, filtered_df2):
+        timestamps1 = filtered_df1['timestamp'].values
+        timestamps2 = filtered_df2['timestamp'].values
+
+        peaks1 = self.find_peaks_in_signal(self.signal1)
+        peaks2 = self.find_peaks_in_signal(self.signal2)
+
+        # Calculate time differences between consecutive peaks
+        time_diffs1 = self.calculate_peak_time_differences(timestamps1, peaks1)
+        time_diffs2 = self.calculate_peak_time_differences(timestamps2, peaks2)
+
+        # Calculate average periods
+        period1 = self.calculate_average_period(time_diffs1)
+        period2 = self.calculate_average_period(time_diffs2)
+        #print("period1:", period1)
+        # Calculate the time difference between the first peaks of both signals
+        if len(peaks1) > 0 and len(peaks2) > 0:
+            # Take the minimum number of peaks to avoid index out of bounds
+            min_peaks = min(len(peaks1), len(peaks2))
+
+            # Calculate time differences between the corresponding peaks
+            time_diff_peaks = []
+            for i in range(min_peaks):
+                time_diff = (timestamps1[peaks1[i]] - timestamps2[peaks2[i]]).astype('timedelta64[ms]').astype(float) / 1000
+                time_diff_peaks.append(time_diff)
+
+            # Calculate the average time difference
+            average_time_diff = np.mean(time_diff_peaks)
+        else:
+            average_time_diff = None
+        #print("time_diff_peaks: ", average_time_diff)
+        # Calculate phase difference based on the peak time difference and the average period
+        phase_at_freq = (average_time_diff/period1)*360
+        return phase_at_freq
+
     def analyze_signals(self, input_file1, input_file2, start_time, freq, input_file1_label, input_file2_label, input_inverse=False, output_inverse=False, max_val=2896):
         """
         Load, filter, perform FFT, and calculate gain and phase difference for two signals.
@@ -239,6 +299,8 @@ class FFTAnalyzer:
         #self.update_signal(target_degree=90, tolerance= 1, sample_spacing=sample_spacing)
 
 
+        phase_at_freq = self.calc_phase_diff(filtered_df1, filtered_df2)
+
         xf1, amplitude1, phase1 = self.perform_fft(self.signal1, sample_spacing)
         xf2, amplitude2, phase2 = self.perform_fft(self.signal2, sample_spacing)
 
@@ -248,13 +310,7 @@ class FFTAnalyzer:
         amplitude1 = amplitude1[:min_length]
         amplitude2 = amplitude2[:min_length]
 
-        # Calculate amplitude gain and phase difference
-        gain_db = self.calculate_amplitude_gain(amplitude1, amplitude2)
-        phase_diff = self.calculate_phase_difference(phase1, phase2)
 
-        # Interpolate gain and phase at the specified frequency
-        #gain1_at_freq = np.interp(freq, xf1, amplitude1[:min_length])
-        #gain2_at_freq = np.interp(freq, xf1, amplitude2[:min_length])
         spline1 = CubicSpline(xf1, amplitude1[:min_length])
         spline2 = CubicSpline(xf1, amplitude2[:min_length])
 
@@ -270,12 +326,8 @@ class FFTAnalyzer:
         #print(f"gain_at_freq: {freq}, {gain_at_freq}")
         phase1_at_freq = np.interp(freq, xf1, phase1[:min_length])
         phase2_at_freq = np.interp(freq, xf1, phase2[:min_length])
-        phase_at_freq = phase2_at_freq - phase1_at_freq
+        #phase_at_freq = phase2_at_freq - phase1_at_freq
 
-        # Allow phase difference greater than -360 degrees
-        if phase_at_freq > 0:
-            phase_at_freq -= 360
-        #phase_at_freq = (phase_at_freq + 180) % 360 - 180
         return gain_at_freq, phase_at_freq, phase1_at_freq, phase2_at_freq
 
 # Example usage
