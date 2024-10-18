@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from scipy.fft import fft, fftfreq
 import matplotlib.pyplot as plt
+from scipy.interpolate import CubicSpline
 import json
 import sys
 import math
@@ -230,7 +231,8 @@ class FFTAnalyzer:
             filtered_df2[input_file2_label] = -filtered_df2[input_file2_label]
 
         # Start shifting process to make phase1 reach 90 degrees
-        self.signal1 = self.normalize_signal(filtered_df1[input_file1_label].values, max_val)
+        #self.signal1 = self.normalize_signal(filtered_df1[input_file1_label].values, max_val)
+        self.signal1 = filtered_df1[input_file1_label].values
         self.signal2 = filtered_df2[input_file2_label].values
         sample_spacing = (filtered_df1['timestamp'].iloc[1] - filtered_df1['timestamp'].iloc[0]).total_seconds()
 
@@ -251,7 +253,21 @@ class FFTAnalyzer:
         phase_diff = self.calculate_phase_difference(phase1, phase2)
 
         # Interpolate gain and phase at the specified frequency
-        gain_at_freq = np.interp(freq, xf1, gain_db)
+        #gain1_at_freq = np.interp(freq, xf1, amplitude1[:min_length])
+        #gain2_at_freq = np.interp(freq, xf1, amplitude2[:min_length])
+        spline1 = CubicSpline(xf1, amplitude1[:min_length])
+        spline2 = CubicSpline(xf1, amplitude2[:min_length])
+
+        gain1_at_freq = spline1(freq)
+        gain2_at_freq = spline2(freq)
+        gain = gain2_at_freq / gain1_at_freq  # Amplitude ratio
+        gain_at_freq = 20 * np.log10(gain)  # Convert to dB
+        #gain_at_freq = np.interp(freq, xf1, gain_db)
+        #print(f"max:gain1_at_freq: {freq}, {max(amplitude1)}")
+        #print(f"max:gain2_at_freq: {freq}, {max(amplitude2)}")
+        #print(f"gain1_at_freq: {freq}, {gain1_at_freq}")
+        #print(f"gain2_at_freq: {freq}, {gain2_at_freq}")
+        #print(f"gain_at_freq: {freq}, {gain_at_freq}")
         phase1_at_freq = np.interp(freq, xf1, phase1[:min_length])
         phase2_at_freq = np.interp(freq, xf1, phase2[:min_length])
         phase_at_freq = phase2_at_freq - phase1_at_freq

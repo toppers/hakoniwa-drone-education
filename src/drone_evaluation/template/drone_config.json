@@ -155,7 +155,7 @@
       "moduleName": "PlantController",
       "direct_rotor_control": true,
       "mixer": {
-        "vendor": "None",
+        "vendor": "linear",
         "enableDebugLog": false,
         "enableErrorLog": false
       }

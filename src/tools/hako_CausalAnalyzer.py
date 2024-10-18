@@ -104,6 +104,8 @@ def plot_data(df, independent_var, dependent_var, graph_type):
         plt.legend()
         plt.grid(True)
     elif graph_type == 'line':
+        print(f"{independent_var}: min: {min(df[independent_var])} max:{max(df[independent_var])} amp:{(max(df[independent_var])-min(df[independent_var]))/2}")
+        print(f"{dependent_var}: min: {min(df[dependent_var])} max:{max(df[dependent_var])} amp:{(max(df[dependent_var])-min(df[dependent_var]))/2}")
         ax1.plot(df[timecolumn], df[independent_var], color='blue', label=independent_var)
         ax1.set_xlabel(timecolumn)
         ax1.set_ylabel(independent_var, color='blue')

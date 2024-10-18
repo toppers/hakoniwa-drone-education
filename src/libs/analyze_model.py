@@ -152,11 +152,20 @@ class TransParser:
 
 
 # ボード線図を表示する関数
-def plot_bode_and_margins(num, den):
+def plot_bode_and_margins(num, den, result_data_path=None):
+    if result_data_path is not None:
+        # CSVファイルからデータを読み込む
+        result_data = np.genfromtxt(result_data_path, delimiter=',', skip_header=1)
+
+        # データの列をそれぞれ取得
+        result_data_frequency = result_data[:, 0]  # 周波数（Hz）
+        result_data_gain = result_data[:, 2]       # ゲイン（dB）
+        result_data_phase = result_data[:, 3]      # 位相（度）
+
     system = ctrl.TransferFunction(num, den)
     
     # Bodeプロットと位相余裕・ゲイン余裕の計算
-    mag, phase, omega = ctrl.bode(system, dB=True, Hz=False, omega_limits=(1e-2, 1e4), plot=False)
+    mag, phase, omega = ctrl.bode(system, dB=True, Hz=False, omega_limits=(1e-3, 1e2), plot=False)
     gm, pm, wg, wp = ctrl.margin(system)
     
     # ゲイン余裕と位相余裕を表示
@@ -166,36 +175,39 @@ def plot_bode_and_margins(num, den):
     print(f"位相余裕発生周波数: {wp} rad/s")
     
     # Bodeプロットを描画
-    plt.figure()
+    plt.figure(figsize=(10, 8))
     
     # ゲイン線図
     plt.subplot(2, 1, 1)
-    plt.semilogx(omega, 20 * np.log10(mag))
+    plt.semilogx(omega, 20 * np.log10(mag), label='Theoretical Gain')
+    if result_data_path is not None:
+        plt.semilogx(result_data_frequency, result_data_gain, 'b', marker='o', linestyle='-', markersize=5, label='Measured Gain')
     plt.title('Bode Plot')
     plt.ylabel('Magnitude (dB)')
     plt.grid(True, which="both", linestyle='--')
-    
+    plt.legend()
+
     # ゲイン交差周波数に縦線を追加
     if wg:
         plt.axvline(wg, color='r', linestyle='--', label=f'Gain Cross @ {wg:.2f} rad/s')
     plt.axhline(0, color='k', linestyle='--')
 
     # 位相線図
-    phase = np.rad2deg(phase) 
+    phase = np.rad2deg(phase)
     plt.subplot(2, 1, 2)
-    plt.semilogx(omega, phase)
+    plt.semilogx(omega, phase, label='Theoretical Phase')
+    if result_data_path is not None:
+        plt.semilogx(result_data_frequency, result_data_phase, 'r', marker='o', linestyle='-', markersize=5, label='Measured Phase')
     plt.ylabel('Phase (degrees)')
     plt.xlabel('Frequency (rad/s)')
     plt.grid(True, which="both", linestyle='--')
+    plt.legend()
 
-    # 位相交差周波数に縦線を追加
-    if wp:
-        plt.axvline(wp, color='r', linestyle='--', label=f'Phase Cross @ {wp:.2f} rad/s')
-    plt.axhline(-180, color='k', linestyle='--')
-
+    plt.tight_layout()
     plt.savefig('bode_plot.png')
     plt.show()
     plt.close()
+
 
 # 極をプロットする関数
 def plot_poles(num, den):
@@ -381,10 +393,12 @@ if __name__ == "__main__":
     parser.add_argument('file_path', type=str, help="Path to the transfer function JSON file")
     parser.add_argument('func_type', type=str, choices=['ps', 'ws', 'ls', 'eds'], default='ls', help="Type of transfer function type")
     parser.add_argument('--mode', type=str, choices=['bode', 'step', 'impulse', 'poles', 'pd', 'ny' ], default='bode', help="Type of response to plot (bode, step, impulse, poles, ny)")
+    parser.add_argument('--result_data', type=str, required=False, default=None, help='result data')
     args = parser.parse_args()
 
     transfer_function_data = args.file_path
     tfd = TransParser(transfer_function_data)
+    result_data_path = args.result_data
 
     # s をシンボルとして定義
     s = symbols('s')
@@ -415,7 +429,7 @@ if __name__ == "__main__":
 
     # ボード線図、ステップ応答、インパルス応答、極のプロットのいずれかをプロット
     if args.mode == 'bode':
-        plot_bode_and_margins(num, den)
+        plot_bode_and_margins(num, den, result_data_path)
     elif args.mode == 'step':
         plot_step_response(num, den)
     elif args.mode == 'impulse':
