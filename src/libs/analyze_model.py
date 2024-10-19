@@ -158,14 +158,17 @@ def plot_bode_and_margins(num, den, result_data_path=None):
         result_data = np.genfromtxt(result_data_path, delimiter=',', skip_header=1)
 
         # データの列をそれぞれ取得
-        result_data_frequency = result_data[:, 0]  # 周波数（Hz）
+        result_data_frequency = 2 * np.pi * result_data[:, 0]  # 周波数（Hz）=> rad/s
         result_data_gain = result_data[:, 2]       # ゲイン（dB）
         result_data_phase = result_data[:, 3]      # 位相（度）
 
     system = ctrl.TransferFunction(num, den)
-    
+        
+    # Hzで指定したい周波数範囲をrad/sに変換
+    omega_min = 2 * np.pi * 0.001  # 0.001 Hz → rad/s
+    omega_max = 2 * np.pi * 1.0e2  # 100 Hz → rad/s
     # Bodeプロットと位相余裕・ゲイン余裕の計算
-    mag, phase, omega = ctrl.bode(system, dB=True, Hz=False, omega_limits=(1e-3, 1e2), plot=False)
+    mag, phase, omega = ctrl.bode(system, dB=True, Hz=False, omega_limits=(omega_min, omega_max), plot=False)
     gm, pm, wg, wp = ctrl.margin(system)
     
     # ゲイン余裕と位相余裕を表示
