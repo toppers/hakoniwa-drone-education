@@ -1,7 +1,7 @@
 {
     "type": "plant",
-    "amp": 200.0,
-    "offset": 1448,
+    "amp": 0.1,
+    "offset": 0.5,
     "input_array_len": 4,
     "in_axis": "c1",
     "out_axis": "Vz",

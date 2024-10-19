@@ -36,10 +36,10 @@ mi_drone_control_out_t hako_module_drone_controller_impl_run(mi_drone_control_in
     out.torque_z = in->target.direction_velocity.r;
 #else
     out.rotor.num = 4;
-    out.rotor.controls[0] = in->target.direction_velocity.r / in->max_rpm;
-    out.rotor.controls[1] = in->target.throttle.power / in->max_rpm;
-    out.rotor.controls[2] = in->target.attitude.roll / in->max_rpm;
-    out.rotor.controls[3] = in->target.attitude.pitch / in->max_rpm;
+    out.rotor.controls[0] = in->target.direction_velocity.r;
+    out.rotor.controls[1] = in->target.throttle.power;
+    out.rotor.controls[2] = in->target.attitude.roll;
+    out.rotor.controls[3] = in->target.attitude.pitch;
 #endif
     return out;
 }

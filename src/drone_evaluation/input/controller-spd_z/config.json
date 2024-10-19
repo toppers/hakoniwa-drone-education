@@ -2,7 +2,7 @@
     "type": "controller",
     "controller_type": "spd_z",
     "amp": 0.1,
-    "offset": 10.0,
+    "offset": 1.0,
     "input_array_len": 1,
     "in_axis": "target_vz",
     "out_axis": "Vz",
