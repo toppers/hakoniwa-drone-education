@@ -1,4 +1,5 @@
 import sys
+import argparse  # コマンドライン引数処理のために追加
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QSlider
 from PyQt5.QtCore import Qt
 from analyze_model import TransParser
@@ -10,13 +11,14 @@ import numpy as np
 # matplotlibのバックエンドをPyQtと連携
 matplotlib.use('Qt5Agg')
 
-global tfd
 class PIDSliderApp(QWidget):
-    def __init__(self):
+    def __init__(self, tfd, show_step_response):
         self.saved_x_limit = 1
         self.saved_y_limit = 1
         self.scale_slider = 1000
         self.scale_param = 10
+        self.show_step_response = show_step_response  # ステップ応答を表示するかどうかのフラグ
+        self.tfd = tfd
         super().__init__()
         self.initUI()
 
@@ -25,15 +27,16 @@ class PIDSliderApp(QWidget):
         plt.ion()  # インタラクティブモードを有効化
         plt.show()  # 最初に一度だけFigureを表示
 
-        # ステップ応答のためのFigureとAxisを初期化
-        self.figure_step, self.ax_step = plt.subplots()
-        plt.ion()  # インタラクティブモードを有効化
-        plt.show()  # 最初に一度だけFigureを表示
+        # ステップ応答のためのFigureとAxisを初期化（必要に応じて）
+        if self.show_step_response:
+            self.figure_step, self.ax_step = plt.subplots()
+            plt.ion()  # インタラクティブモードを有効化
+            plt.show()  # 最初に一度だけFigureを表示
 
         # TransParserから初期値を取得
-        self.kp_init = tfd.constants.get("VAlt_Kp", 0) * self.scale_param
-        self.ki_init = tfd.constants.get("VAlt_Ki", 0) * self.scale_param
-        self.kd_init = tfd.constants.get("VAlt_Kd", 0) * self.scale_param
+        self.kp_init = self.tfd.constants.get("VAlt_Kp", 0) * self.scale_param
+        self.ki_init = self.tfd.constants.get("VAlt_Ki", 0) * self.scale_param
+        self.kd_init = self.tfd.constants.get("VAlt_Kd", 0) * self.scale_param
 
         # 初期値をスライダーに反映
         self.slider_p.setValue(int(self.kp_init))
@@ -74,26 +77,26 @@ class PIDSliderApp(QWidget):
 
     def update_graph(self):
         # コントローラとプラントの伝達関数を計算
-        self.W_num, self.W_den = tfd.calculate_w()
+        self.W_num, self.W_den = self.tfd.calculate_w()
 
         self.update_poles()
-        self.update_step_response()
+        if self.show_step_response:
+            self.update_step_response()
 
     def update_poles(self):
         # コントローラとプラントの伝達関数を計算
-        num = tfd.get_coefficients(self.W_num)
-        den = tfd.get_coefficients(self.W_den)
+        num = self.tfd.get_coefficients(self.W_num)
+        den = self.tfd.get_coefficients(self.W_den)
 
         # 極をプロット（Figureを再利用）
         self.ax.clear()  # 以前のプロットをクリア
         self.plot_poles(num, den)  # 極を再描画
         plt.draw()  # 描画を更新
 
-
     def update_step_response(self):
         # コントローラとプラントの伝達関数を計算
-        num = tfd.get_coefficients(self.W_num)
-        den = tfd.get_coefficients(self.W_den)
+        num = self.tfd.get_coefficients(self.W_num)
+        den = self.tfd.get_coefficients(self.W_den)
         system = ctrl.TransferFunction(num, den)
 
         # ステップ応答の計算
@@ -111,20 +114,20 @@ class PIDSliderApp(QWidget):
 
     def update_p(self, value):
         # Pパラメータの値を更新
-        tfd.update_constant("VAlt_Kp", value / 10.0)  # 値を変換して更新
+        self.tfd.update_constant("VAlt_Kp", value / 10.0)  # 値を変換して更新
         self.update_graph()
         # Pの値をラベルに反映
         self.label_p.setText(f"P: {value}")
 
     def update_i(self, value):
         # Iパラメータの値を更新
-        tfd.update_constant("VAlt_Ki", value / 10.0)
+        self.tfd.update_constant("VAlt_Ki", value / 10.0)
         self.update_graph()
         self.label_i.setText(f"I: {value}")
 
     def update_d(self, value):
         # Dパラメータの値を更新
-        tfd.update_constant("VAlt_Kd", value / 10.0)
+        self.tfd.update_constant("VAlt_Kd", value / 10.0)
         self.update_graph()
         self.label_d.setText(f"D: {value}")
 
@@ -175,17 +178,21 @@ class PIDSliderApp(QWidget):
         self.ax.set_ylabel('Imaginary')
         self.ax.legend()
 
-
 if __name__ == '__main__':
+    # コマンドライン引数の処理
+    parser = argparse.ArgumentParser(description="PID パラメータ調整とステップ応答")
+    parser.add_argument('file_path', type=str, help='Transfer function JSONファイルのパス')
+    parser.add_argument('--step', action='store_true', help='ステップ応答を表示するかどうか')
+    args = parser.parse_args()
+
     # PyQtアプリケーションの初期化
     app = QApplication(sys.argv)
     
     # TransParserの初期化
-    transfer_function_data = 'workspace/model.json'
-    tfd = TransParser(transfer_function_data)
+    tfd = TransParser(args.file_path)
     
     # PIDスライダーのUIを作成
-    ex = PIDSliderApp()
+    ex = PIDSliderApp(tfd, args.step)
 
     # PyQtアプリケーションを実行
     sys.exit(app.exec_())
