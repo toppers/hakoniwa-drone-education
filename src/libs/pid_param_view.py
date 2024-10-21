@@ -11,12 +11,15 @@ import numpy as np
 matplotlib.use('Qt5Agg')
 
 class PIDSliderApp(QWidget):
-    def __init__(self, tfd, uptime_msec, scale_range, scale_value, show_step_response, show_bode_phase, show_ny):
+    def __init__(self, tfd, uptime_msec, scale_range, scale_value, p, i, d, show_step_response, show_bode_phase, show_ny):
         super().__init__()
         self.tfd = tfd
         self.show_step_response = show_step_response
         self.show_bode_phase = show_bode_phase
         self.show_ny = show_ny
+        self.p = p
+        self.i = i
+        self.d = d
         self.saved_x_limit = 1
         self.saved_y_limit = 1
         self.scale_slider = scale_range
@@ -48,9 +51,9 @@ class PIDSliderApp(QWidget):
         self.initUI()
 
         # TransParserから初期値を取得
-        self.kp_init = self.tfd.constants.get("VAlt_Kp", 0) * self.scale_param
-        self.ki_init = self.tfd.constants.get("VAlt_Ki", 0) * self.scale_param
-        self.kd_init = self.tfd.constants.get("VAlt_Kd", 0) * self.scale_param
+        self.kp_init = self.tfd.constants.get(self.p, 0) * self.scale_param
+        self.ki_init = self.tfd.constants.get(self.i, 0) * self.scale_param
+        self.kd_init = self.tfd.constants.get(self.d, 0) * self.scale_param
 
         # 初期値をスライダーと入力フィールドに反映
         self.slider_p.setValue(int(self.kp_init))
@@ -65,9 +68,9 @@ class PIDSliderApp(QWidget):
         layout = QVBoxLayout()
 
         # P, I, D のスライダーと入力フィールドの作成
-        layout.addLayout(self.create_slider_with_input("P", "VAlt_Kp"))
-        layout.addLayout(self.create_slider_with_input("I", "VAlt_Ki"))
-        layout.addLayout(self.create_slider_with_input("D", "VAlt_Kd"))
+        layout.addLayout(self.create_slider_with_input("P", self.p))
+        layout.addLayout(self.create_slider_with_input("I", self.i))
+        layout.addLayout(self.create_slider_with_input("D", self.d))
         # ウィンドウサイズを固定（横長に設定）
         self.setFixedSize(600, 200)  # 横600px, 縦200px のサイズに固定
 
@@ -103,7 +106,7 @@ class PIDSliderApp(QWidget):
 
     def update_value(self, value, const_name):
         # 値を更新するだけで、すぐに描画はしない
-        const_map = {'p': 'VAlt_Kp', 'i': 'VAlt_Ki', 'd': 'VAlt_Kd'}
+        const_map = {'p': self.p, 'i': self.i, 'd': self.d}
         const_name_full = const_map.get(const_name)
 
         if const_name_full in self.tfd.constants:
@@ -235,11 +238,17 @@ if __name__ == '__main__':
     parser.add_argument('--step', action='store_true', help='ステップ応答を表示するかどうか')
     parser.add_argument('--bode', action='store_true', help='ボード線図と位相線図を表示するかどうか')
     parser.add_argument('--ny', action='store_true', help=' ナイキスト線図を表示するかどうか')
+    parser.add_argument('--p', type=str, default='VAlt_Kp', help='Pゲインのパラメータ名')
+    parser.add_argument('--i', type=str, default='VAlt_Ki', help='Iゲインのパラメータ名')
+    parser.add_argument('--d', type=str, default='VAlt_Kd', help='Dゲインのパラメータ名')
     args = parser.parse_args()
 
     app = QApplication(sys.argv)
     tfd = TransParser(args.file_path)
     scale_range = int(args.max_input_value / args.input_increment)
     scale_value = int(1 / args.input_increment)
-    ex = PIDSliderApp(tfd, args.uptime, scale_range, scale_value, args.step, args.bode, args.ny)
+    print("P: ", args.p)
+    print("I: ", args.i)
+    print("D: ", args.d)
+    ex = PIDSliderApp(tfd, args.uptime, scale_range, scale_value, args.p, args.i, args.d, args.step, args.bode, args.ny)
     sys.exit(app.exec_())
