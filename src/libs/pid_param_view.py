@@ -11,11 +11,12 @@ import numpy as np
 matplotlib.use('Qt5Agg')
 
 class PIDSliderApp(QWidget):
-    def __init__(self, tfd, show_step_response, show_bode_phase):
+    def __init__(self, tfd, show_step_response, show_bode_phase, show_ny):
         super().__init__()
         self.tfd = tfd
         self.show_step_response = show_step_response
         self.show_bode_phase = show_bode_phase
+        self.show_ny = show_ny
         self.saved_x_limit = 1
         self.saved_y_limit = 1
         self.scale_slider = 1000
@@ -37,6 +38,11 @@ class PIDSliderApp(QWidget):
             self.figure_bode, self.ax_bode = plt.subplots(2, 1)  # ゲインと位相のために2つのサブプロット
             plt.ion()  # インタラクティブモードを有効化
             plt.show()  # 最初に一度だけFigureを表示
+
+        if self.show_ny:
+            self.figure_ny, self.ax_ny = plt.subplots()
+            plt.ion()
+            plt.show()
 
         # TransParserから初期値を取得
         self.kp_init = self.tfd.constants.get("VAlt_Kp", 0) * self.scale_param
@@ -111,12 +117,13 @@ class PIDSliderApp(QWidget):
 
     def update_from_input(self, const_name, input_field):
         try:
-            # 入力フィールドの値をスライダーと定数に反映
             new_value = float(input_field.text()) * self.scale_param
-            slider = getattr(self, f"slider_{const_name.split('_')[-1].lower()}")
+            slider = getattr(self, f"slider_{const_name}")
             slider.setValue(int(new_value))
+            input_field.setStyleSheet("")  # 正常入力の場合、背景色をリセット
         except ValueError:
-            pass
+            input_field.setStyleSheet("background-color: red")  # エラー時に背景を赤く
+
 
     def update_graph(self):
         self.W_num, self.W_den = self.tfd.calculate_w()
@@ -126,6 +133,9 @@ class PIDSliderApp(QWidget):
             self.update_step_response()
         if self.show_bode_phase:
             self.update_bode()
+        if self.show_ny:
+            self.update_nyquist()
+        
 
     def update_poles(self):
         num = self.tfd.get_coefficients(self.W_num)
@@ -134,7 +144,33 @@ class PIDSliderApp(QWidget):
         self.plot_poles(num, den)
         plt.draw()
 
+    # ナイキスト線図をプロットする関数
+    def update_nyquist(self):
+        num = self.tfd.get_coefficients(self.L_num)
+        den = self.tfd.get_coefficients(self.L_den)
+        system = ctrl.TransferFunction(num, den)
+        
+        # axをクリア
+        self.ax_ny.clear()
 
+        # ナイキスト線図のプロット
+        ctrl.nyquist(system, ax=self.ax_ny)
+        
+        # 半径1の円を追加
+        circle = plt.Circle((0, 0), 1, color='r', fill=False, linestyle='--', label='|L(s)|=1')
+        self.ax_ny.add_artist(circle)
+
+        # 凡例をカスタマイズ
+        self.ax_ny.legend(['Nyquist', '|L(s)|=1'])
+
+        # グラフの設定
+        self.ax_ny.set_title('Nyquist Plot')
+        self.ax_ny.grid(True)
+        self.ax_ny.set_aspect('equal', 'box')
+
+        plt.draw()
+
+        
     def update_bode(self):
         num = tfd.get_coefficients(self.L_num)
         den = tfd.get_coefficients(self.L_den)
@@ -199,9 +235,10 @@ if __name__ == '__main__':
     parser.add_argument('file_path', type=str, help='Transfer function JSONファイルのパス')
     parser.add_argument('--step', action='store_true', help='ステップ応答を表示するかどうか')
     parser.add_argument('--bode', action='store_true', help='ボード線図と位相線図を表示するかどうか')
+    parser.add_argument('--ny', action='store_true', help=' ナイキスト線図を表示するかどうか')
     args = parser.parse_args()
 
     app = QApplication(sys.argv)
     tfd = TransParser(args.file_path)
-    ex = PIDSliderApp(tfd, args.step, args.bode)
+    ex = PIDSliderApp(tfd, args.step, args.bode, args.ny)
     sys.exit(app.exec_())
