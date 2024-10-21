@@ -135,6 +135,7 @@ class PIDSliderApp(QWidget):
             self.update_bode()
         if self.show_ny:
             self.update_nyquist()
+        plt.draw()
         
 
     def update_poles(self):
@@ -142,7 +143,6 @@ class PIDSliderApp(QWidget):
         den = self.tfd.get_coefficients(self.W_den)
         self.ax.clear()
         self.plot_poles(num, den)
-        plt.draw()
 
     # ナイキスト線図をプロットする関数
     def update_nyquist(self):
@@ -168,7 +168,6 @@ class PIDSliderApp(QWidget):
         self.ax_ny.grid(True)
         self.ax_ny.set_aspect('equal', 'box')
 
-        plt.draw()
 
         
     def update_bode(self):
@@ -196,7 +195,6 @@ class PIDSliderApp(QWidget):
         self.ax_bode[1].set_xlabel('Frequency (rad/s)')
         self.ax_bode[1].grid(True, which="both", linestyle='--')
 
-        plt.draw()
 
     def update_step_response(self):
         num = self.tfd.get_coefficients(self.W_num)
@@ -210,7 +208,6 @@ class PIDSliderApp(QWidget):
         self.ax_step.set_ylabel('Amplitude')
         self.ax_step.grid(True)
         self.ax_step.legend()
-        plt.draw()
 
     def plot_poles(self, num, den):
         system = ctrl.TransferFunction(num, den)
@@ -227,7 +224,6 @@ class PIDSliderApp(QWidget):
         self.ax.set_xlabel('Real')
         self.ax.set_ylabel('Imaginary')
         self.ax.legend()
-        plt.draw()
 
 if __name__ == '__main__':
     import argparse
