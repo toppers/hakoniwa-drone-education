@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QSlider, QLineEdit, QHBoxLayout
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 from analyze_model import TransParser
 import matplotlib.pyplot as plt
 import control as ctrl
@@ -11,7 +11,7 @@ import numpy as np
 matplotlib.use('Qt5Agg')
 
 class PIDSliderApp(QWidget):
-    def __init__(self, tfd, show_step_response, show_bode_phase, show_ny):
+    def __init__(self, tfd, uptime_msec, scale_range, scale_value, show_step_response, show_bode_phase, show_ny):
         super().__init__()
         self.tfd = tfd
         self.show_step_response = show_step_response
@@ -19,10 +19,11 @@ class PIDSliderApp(QWidget):
         self.show_ny = show_ny
         self.saved_x_limit = 1
         self.saved_y_limit = 1
-        self.scale_slider = 1000
-        self.scale_param = 10
-
-        self.initUI()
+        self.scale_slider = scale_range
+        self.scale_param = scale_value
+        self.update_timer = QTimer(self)  # タイマーを設定
+        self.update_timer.setInterval(uptime_msec) 
+        self.update_timer.timeout.connect(self.update_graph)  # タイムアウトで描画更新
 
         # matplotlibのFigureとAxisを初期化
         self.figure, self.ax = plt.subplots()
@@ -43,6 +44,8 @@ class PIDSliderApp(QWidget):
             self.figure_ny, self.ax_ny = plt.subplots()
             plt.ion()
             plt.show()
+
+        self.initUI()
 
         # TransParserから初期値を取得
         self.kp_init = self.tfd.constants.get("VAlt_Kp", 0) * self.scale_param
@@ -65,6 +68,8 @@ class PIDSliderApp(QWidget):
         layout.addLayout(self.create_slider_with_input("P", "VAlt_Kp"))
         layout.addLayout(self.create_slider_with_input("I", "VAlt_Ki"))
         layout.addLayout(self.create_slider_with_input("D", "VAlt_Kd"))
+        # ウィンドウサイズを固定（横長に設定）
+        self.setFixedSize(600, 200)  # 横600px, 縦200px のサイズに固定
 
         self.setLayout(layout)
         self.setWindowTitle('PID パラメータ調整')
@@ -97,22 +102,17 @@ class PIDSliderApp(QWidget):
         return layout
 
     def update_value(self, value, const_name):
-        # 'p', 'i', 'd' を対応する定数名に変換
-        if const_name == 'p':
-            const_name_full = 'VAlt_Kp'
-        elif const_name == 'i':
-            const_name_full = 'VAlt_Ki'
-        elif const_name == 'd':
-            const_name_full = 'VAlt_Kd'
+        # 値を更新するだけで、すぐに描画はしない
+        const_map = {'p': 'VAlt_Kp', 'i': 'VAlt_Ki', 'd': 'VAlt_Kd'}
+        const_name_full = const_map.get(const_name)
 
-        # 定数の更新
-        if const_name_full in tfd.constants:
-            tfd.update_constant(const_name_full, value / self.scale_param)
+        if const_name_full in self.tfd.constants:
+            self.tfd.update_constant(const_name_full, value / self.scale_param)
             input_field = getattr(self, f"input_{const_name}")
             input_field.setText(str(value / self.scale_param))
-            self.update_graph()
-        else:
-            print(f"{const_name_full} is not found in constants")
+
+            # タイマーをリセットして再スタート
+            self.update_timer.start()  # タイマーが再起動して200ms後に描画される
 
 
     def update_from_input(self, const_name, input_field):
@@ -229,6 +229,9 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description="PID パラメータ調整とステップ応答")
     parser.add_argument('file_path', type=str, help='Transfer function JSONファイルのパス')
+    parser.add_argument('--uptime', type=int, default=100, help='グラフ描画感覚。単位はmsecです')
+    parser.add_argument('--max_input_value', type=float, default=10.0, help='入力可能な最大値')
+    parser.add_argument('--input_increment', type=float, default=0.1, help='数値入力のステップサイズ')
     parser.add_argument('--step', action='store_true', help='ステップ応答を表示するかどうか')
     parser.add_argument('--bode', action='store_true', help='ボード線図と位相線図を表示するかどうか')
     parser.add_argument('--ny', action='store_true', help=' ナイキスト線図を表示するかどうか')
@@ -236,5 +239,7 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     tfd = TransParser(args.file_path)
-    ex = PIDSliderApp(tfd, args.step, args.bode, args.ny)
+    scale_range = int(args.max_input_value / args.input_increment)
+    scale_value = int(1 / args.input_increment)
+    ex = PIDSliderApp(tfd, args.uptime, scale_range, scale_value, args.step, args.bode, args.ny)
     sys.exit(app.exec_())
