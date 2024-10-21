@@ -11,10 +11,11 @@ import numpy as np
 matplotlib.use('Qt5Agg')
 
 class PIDSliderApp(QWidget):
-    def __init__(self, tfd, show_step_response):
+    def __init__(self, tfd, show_step_response, show_bode_phase):
         super().__init__()
         self.tfd = tfd
         self.show_step_response = show_step_response
+        self.show_bode_phase = show_bode_phase
         self.saved_x_limit = 1
         self.saved_y_limit = 1
         self.scale_slider = 1000
@@ -29,6 +30,11 @@ class PIDSliderApp(QWidget):
 
         if self.show_step_response:
             self.figure_step, self.ax_step = plt.subplots()
+            plt.ion()  # インタラクティブモードを有効化
+            plt.show()  # 最初に一度だけFigureを表示
+
+        if self.show_bode_phase:
+            self.figure_bode, self.ax_bode = plt.subplots(2, 1)  # ゲインと位相のために2つのサブプロット
             plt.ion()  # インタラクティブモードを有効化
             plt.show()  # 最初に一度だけFigureを表示
 
@@ -114,15 +120,46 @@ class PIDSliderApp(QWidget):
 
     def update_graph(self):
         self.W_num, self.W_den = self.tfd.calculate_w()
+        self.L_num, self.L_den = self.tfd.calculate_l()
         self.update_poles()
         if self.show_step_response:
             self.update_step_response()
+        if self.show_bode_phase:
+            self.update_bode()
 
     def update_poles(self):
         num = self.tfd.get_coefficients(self.W_num)
         den = self.tfd.get_coefficients(self.W_den)
         self.ax.clear()
         self.plot_poles(num, den)
+        plt.draw()
+
+
+    def update_bode(self):
+        num = tfd.get_coefficients(self.L_num)
+        den = tfd.get_coefficients(self.L_den)
+        system = ctrl.TransferFunction(num, den)
+
+        # Bodeプロットと余裕の計算
+        mag, phase, omega = ctrl.bode(system, dB=True, Hz=False, plot=False)
+        gm, pm, wg, wp = ctrl.margin(system)
+
+        self.ax_bode[0].clear()
+        self.ax_bode[1].clear()
+
+        # ゲイン線図のプロット
+        self.ax_bode[0].semilogx(omega, 20 * np.log10(mag), label='Theoretical Gain')
+        self.ax_bode[0].set_title('Bode Plot')
+        self.ax_bode[0].set_ylabel('Magnitude (dB)')
+        self.ax_bode[0].grid(True, which="both", linestyle='--')
+
+        # 位相線図のプロット
+        phase = np.rad2deg(phase)
+        self.ax_bode[1].semilogx(omega, phase, label='Theoretical Phase')
+        self.ax_bode[1].set_ylabel('Phase (degrees)')
+        self.ax_bode[1].set_xlabel('Frequency (rad/s)')
+        self.ax_bode[1].grid(True, which="both", linestyle='--')
+
         plt.draw()
 
     def update_step_response(self):
@@ -161,9 +198,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="PID パラメータ調整とステップ応答")
     parser.add_argument('file_path', type=str, help='Transfer function JSONファイルのパス')
     parser.add_argument('--step', action='store_true', help='ステップ応答を表示するかどうか')
+    parser.add_argument('--bode', action='store_true', help='ボード線図と位相線図を表示するかどうか')
     args = parser.parse_args()
 
     app = QApplication(sys.argv)
     tfd = TransParser(args.file_path)
-    ex = PIDSliderApp(tfd, args.step)
+    ex = PIDSliderApp(tfd, args.step, args.bode)
     sys.exit(app.exec_())
