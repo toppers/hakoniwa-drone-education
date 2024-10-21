@@ -7,15 +7,37 @@
       "step1": {
         "type": "step",
         "parameters": {
-          "comment": "target speed z : 10 m/sec",
-          "offsets": [ 10 ]
+          "comment": "target speed z : 1 m/sec",
+          "offsets": [ 1 ]
+        }
+      },
+      "step2": {
+        "type": "step",
+        "parameters": {
+          "comment": "target speed z : 0 m/sec",
+          "offsets": [ 0 ]
+        }
+      },
+      "step3": {
+        "type": "step",
+        "parameters": {
+          "comment": "target speed z : 1 m/sec",
+          "offsets": [ 1 ]
         }
       }
     },
     "signal_input_timings": [
       {
         "name": "step1",
-        "duration_sec": 20.0
+        "duration_sec": 99.0
+      },
+      {
+        "name": "step2",
+        "duration_sec": 100.0
+      },
+      {
+        "name": "step3",
+        "duration_sec": 100.0
       }
     ]
   },
@@ -24,15 +46,15 @@
       "config_params": {
         "AXIS": "Vz",
         "INVERT_AXIS": true,
-        "EVALUATION_START_TIME": 1.0,
+        "EVALUATION_START_TIME": 200.0,
         "CONVERT_TO_DEGREE": false
       },
       "target_params": {
-          "TARGET_TR": 40.0,
-          "TARGET_TD": 10.0,
-          "TARGET_OS": 0.5,
-          "TARGET_TS": 50.0,
-          "TARGET_VALUE": 10.0
+          "TARGET_TR": 2.0,
+          "TARGET_TD": 1.01,
+          "TARGET_OS": 0.04,
+          "TARGET_TS": 5.49,
+          "TARGET_VALUE": 1.0
       }
     },
     "input_data": {

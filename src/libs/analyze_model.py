@@ -232,14 +232,25 @@ def plot_poles(num, den):
     plt.show()
     plt.close()
 
-
 # ステップ応答をプロットし、各種パラメータを計算・表示する関数
-def plot_step_response(num, den):
+def plot_step_response(num, den, result_data_path=None):
     system = ctrl.TransferFunction(num, den)
-    
-    # ステップ応答の計算
-    t, y = ctrl.step_response(system)
-    
+
+    if result_data_path is not None:
+        # CSVファイルからデータを読み込む
+        result_data = np.genfromtxt(result_data_path, delimiter=',', skip_header=1)
+
+        # データの列をそれぞれ取得
+        result_data_timestamp = result_data[:, 0] * 1e-06
+        result_data_value = result_data[:, 1]
+
+        # ステップ応答の計算 (result_data の時間領域を使用)
+        t = result_data_timestamp
+        t, y = ctrl.step_response(system, T=t)
+    else:
+        # ステップ応答の計算 (時間ベクトル t を渡さない場合)
+        t, y = ctrl.step_response(system)
+
     # オーバーシュートの計算
     overshoot = (np.max(y) - 1) * 100  # ステップ応答の最大値から1を引いて百分率に変換
     overshoot_time = t[np.argmax(y)]  # オーバーシュートが発生した時間
@@ -256,7 +267,7 @@ def plot_step_response(num, den):
     delay_time_index = np.where(y >= 0.5)[0]
     delay_time = t[delay_time_index[0]] if len(delay_time_index) > 0 else None
 
-    # 整定時間（Settling Time）の計算 (±2%の範囲に収まる)
+    # 整定時間（Settling Time）の計算 (±5%の範囲に収まる)
     settling_threshold = 0.05  # 5%の範囲
     settling_index = np.where(np.abs(y - steady_state_value) <= settling_threshold)[0]
     settling_time = t[settling_index[-1]] if len(settling_index) > 0 else None
@@ -271,15 +282,19 @@ def plot_step_response(num, den):
     
     # ステップ応答のプロット
     plt.figure()
-    plt.plot(t, y)
+    plt.plot(t, y, label='Step Response')
     plt.title('Step Response')
     plt.xlabel('Time (s)')
     plt.ylabel('Amplitude')
     plt.grid(True)
-    
+
+    if result_data_path is not None:
+        # 結果データをプロットに追加
+        plt.plot(result_data_timestamp, result_data_value, label='Measured Data', linestyle='--')
+
     # オーバーシュートの箇所にマーカーを追加
-    plt.axvline(x=overshoot_time, color='r', linestyle='--', label=f'Overshoot @ {overshoot_time:.2f}s')
-    plt.axhline(y=steady_state_value, color='g', linestyle='--', label=f'Steady-State Value = {steady_state_value:.2f}')
+    #plt.axvline(x=overshoot_time, color='r', linestyle='--', label=f'Overshoot @ {overshoot_time:.2f}s')
+    #plt.axhline(y=steady_state_value, color='g', linestyle='--', label=f'Steady-State Value = {steady_state_value:.2f}')
     
     plt.legend()
     plt.savefig('step_plot.png')
@@ -434,7 +449,7 @@ if __name__ == "__main__":
     if args.mode == 'bode':
         plot_bode_and_margins(num, den, result_data_path)
     elif args.mode == 'step':
-        plot_step_response(num, den)
+        plot_step_response(num, den, result_data_path)
     elif args.mode == 'impulse':
         plot_impulse_response(num, den)
     elif args.mode == 'poles':

@@ -22,6 +22,7 @@ class DroneConfigUpdater:
         self.params['controller']['direct_rotor_control'] = True
         self.params['controller']['moduleDirectory'] = self.base_path + module_name
         self.params['controller']['moduleName'] = module_name
+        self.params['components']['droneDynamics'].pop('out_of_bounds_reset', None)
 
     def set_controller_module(self, controller_type):
         valid_types = ['angle', 'spd', 'spd_z', 'pos', 'pos_z']
