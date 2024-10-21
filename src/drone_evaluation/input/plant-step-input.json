@@ -6,16 +6,14 @@
       "step1": {
         "type": "step",
         "parameters": {
-          "description": "Initial offsets for hovering control.",
-          "comment": "offsets are c1, c2, c3, c4 for hovering",
-          "offsets": [1448, 1448, 1448, 1448]
+          "offsets": [1, 1, 1, 1]
         }
       }
     },
     "signal_input_timings": [
       {
         "name": "step1",
-        "duration_sec": 400.0
+        "duration_sec": 101.0
       }
     ]
   },
