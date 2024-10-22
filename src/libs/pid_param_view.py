@@ -81,13 +81,12 @@ class PIDSliderApp(QWidget):
         label_layout = QVBoxLayout()
 
         self.system_type_label = QLabel("System Type: -", self)
-        self.system_gain_label = QLabel("System Gain: -", self)
         self.error_p_label = QLabel("Position Error (ep): -", self)
         self.error_v_label = QLabel("Velocity Error (ev): -", self)
         self.error_a_label = QLabel("Acceleration Error (ea): -", self)
 
         # ラベルにスタイルを追加
-        for label in [self.system_type_label, self.system_gain_label, self.error_p_label, self.error_v_label, self.error_a_label]:
+        for label in [self.system_type_label, self.error_p_label, self.error_v_label, self.error_a_label]:
             label.setStyleSheet("font-size: 14px; padding: 5px;")  # フォントサイズとパディングを設定
             label_layout.addWidget(label)
 
@@ -238,73 +237,51 @@ class PIDSliderApp(QWidget):
         self.ax_step.legend()
 
     def calculate_steady_state_errors(self):
-        # SymPyシンボルの定義
-        s = sp.symbols('s')
-
-        # 分子と分母をシンボリック形式で取得
         num = self.tfd.get_coefficients(self.L_num)
         den = self.tfd.get_coefficients(self.L_den)
-
-        # SymPyの多項式として分子と分母を定義
-        num_expr = sum(coef * s**i for i, coef in enumerate(reversed(num)))
-        den_expr = sum(coef * s**i for i, coef in enumerate(reversed(den)))
-
-        # 分子と分母の共通因子を因数分解して相殺
-        factored_num = sp.factor(num_expr)
-        factored_den = sp.factor(den_expr)
-        simplified_L_s = sp.simplify(factored_num / factored_den)
-
-        # 分子と分母をリスト形式で取り出す
-        num, den = sp.fraction(simplified_L_s)
-        num = sp.Poly(num, s).all_coeffs()
-        den = sp.Poly(den, s).all_coeffs()
-
-        # 分子と分母をfloatに変換
-        num = [float(coef) for coef in num]
-        den = [float(coef) for coef in den]
-
-        # 簡略化された伝達関数を生成
+        # 共通の因子 s を相殺する
+        while num[-1] == 0 and den[-1] == 0:
+            num = num[:-1]
+            den = den[:-1]
         system = ctrl.TransferFunction(num, den)
-
         # システムの型を判別
         poles = system.poles()
         num_poles_at_origin = np.sum(np.isclose(poles, 0, atol=1e-6))
 
-        # 定常偏差の計算とUIへの反映
-        try:
-            dc_gain = ctrl.dcgain(system)
-        except Exception as e:
-            dc_gain = None
+        s = sp.symbols('s')
+        num_expr = sum(coef * s**i for i, coef in enumerate(reversed(num)))
+        den_expr = sum(coef * s**i for i, coef in enumerate(reversed(den)))
+        L_s = num_expr / den_expr
 
+        # 定常偏差の計算とUIへの反映
         if num_poles_at_origin == 0:
             system_type = "0型"
-            ep = 1 / (dc_gain + 1) if dc_gain is not None else "N/A"
+            v = sp.cancel(1 / (1 + L_s))
+            ep = sp.N(sp.limit(v, s, 0))
             ev = "∞"
             ea = "∞"
         elif num_poles_at_origin == 1:
             system_type = "1型"
-            ep = 0
-            ev = 1 / dc_gain if dc_gain is not None else "N/A"
+            ep = 0.0
+            v = sp.cancel((1 / (1 + L_s)) / s)
+            ev = sp.N(sp.limit(v, s, 0))
             ea = "∞"
         elif num_poles_at_origin == 2:
             system_type = "2型"
-            ep = 0
-            ev = 0
-            ea = 1 / dc_gain if dc_gain is not None else "N/A"
+            ep = 0.0
+            ev = 0.0
+            v = sp.cancel((1 / (1 + L_s)) / (s * s))
+            ea = sp.N(sp.limit(v, s, 0))
         else:
             system_type = f"{num_poles_at_origin}型"
             ep = "N/A"
             ev = "N/A"
-            ea = "N/A"
-
         # ラベルに計算結果を表示
-        dc_gain_str = f"{dc_gain:.2f}" if isinstance(dc_gain, (int, float)) else dc_gain
-        ep_str = f"{ep:.2f}" if isinstance(ep, (int, float)) else ep
-        ev_str = f"{ev:.2f}" if isinstance(ev, (int, float)) else ev
-        ea_str = f"{ea:.2f}" if isinstance(ea, (int, float)) else ea
+        ep_str = f"{ep:.2f}" if isinstance(ep, (int, float, sp.core.numbers.Float)) else ep
+        ev_str = f"{ev:.2f}" if isinstance(ev, (int, float, sp.core.numbers.Float)) else ev
+        ea_str = f"{ea:.2f}" if isinstance(ea, (int, float, sp.core.numbers.Float)) else ea
 
         self.system_type_label.setText(f"System Type: {system_type}")
-        self.system_gain_label.setText(f"System Gain: {dc_gain_str}")
         self.error_p_label.setText(f"Position Error (ep): {ep_str}")
         self.error_v_label.setText(f"Velocity Error (ev): {ev_str}")
         self.error_a_label.setText(f"Acceleration Error (ea): {ea_str}")
