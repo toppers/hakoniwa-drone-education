@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import control as ctrl
 import matplotlib
 import numpy as np
+import sympy as sp
 
 # matplotlibのバックエンドをPyQtと連携
 matplotlib.use('Qt5Agg')
@@ -237,12 +238,32 @@ class PIDSliderApp(QWidget):
         self.ax_step.legend()
 
     def calculate_steady_state_errors(self):
+        # SymPyシンボルの定義
+        s = sp.symbols('s')
+
+        # 分子と分母をシンボリック形式で取得
         num = self.tfd.get_coefficients(self.L_num)
         den = self.tfd.get_coefficients(self.L_den)
-        # 共通の因子 s を相殺する
-        while num[-1] == 0 and den[-1] == 0:
-            num = num[:-1]
-            den = den[:-1]
+
+        # SymPyの多項式として分子と分母を定義
+        num_expr = sum(coef * s**i for i, coef in enumerate(reversed(num)))
+        den_expr = sum(coef * s**i for i, coef in enumerate(reversed(den)))
+
+        # 分子と分母の共通因子を因数分解して相殺
+        factored_num = sp.factor(num_expr)
+        factored_den = sp.factor(den_expr)
+        simplified_L_s = sp.simplify(factored_num / factored_den)
+
+        # 分子と分母をリスト形式で取り出す
+        num, den = sp.fraction(simplified_L_s)
+        num = sp.Poly(num, s).all_coeffs()
+        den = sp.Poly(den, s).all_coeffs()
+
+        # 分子と分母をfloatに変換
+        num = [float(coef) for coef in num]
+        den = [float(coef) for coef in den]
+
+        # 簡略化された伝達関数を生成
         system = ctrl.TransferFunction(num, den)
 
         # システムの型を判別
@@ -252,9 +273,6 @@ class PIDSliderApp(QWidget):
         # 定常偏差の計算とUIへの反映
         try:
             dc_gain = ctrl.dcgain(system)
-            #print("dc_gain: ", dc_gain)
-            #print("num: ", num)
-            #print("den: ", den)
         except Exception as e:
             dc_gain = None
 
@@ -290,7 +308,6 @@ class PIDSliderApp(QWidget):
         self.error_p_label.setText(f"Position Error (ep): {ep_str}")
         self.error_v_label.setText(f"Velocity Error (ev): {ev_str}")
         self.error_a_label.setText(f"Acceleration Error (ea): {ea_str}")
-
 
 
     def plot_poles(self, num, den):
