@@ -203,7 +203,7 @@ class PIDSliderApp(QWidget):
         system = ctrl.TransferFunction(num, den)
 
         # Bodeプロットと余裕の計算
-        mag, phase, omega = ctrl.bode(system, dB=True, Hz=False, plot=False)
+        mag, phase, omega = ctrl.bode(system, dB=True, Hz=False, omega_limits=(1.0e-3, 1.0e3), plot=False)
         gm, pm, wg, wp = ctrl.margin(system)
 
         self.ax_bode[0].clear()
