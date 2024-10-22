@@ -1,5 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QSlider, QLineEdit, QHBoxLayout
+from PyQt5.QtWidgets import QSpacerItem, QSizePolicy
 from PyQt5.QtCore import Qt, QTimer
 from analyze_model import TransParser
 import matplotlib.pyplot as plt
@@ -65,18 +66,41 @@ class PIDSliderApp(QWidget):
         self.input_d.setText(str(self.kd_init / self.scale_param))
 
     def initUI(self):
-        layout = QVBoxLayout()
+        main_layout = QVBoxLayout()
 
         # P, I, D のスライダーと入力フィールドの作成
-        layout.addLayout(self.create_slider_with_input("P", self.p))
-        layout.addLayout(self.create_slider_with_input("I", self.i))
-        layout.addLayout(self.create_slider_with_input("D", self.d))
-        # ウィンドウサイズを固定（横長に設定）
-        self.setFixedSize(600, 200)  # 横600px, 縦200px のサイズに固定
+        main_layout.addLayout(self.create_slider_with_input("P", self.p))
+        main_layout.addLayout(self.create_slider_with_input("I", self.i))
+        main_layout.addLayout(self.create_slider_with_input("D", self.d))
 
-        self.setLayout(layout)
+        # スペーサーを追加してスライダーとラベルの表示エリアを分ける
+        main_layout.addSpacerItem(QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding))
+
+        # システムタイプと定常偏差表示用のラベルのレイアウトを作成
+        label_layout = QVBoxLayout()
+
+        self.system_type_label = QLabel("System Type: -", self)
+        self.system_gain_label = QLabel("System Gain: -", self)
+        self.error_p_label = QLabel("Position Error (ep): -", self)
+        self.error_v_label = QLabel("Velocity Error (ev): -", self)
+        self.error_a_label = QLabel("Acceleration Error (ea): -", self)
+
+        # ラベルにスタイルを追加
+        for label in [self.system_type_label, self.system_gain_label, self.error_p_label, self.error_v_label, self.error_a_label]:
+            label.setStyleSheet("font-size: 14px; padding: 5px;")  # フォントサイズとパディングを設定
+            label_layout.addWidget(label)
+
+        # ラベルのレイアウトをメインレイアウトに追加
+        main_layout.addLayout(label_layout)
+
+        # ウィンドウサイズを固定（横長に設定）
+        self.setFixedSize(600, 400)
+        #main_layout.setContentsMargins(10, 10, 10, 10)
+
+        self.setLayout(main_layout)
         self.setWindowTitle('PID パラメータ調整')
         self.show()
+
 
     def create_slider_with_input(self, label_text, const_name):
         layout = QHBoxLayout()
@@ -139,7 +163,7 @@ class PIDSliderApp(QWidget):
         if self.show_ny:
             self.update_nyquist()
         plt.draw()
-        
+        self.calculate_steady_state_errors()
 
     def update_poles(self):
         num = self.tfd.get_coefficients(self.W_num)
@@ -211,6 +235,54 @@ class PIDSliderApp(QWidget):
         self.ax_step.set_ylabel('Amplitude')
         self.ax_step.grid(True)
         self.ax_step.legend()
+
+    def calculate_steady_state_errors(self):
+        num = self.tfd.get_coefficients(self.L_num)
+        den = self.tfd.get_coefficients(self.L_den)
+        # 共通の因子 s を相殺する
+        while num[-1] == 0 and den[-1] == 0:
+            num = num[:-1]
+            den = den[:-1]
+        system = ctrl.TransferFunction(num, den)
+
+        # システムの型を判別
+        poles = system.poles()
+        num_poles_at_origin = np.sum(np.isclose(poles, 0, atol=1e-6))
+
+        # 定常偏差の計算とUIへの反映
+        try:
+            dc_gain = ctrl.dcgain(system)
+        except Exception as e:
+            dc_gain = None
+
+        if num_poles_at_origin == 0:
+            system_type = "0型"
+            ep = 1 / (dc_gain + 1) if dc_gain is not None else "N/A"
+            ev = "∞"
+            ea = "∞"
+        elif num_poles_at_origin == 1:
+            system_type = "1型"
+            ep = 0
+            ev = 1 / dc_gain if dc_gain is not None else "N/A"
+            ea = "∞"
+        elif num_poles_at_origin == 2:
+            system_type = "2型"
+            ep = 0
+            ev = 0
+            ea = 1 / dc_gain if dc_gain is not None else "N/A"
+        else:
+            system_type = f"{num_poles_at_origin}型"
+            ep = "N/A"
+            ev = "N/A"
+            ea = "N/A"
+
+        # ラベルに計算結果を表示
+        self.system_type_label.setText(f"System Type: {system_type}")
+        self.system_gain_label.setText(f"System Gain: {dc_gain}")
+        self.error_p_label.setText(f"Position Error (ep): {ep}")
+        self.error_v_label.setText(f"Velocity Error (ev): {ev}")
+        self.error_a_label.setText(f"Acceleration Error (ea): {ea}")
+
 
     def plot_poles(self, num, den):
         system = ctrl.TransferFunction(num, den)
