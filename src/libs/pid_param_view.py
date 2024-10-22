@@ -252,6 +252,9 @@ class PIDSliderApp(QWidget):
         # 定常偏差の計算とUIへの反映
         try:
             dc_gain = ctrl.dcgain(system)
+            #print("dc_gain: ", dc_gain)
+            #print("num: ", num)
+            #print("den: ", den)
         except Exception as e:
             dc_gain = None
 
@@ -277,11 +280,17 @@ class PIDSliderApp(QWidget):
             ea = "N/A"
 
         # ラベルに計算結果を表示
+        dc_gain_str = f"{dc_gain:.2f}" if isinstance(dc_gain, (int, float)) else dc_gain
+        ep_str = f"{ep:.2f}" if isinstance(ep, (int, float)) else ep
+        ev_str = f"{ev:.2f}" if isinstance(ev, (int, float)) else ev
+        ea_str = f"{ea:.2f}" if isinstance(ea, (int, float)) else ea
+
         self.system_type_label.setText(f"System Type: {system_type}")
-        self.system_gain_label.setText(f"System Gain: {dc_gain}")
-        self.error_p_label.setText(f"Position Error (ep): {ep}")
-        self.error_v_label.setText(f"Velocity Error (ev): {ev}")
-        self.error_a_label.setText(f"Acceleration Error (ea): {ea}")
+        self.system_gain_label.setText(f"System Gain: {dc_gain_str}")
+        self.error_p_label.setText(f"Position Error (ep): {ep_str}")
+        self.error_v_label.setText(f"Velocity Error (ev): {ev_str}")
+        self.error_a_label.setText(f"Acceleration Error (ea): {ea_str}")
+
 
 
     def plot_poles(self, num, den):
