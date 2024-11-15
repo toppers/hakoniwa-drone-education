@@ -22,7 +22,7 @@ then
     source setup.bash
 fi
 
-if [ ! -z ${PYTHON_BIN} ]
+if [ -z ${PYTHON_BIN} ]
 then
     which python3.12
     if [ $? -eq 0 ]
