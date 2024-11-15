@@ -10,7 +10,6 @@ ENV LD_LIBRARY_PATH /usr/local/lib/hakoniwa:${LD_LIBRARY_PATH}
 ENV ROOT_DIR /
 ENV PYTHON_BIN python3
 
-
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     software-properties-common \

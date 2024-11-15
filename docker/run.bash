@@ -12,7 +12,8 @@ then
     :
 else
     mkdir -p workspace/root/var/lib/hakoniwa/config/
-    cp -rp installer/linux/config/* workspace/root/var/lib/hakoniwa/config/
+    cp -rp drone_control/config/* workspace/root/var/lib/hakoniwa/config/
+    cp -rp installer/config/* workspace/root/var/lib/hakoniwa/config/
 fi
 
 VAR_CONFIG_HOST_DIR=${HAKONIWA_TOP_DIR}/workspace/root/var/lib/hakoniwa/config

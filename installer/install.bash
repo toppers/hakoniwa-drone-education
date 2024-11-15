@@ -19,6 +19,7 @@ fi
 
 TOP_PATH=`(cd "$(dirname $script_path)/.." && pwd)`
 INSTALLER_PATH=`(cd "$(dirname $script_path)" && pwd)`
+export SRC_PATH=${TOP_PATH}/src
 DIR_PATH=`(cd "$(dirname $script_path)/${OS_TYPE}" && pwd)`
 UTILS_PATH=${DIR_PATH}/utils
 

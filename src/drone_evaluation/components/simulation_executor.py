@@ -24,7 +24,7 @@ class SimulationExecutor:
         self.evaluation_params = self.loader.load_params()
 
         # drone api
-        client = hakosim.MultirotorClient(self.pdu_config_path)
+        client = hakosim.MultirotorClient(self.pdu_config_path, "DroneTransporter")
         client.default_drone_name = self.drone_config_params['name']
         hako_binary_path = os.getenv('HAKO_BINARY_PATH', '/usr/local/lib/hakoniwa/hako_binary/offset')
         client.pdu_manager = hako_pdu.HakoPduManager(hako_binary_path, self.pdu_config_path)
