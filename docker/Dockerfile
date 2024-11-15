@@ -46,7 +46,7 @@ RUN mkdir -p ${ROOT_DIR}/etc/hakoniwa \
 WORKDIR /root/workspace
 
 # Clone the necessary repositories
-RUN git clone https://github.com/toppers/hakoniwa-px4sim.git || echo "hakoniwa-px4sim is already cloned."
+RUN git clone -b main https://github.com/toppers/hakoniwa-px4sim.git || echo "hakoniwa-px4sim is already cloned."
 
 # Initialize and update submodules
 WORKDIR /root/workspace/hakoniwa-px4sim/hakoniwa
@@ -97,6 +97,8 @@ RUN cp -rp hakoniwa-px4sim/hakoniwa/third-party/hakoniwa-ros2pdu/pdu/offset ${RO
 COPY requirements.txt /root/requirements.txt
 RUN pip3 install -r /root/requirements.txt
 
+ENV PYTHONPATH /root/work/src:/root/work/src/drone_evaluation:/root/work/src/drone_evaluation/components:${PYTHONPATH}
+
 # Add initialization script
 COPY docker/init_script.sh /root/init_script.sh
 
@@ -104,7 +106,6 @@ COPY docker/init_script.sh /root/init_script.sh
 RUN chmod +x /root/init_script.sh
 # Use CMD to run init_script.sh and keep shell open after it completes
 CMD ["/bin/bash", "-c", "/root/init_script.sh && exec /bin/bash"]
-
 
 # Expose necessary ports if required
 EXPOSE 8000

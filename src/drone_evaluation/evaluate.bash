@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DRONE_TEMPLATE_CONFIG=../src/drone_evaluation/template/drone_config.json
+DRONE_TEMPLATE_CONFIG=../installer/config/mixer-api/drone_config_0.json
 DRONE_CONFIG=root/var/lib/hakoniwa/config/mixer-api/drone_config_0.json
 PDU_CONFIG=root/var/lib/hakoniwa/config/custom.json
 
@@ -17,8 +17,27 @@ then
     exit 1
 fi
 
-source setup.bash
+if [ -f setup.bash ]
+then
+    source setup.bash
+fi
 
+if [ ! -z ${PYTHON_BIN} ]
+then
+    which python3.12
+    if [ $? -eq 0 ]
+    then
+        PYTHON_BIN=python3.12
+    else
+        which python3
+        if [ $? -eq 0 ]
+        then
+            PYTHON_BIN=python3
+        else
+            PYTHON_BIN=python
+        fi
+    fi
+fi
 function handler()
 {
     echo "SIGTERM"
@@ -26,9 +45,9 @@ function handler()
 trap handler SIGTERM
 
 VALUE=$(jq '.simulation.simulation_time_step' ${SCENARIO_CONFIG})
-python ../src/drone_evaluation/update_control_params.py ${HAKO_CONTROLLER_PARAM_FILE} SIMULATION_DELTA_TIME $VALUE
+${PYTHON_BIN} ../src/drone_evaluation/update_control_params.py ${HAKO_CONTROLLER_PARAM_FILE} SIMULATION_DELTA_TIME $VALUE
 
-python ../src/drone_evaluation/components/drone_config_updater.py \
+${PYTHON_BIN} ../src/drone_evaluation/components/drone_config_updater.py \
     ${DRONE_TEMPLATE_CONFIG} ${DRONE_CONFIG} ${SCENARIO_CONFIG}
 
 hako-px4sim 127.0.0.1 450 ext &
@@ -36,8 +55,8 @@ HAKO_PID=$!
 
 sleep 1
 
-python3.12 ../src/drone_evaluation/evaluator.py \
-            ${DRONE_CONFIG} ${PDU_CONFIG} ${SCENARIO_CONFIG} &
+${PYTHON_BIN} ../src/drone_evaluation/evaluator.py \
+        ${DRONE_CONFIG} ${PDU_CONFIG} ${SCENARIO_CONFIG} &
 EVAL_PID=$!
 
 sleep 3
