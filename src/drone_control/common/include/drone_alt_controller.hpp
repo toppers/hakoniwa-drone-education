@@ -105,7 +105,6 @@ public:
              */
             //out.thrust = (mass * gravity) + (throttle_gain * throttle_power);
             out.thrust = (throttle_gain * throttle_power);
-            //std::cout << "thrust: " << out.thrust << std::endl;
             spd_prev_out = out;
         }
         spd_simulation_time += delta_time;
