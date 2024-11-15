@@ -1,12 +1,7 @@
 #!/bin/bash
 
 # Get the directory path from the script_path
-DIR_PATH=`pwd`/installer/linux
-UTILS_PATH=${DIR_PATH}/utils
-
-# Copy config files
-cp workspace/hakoniwa-px4sim/hakoniwa/third-party/hakoniwa-core-cpp-client/core/cpp_core_config.json ${ROOT_DIR}/etc/hakoniwa/cpp_core_config.json
-#cp -rp ${DIR_PATH}/config/* ${ROOT_DIR}/var/lib/hakoniwa/config/
+UTILS_PATH=/root/workspace/installer/linux/utils
 
 # Set up mmap
 export default_core_mmap_path=${ROOT_DIR}/var/lib/hakoniwa/mmap

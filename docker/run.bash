@@ -12,7 +12,7 @@ then
     :
 else
     mkdir -p workspace/root/var/lib/hakoniwa/config/
-    cp -rp drone_control/config/* workspace/root/var/lib/hakoniwa/config/
+    cp -rp src/drone_control/config/* workspace/root/var/lib/hakoniwa/config/
     cp -rp installer/config/* workspace/root/var/lib/hakoniwa/config/
 fi
 
