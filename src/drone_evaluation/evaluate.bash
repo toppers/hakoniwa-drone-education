@@ -53,12 +53,14 @@ ${PYTHON_BIN} ../src/drone_evaluation/components/drone_config_updater.py \
 hako-px4sim 127.0.0.1 450 ext &
 HAKO_PID=$!
 
+# TODO sleep time should be changed to wait for hako-px4sim to be ready
 sleep 1
 
 ${PYTHON_BIN} ../src/drone_evaluation/evaluator.py \
         ${DRONE_CONFIG} ${PDU_CONFIG} ${SCENARIO_CONFIG} &
 EVAL_PID=$!
 
+# TODO sleep time should be changed to wait for evaluator to be ready
 sleep 3
 
 hako-cmd start
