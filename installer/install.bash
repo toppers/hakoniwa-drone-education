@@ -1,4 +1,10 @@
 #!/bin/bash
+if [ `uname` = "Darwin" ]
+then
+    OS_TYPE=mac
+else
+    OS_TYPE=linux
+fi
 
 script_path=$(realpath "$0")
 echo "Script path: $script_path"
@@ -11,7 +17,9 @@ else
     export SUDO=
 fi
 
-DIR_PATH=`(cd "$(dirname $script_path)" && pwd)`
+TOP_PATH=`(cd "$(dirname $script_path)/.." && pwd)`
+INSTALLER_PATH=`(cd "$(dirname $script_path)" && pwd)`
+DIR_PATH=`(cd "$(dirname $script_path)/${OS_TYPE}" && pwd)`
 UTILS_PATH=${DIR_PATH}/utils
 
 # ROOT_DIR ディレクトリは好みで変えてください
@@ -37,7 +45,8 @@ then
     exit 1
 fi
 
-cp -rp ${DIR_PATH}/config/* ${ROOT_DIR}/var/lib/hakoniwa/config/
+cp -rp ${TOP_PATH}/src/drone_control/config/* ${ROOT_DIR}/var/lib/hakoniwa/config/
+cp -rp ${INSTALLER_PATH}/config/* ${ROOT_DIR}/var/lib/hakoniwa/config/
 
 export default_core_mmap_path=${ROOT_DIR}/var/lib/hakoniwa/mmap
 export config_file=${ROOT_DIR}/etc/hakoniwa/cpp_core_config.json
