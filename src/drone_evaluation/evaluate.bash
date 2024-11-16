@@ -44,6 +44,9 @@ function handler()
 }
 trap handler SIGTERM
 
+# copy original param-api-mixer.txt to /var/lib/hakoniwa/config
+cp ../src/drone_control/config/param-api-mixer.txt ${HAKO_CONTROLLER_PARAM_FILE}
+
 VALUE=$(jq '.simulation.simulation_time_step' ${SCENARIO_CONFIG})
 ${PYTHON_BIN} ../src/drone_evaluation/update_control_params.py ${HAKO_CONTROLLER_PARAM_FILE} SIMULATION_DELTA_TIME $VALUE
 
