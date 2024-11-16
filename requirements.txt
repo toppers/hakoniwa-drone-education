@@ -4,3 +4,4 @@ numpy
 sympy
 pandas
 scikit-learn
+pyQt5
