@@ -189,3 +189,12 @@ $T_0 + \Delta T(t) = T_0 + 2 C_t \omega_0 \Delta \omega$
 となって、相殺される。
 
 $\Delta T(t) = 2 C_t \omega_0 \Delta \omega$
+
+ラプラス変換すると以下の通り。
+
+$\Delta T(s) = 2 C_t \omega_0 \Delta \omega(s)$
+
+伝達関数で表すと以下の通り。
+
+$G_{\Delta T}(s) = \frac{\Delta T(s)}{\Delta \omega(s)} = 2 C_t \omega_0$
+
