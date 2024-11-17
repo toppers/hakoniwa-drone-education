@@ -126,9 +126,9 @@ $\frac{K^2}{R} \omega_0 + C_Q \omega_0^2 = \frac{K}{R} e_0$
 
 $J \dot{\Delta \omega} + \frac{K^2}{R} (\omega_0 + \Delta \omega) + C_Q (\omega_0 + \Delta \omega)^2 = \frac{K}{R} (e_0 + \Delta e)$
 
-この指揮は、釣り合いの指揮と照らし合わせて削除出る項があり、以下の通りとなる。
+この式は、釣り合いの指揮と照らし合わせて削除できる項があり、以下の通りとなる。
 
-**線形化モータープロペラ系のモデル**
+**線形化されたモータープロペラ系のモデル**
 
 $J \dot{\Delta \omega} + ( \frac{K^2}{R} + 2 C_Q \omega_0 ) \Delta \omega = \frac{K}{R} \Delta e$
 
@@ -160,4 +160,5 @@ $\Delta e = V_{BAT} \Delta d$
 
 デュティーを入力とした伝達関数は以下の通り。
 
-$G_{\Delta \omega}(s) = \frac{\Delta \omega (s)}{\Delta d(s)} = \frac{K_m}{\tau_m s + 1} \frac{1}{V_{BAT}}$
+$G_{\Delta \omega}(s) = \frac{\Delta \omega (s)}{\Delta d(s)} = \frac{K_m V_{BAT}}{\tau_m s + 1}$
+
