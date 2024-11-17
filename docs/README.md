@@ -23,7 +23,9 @@ https://www.docswell.com/s/Kouhei_Ito/K38V1P-2024-02-10-094123#p125
 ![image](images/architecture.png)
 
 
-## PID制御の数式
+# モデル化
+
+## PID制御のモデル化
 
 **時間領域**
 
@@ -31,13 +33,13 @@ $u(t) = K_p e(t) + K_i \int_0^t e(\tau) d\tau + K_d \dot{e(t)}$
 
 $e(t) = r(t) - y(t)$
 
-- u(t) : 制御入力
-- e(t) : 偏差
-- r(t) : 目標値
-- y(t) : 出力値
-- K_p : 比例ゲイン
-- K_i : 積分ゲイン
-- K_d : 微分ゲイン
+- $u(t)$ : 制御入力
+- $e(t)$ : 偏差
+- $r(t)$ : 目標値
+- $y(t)$ : 出力値
+- $K_p$ : 比例ゲイン
+- $K_i$ : 積分ゲイン
+- $K_d$ : 微分ゲイン
 
 **ラプラス領域**
 
@@ -45,13 +47,13 @@ $U(s) = K_p E(s) + K_i \frac{1}{s} E(s) + K_d s E(s)$
 
 $E(s) = R(s) - Y(s)$
 
-- U(s) : 制御入力
-- E(s) : 偏差
-- R(s) : 目標値
-- Y(s) : 出力値
-- K_p : 比例ゲイン
-- K_i : 積分ゲイン
-- K_d : 微分ゲイン
+- $U(s)$ : 制御入力
+- $E(s)$ : 偏差
+- $R(s)$ : 目標値
+- $Y(s)$ : 出力値
+- $K_p$ : 比例ゲイン
+- $K_i$ : 積分ゲイン
+- $K_d$ : 微分ゲイン
 
 # Z軸速度方向の線形モデル化
 
@@ -82,9 +84,9 @@ $sV_z(s) = -\frac{\Delta T(s)}{m} - \frac{D_z}{m} V_z(s)$
 $G_{V_z}(s) = \frac{V_z(s)}{\Delta T(s)} = \frac{-1}{ms + D_z}$
 
 
-# モータプロペラ系のモデルの線形モデル化
+## モータプロペラ系のモデルの線形モデル化
 
-モータプロペラの運動方程式：
+**モータプロペラの運動方程式：**
 
 $J \dot{\omega} + C_Q \omega^2 = K i$
 
@@ -94,7 +96,7 @@ $J \dot{\omega} + C_Q \omega^2 = K i$
 - $i$ : モータ電流 [ $A$ ]
 - $\omega$ : 角速度[ $rad/s$ ]
 
-電気の方程式：
+**電気の方程式：**
 
 $R i + K \omega = e$
 
@@ -158,7 +160,7 @@ $\Delta e = V_{BAT} \Delta d$
 
 $G_{\Delta \omega}(s) = \frac{\Delta \omega (s)}{\Delta d(s)} = \frac{K_m V_{BAT}}{\tau_m s + 1}$
 
-# スラスタ（推力）の線形モデル化
+## スラスタ（推力）の線形モデル化
 
 $T(t) = C_t \omega^2$
 
@@ -193,4 +195,28 @@ $\Delta T(s) = 2 C_t \omega_0 \Delta \omega(s)$
 伝達関数で表すと以下の通り。
 
 $G_{\Delta T}(s) = \frac{\Delta T(s)}{\Delta \omega(s)} = 2 C_t \omega_0$
+
+
+## ミキサーの線型モデル化
+
+Z軸方向の移動のみを考えた場合、トルクを０とできる。この場合、回転数と推力の関係は以下の通りとなる。
+
+$\omega^2 = \frac{T(t)}{C_t}$
+
+ホバリング状態からの変化量の観点で記述すると、以下のようになり、
+
+$\omega = \omega_{0} + \Delta \omega$
+
+$(\omega_{0} + \Delta \omega)^2 = \frac{T_0 + \Delta T(t)}{C_t}$
+
+$\omega_{0}^2 + 2 \omega_{0} \Delta \omega + \Delta \omega^2 = \frac{T_0 + \Delta T(t)}{C_t}$
+
+
+ここで、 $\Delta \omega$ の２次の項を無視し、さらに釣り合いの式を与えると、 $\omega_{0}^2 = \frac{T_0}{C_t}$ であるため、以下の通りとなる。
+
+$2 \omega_{0} \Delta \omega = \frac{\Delta T(t)}{C_t}$
+
+伝達関数で表すと以下の通りとなり、スラスタと逆の伝達関数となる。
+
+$G_{\Delta \omega}(s) = \frac{\Delta \omega(s)}{\Delta T(s)} = \frac{1}{2 C_t \omega_{0}}$
 
