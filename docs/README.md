@@ -270,5 +270,5 @@ $G_{V_z}(s) = \frac{V_z(s)}{\Delta T(s)} = \frac{-1}{ms + D_z}$
   - $G_{\Delta T}(s) = \frac{\Delta T(s)}{\Delta \omega(s)} = 2 N C_t \omega_0$
   - $G_{V_z}(s) = \frac{V_z(s)}{\Delta T(s)} = \frac{-1}{ms + D_z}$
 
-$L(s) = - \frac{K_m V_{BAT} (s^2 K_d + s K_p + K_i)}{2 \omega_0 s (ms + D_z)(\tau_m s + 1)}$
+$L(s) = \frac{V_z(s)}{E(s)} = - \frac{K_m V_{BAT} (s^2 K_d + s K_p + K_i)}{2 \omega_0 s (ms + D_z)(\tau_m s + 1)}$
 
