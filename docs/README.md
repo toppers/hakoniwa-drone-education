@@ -55,10 +55,6 @@ $E(s) = R(s) - Y(s)$
 
 # Z軸速度方向の線形モデル化
 
-## プラントモデル
-
-### Z軸方向の運動方程式
-
 **時間領域**
 
 $\dot{V_z} = -\frac{T(t)}{m} + g - \frac{D_z}{m} V_z$
@@ -86,7 +82,7 @@ $sV_z(s) = -\frac{\Delta T(s)}{m} - \frac{D_z}{m} V_z(s)$
 $G_{V_z}(s) = \frac{V_z(s)}{\Delta T(s)} = \frac{-1}{ms + D_z}$
 
 
-### モータプロペラ系のモデル
+# モータプロペラ系のモデルの線形モデル化
 
 モータプロペラの運動方程式：
 
@@ -162,7 +158,7 @@ $\Delta e = V_{BAT} \Delta d$
 
 $G_{\Delta \omega}(s) = \frac{\Delta \omega (s)}{\Delta d(s)} = \frac{K_m V_{BAT}}{\tau_m s + 1}$
 
-### スラスタ（推力）のモデル
+# スラスタ（推力）の線形モデル化
 
 $T(t) = C_t \omega^2$
 
@@ -182,7 +178,7 @@ $T_0 + \Delta T(t) = C_t \omega_0^2 + 2 C_t \omega_0 \Delta \omega + C_t \Delta 
 
 $T_0 + \Delta T(t) = C_t \omega_0^2 + 2 C_t \omega_0 \Delta \omega$
 
-さらに、$T_0$ はホバリング推力であり、$T_0 = C_t \omega_0^2 $ であるため、
+さらに、 $T_0$ はホバリング推力であり、 $T_0 = C_t \omega_0^2$ であるため、
 
 $T_0 + \Delta T(t) = T_0 + 2 C_t \omega_0 \Delta \omega$
 
