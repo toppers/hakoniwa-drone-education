@@ -92,18 +92,18 @@ $G_{V_z}(s) = \frac{V_z(s)}{\Delta T(s)} = \frac{-1}{ms + D_z}$
 
 $J \dot{\omega} + C_Q \omega^2 = K i$
 
-- $J$ : モーターイナーシャ
-- $C_Q$ : トルク係数
-- $K$ : 逆起電力定数
-- $i$ : モータ電流
-- $\omega$ : 角速度(rad/s)
+- $J$ : モーターイナーシャ[ $kg m^2$ ]
+- $C_Q$ : トルク係数 [ $Nms^2/rad^2$ ]
+- $K$ : ローターのトルク定数。[ $Nm/A$ ]
+- $i$ : モータ電流 [ $A$ ]
+- $\omega$ : 角速度[ $rad/s$ ]
 
 電気の方程式：
 
 $R i + K \omega = e$
 
-- $R$ : モータ抵抗
-- $e$ : 誘起起電力
+- $R$ : モータ抵抗[ $\Omega$ ]
+- $e$ : 誘起モーターに印加される電圧[ $V$ ]
 
 モータプロペラの非線形モデル：
 
@@ -162,3 +162,30 @@ $\Delta e = V_{BAT} \Delta d$
 
 $G_{\Delta \omega}(s) = \frac{\Delta \omega (s)}{\Delta d(s)} = \frac{K_m V_{BAT}}{\tau_m s + 1}$
 
+### スラスタ（推力）のモデル
+
+$T(t) = C_t \omega^2$
+
+- $C_t$ : 推力係数 [ $Ns^2/rad^2$ ]
+
+ホバリング状態からの変化量という記述をする場合、以下のようになり、
+
+$T_0 = C_t \omega_0^2$
+
+代入すると、
+
+$T_0 + \Delta T(t) = C_t (\omega_0 + \Delta \omega)^2$
+
+$T_0 + \Delta T(t) = C_t \omega_0^2 + 2 C_t \omega_0 \Delta \omega + C_t \Delta \omega^2$
+
+二次の項を無視すると、
+
+$T_0 + \Delta T(t) = C_t \omega_0^2 + 2 C_t \omega_0 \Delta \omega$
+
+さらに、$T_0$ はホバリング推力であり、$T_0 = C_t \omega_0^2 $ であるため、
+
+$T_0 + \Delta T(t) = T_0 + 2 C_t \omega_0 \Delta \omega$
+
+となって、相殺される。
+
+$\Delta T(t) = 2 C_t \omega_0 \Delta \omega$
