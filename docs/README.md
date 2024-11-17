@@ -96,17 +96,19 @@ $2 \omega_{0} \Delta \omega = \frac{ \Delta T(t)}{N C_t}$
 
 $G_{\Delta \omega}(s) = \frac{\Delta \omega(s)}{\Delta T(s)} = \frac{1}{2 N C_t \omega_{0}}$
 
-ここで、デューティ値と回転数の関係は以下の通り。
+ここで、デューティ値と回転数の関係は以下とし、
 
 $d = \frac{\omega}{\omega_{max}}$
 
+代入すると、以下の通りとなる。
+
 $d_0 + \Delta d = \frac{\omega_0 + \Delta \omega}{ 2 \omega_{0}}$
 
-$d_0 = 0.5$ であるため、以下の通りとなる。
+さらに、ホバリング状態では、 $d_0 = 0.5$ と仮定すると、以下となり、
 
 $\Delta d = \frac{\Delta \omega}{2 \omega_{0}}$
 
-そのため、デューティを分子とした時の伝達関数は、以下の通りとなる。
+デューティの伝達関数は、以下の通りとなる。
 
 $G_{\Delta d(s)} = \frac{\Delta d(s)}{\Delta T(s)} = \frac{1}{4 \omega_{0}^2 N C_t}$
 
@@ -151,7 +153,7 @@ $\frac{K^2}{R} \omega_0 + C_Q \omega_0^2 = \frac{K}{R} e_0$
 
 $J \dot{\Delta \omega} + \frac{K^2}{R} (\omega_0 + \Delta \omega) + C_Q (\omega_0 + \Delta \omega)^2 = \frac{K}{R} (e_0 + \Delta e)$
 
-この式は、釣り合いの指揮と照らし合わせて削除できる項があり、以下の通りとなる。
+この式は、釣り合いの式と照らし合わせて削除できる項があり、以下の通りとなる。
 
 **線形化されたモータープロペラ系のモデル**
 
@@ -183,7 +185,7 @@ $\Delta e = V_{BAT} \Delta d$
 - $V_{BAT}$ : 電源電圧
 - $\Delta d$ : デューティー
 
-デュティーを入力とした伝達関数は以下の通り。
+デュティーを入力とした回転数の伝達関数は以下の通りとなる。
 
 $G_{\Delta \omega}(s) = \frac{\Delta \omega (s)}{\Delta d(s)} = \frac{K_m V_{BAT}}{\tau_m s + 1}$
 
@@ -244,7 +246,7 @@ $\dot{V_z} = -\frac{T(t)}{m} + g - \frac{D_z}{m} V_z$
 
 $\dot{V_z} = -\frac{T_0 + \Delta T(t)}{m} + g - \frac{D_z}{m} V_z$
 
-$T_0$ : ホバリング推力であり、$T_0 = mg$
+$T_0$ : ホバリング推力であり、$T_0 = mg$ より、
 
 $\dot{V_z} = -\frac{\Delta T(t)}{m} - \frac{D_z}{m} V_z$
 
