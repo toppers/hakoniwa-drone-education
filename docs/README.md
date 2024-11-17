@@ -181,11 +181,11 @@ $T_0 = N C_t \omega_0^2$
 
 $T_0 + \Delta T(t) = N C_t (\omega_0 + \Delta \omega)^2$
 
-$T_0 + \Delta T(t) = N C_t \omega_0^2 + 2 C_t \omega_0 \Delta \omega + C_t \Delta \omega^2$
+$T_0 + \Delta T(t) = N C_t (\omega_0^2 + 2 C_t \omega_0 \Delta \omega + C_t \Delta \omega^2)$
 
 二次の項を無視すると、
 
-$T_0 + \Delta T(t) = N C_t \omega_0^2 + 2 C_t \omega_0 \Delta \omega$
+$T_0 + \Delta T(t) = N C_t (\omega_0^2 + 2 C_t \omega_0 \Delta \omega)$
 
 さらに、 $T_0$ はホバリング推力であり、 $T_0 = N C_t \omega_0^2$ であるため、
 
