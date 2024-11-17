@@ -25,7 +25,11 @@ https://www.docswell.com/s/Kouhei_Ito/K38V1P-2024-02-10-094123#p125
 
 # モデル化
 
-## PID制御のモデル化
+まずは、Vzの制御を考えます。
+
+![image](images/vz-block.png)
+
+## PID制御(Vz制御)のモデル化
 
 **時間領域**
 
@@ -55,7 +59,9 @@ $E(s) = R(s) - Y(s)$
 - $K_i$ : 積分ゲイン
 - $K_d$ : 微分ゲイン
 
-# Z軸速度方向の線形モデル化
+## Z軸速度方向の線形モデル化
+
+ロール、ピッチ、ヨー角度は０として、Z軸方向の速度のみを考える。
 
 **時間領域**
 
@@ -162,61 +168,82 @@ $G_{\Delta \omega}(s) = \frac{\Delta \omega (s)}{\Delta d(s)} = \frac{K_m V_{BAT
 
 ## スラスタ（推力）の線形モデル化
 
-$T(t) = C_t \omega^2$
+$T(t) = N C_t \omega^2$
 
+- N : プロペラの数
 - $C_t$ : 推力係数 [ $Ns^2/rad^2$ ]
 
 ホバリング状態からの変化量という記述をする場合、以下のようになり、
 
-$T_0 = C_t \omega_0^2$
+$T_0 = N C_t \omega_0^2$
 
 代入すると、
 
-$T_0 + \Delta T(t) = C_t (\omega_0 + \Delta \omega)^2$
+$T_0 + \Delta T(t) = N C_t (\omega_0 + \Delta \omega)^2$
 
-$T_0 + \Delta T(t) = C_t \omega_0^2 + 2 C_t \omega_0 \Delta \omega + C_t \Delta \omega^2$
+$T_0 + \Delta T(t) = N C_t \omega_0^2 + 2 C_t \omega_0 \Delta \omega + C_t \Delta \omega^2$
 
 二次の項を無視すると、
 
-$T_0 + \Delta T(t) = C_t \omega_0^2 + 2 C_t \omega_0 \Delta \omega$
+$T_0 + \Delta T(t) = N C_t \omega_0^2 + 2 C_t \omega_0 \Delta \omega$
 
-さらに、 $T_0$ はホバリング推力であり、 $T_0 = C_t \omega_0^2$ であるため、
+さらに、 $T_0$ はホバリング推力であり、 $T_0 = N C_t \omega_0^2$ であるため、
 
-$T_0 + \Delta T(t) = T_0 + 2 C_t \omega_0 \Delta \omega$
+$T_0 + \Delta T(t) = T_0 + 2 N C_t \omega_0 \Delta \omega$
 
 となって、相殺される。
 
-$\Delta T(t) = 2 C_t \omega_0 \Delta \omega$
+$\Delta T(t) = 2 N C_t \omega_0 \Delta \omega$
 
 ラプラス変換すると以下の通り。
 
-$\Delta T(s) = 2 C_t \omega_0 \Delta \omega(s)$
+$\Delta T(s) = 2 N C_t \omega_0 \Delta \omega(s)$
 
 伝達関数で表すと以下の通り。
 
-$G_{\Delta T}(s) = \frac{\Delta T(s)}{\Delta \omega(s)} = 2 C_t \omega_0$
+$G_{\Delta T}(s) = \frac{\Delta T(s)}{\Delta \omega(s)} = 2 N C_t \omega_0$
 
 
 ## ミキサーの線型モデル化
 
 Z軸方向の移動のみを考えた場合、トルクを０とできる。この場合、回転数と推力の関係は以下の通りとなる。
 
-$\omega^2 = \frac{T(t)}{C_t}$
+$\omega^2 = \frac{T(t)}{N C_t}$
 
 ホバリング状態からの変化量の観点で記述すると、以下のようになり、
 
 $\omega = \omega_{0} + \Delta \omega$
 
-$(\omega_{0} + \Delta \omega)^2 = \frac{T_0 + \Delta T(t)}{C_t}$
+$(\omega_{0} + \Delta \omega)^2 = \frac{T_0 + \Delta T(t)}{N C_t}$
 
-$\omega_{0}^2 + 2 \omega_{0} \Delta \omega + \Delta \omega^2 = \frac{T_0 + \Delta T(t)}{C_t}$
+$\omega_{0}^2 + 2 \omega_{0} \Delta \omega + \Delta \omega^2 = \frac{T_0 + \Delta T(t)}{N C_t}$
 
 
-ここで、 $\Delta \omega$ の２次の項を無視し、さらに釣り合いの式を与えると、 $\omega_{0}^2 = \frac{T_0}{C_t}$ であるため、以下の通りとなる。
+ここで、 $\Delta \omega$ の２次の項を無視し、さらに釣り合いの式を与えると、 $\omega_{0}^2 = \frac{T_0}{N C_t}$ であるため、以下の通りとなる。
 
-$2 \omega_{0} \Delta \omega = \frac{\Delta T(t)}{C_t}$
+$2 \omega_{0} \Delta \omega = \frac{ \Delta T(t)}{N C_t}$
 
 伝達関数で表すと以下の通りとなり、スラスタと逆の伝達関数となる。
 
-$G_{\Delta \omega}(s) = \frac{\Delta \omega(s)}{\Delta T(s)} = \frac{1}{2 C_t \omega_{0}}$
+$G_{\Delta \omega}(s) = \frac{\Delta \omega(s)}{\Delta T(s)} = \frac{1}{2 N C_t \omega_{0}}$
+
+ここで、デューティ値と回転数の関係は以下の通り。
+
+$d = \frac{\omega}{\omega_{max}}$
+
+$d_0 + \Delta d = \frac{\omega_0 + \Delta \omega}{ 2 \omega_{0}}$
+
+$d_0 = 0.5$ であるため、以下の通りとなる。
+
+$\Delta d = \frac{\Delta \omega}{2 \omega_{0}}$
+
+そのため、デューティを分子とした時の伝達関数は、以下の通りとなる。
+
+$G_{\Delta d(s)} = \frac{\Delta d(s)}{\Delta T(s)} = \frac{1}{4 \omega_{0}^2 N C_t}$
+
+# Z軸速度制御の伝達関数
+
+## 開ループ伝達関数
+
+
 
