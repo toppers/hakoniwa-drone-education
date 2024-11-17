@@ -138,7 +138,7 @@ $J s \Delta \omega(s) + ( \frac{K^2}{R} + 2 C_Q \omega_0 ) \Delta \omega(s) = \f
 
 伝達関数で表すと以下の通り。
 
-$ G_{\Delta \omega}(s) = \frac{\Delta \omega(s)}{\Delta e(s)} = \frac{K}{J R s + (K^2 + 2 R C_Q \omega_0)}$
+$G_{\Delta \omega}(s) = \frac{\Delta \omega(s)}{\Delta e(s)} = \frac{K}{J R s + (K^2 + 2 R C_Q \omega_0)}$
 
 ここで、一次遅れ系の伝達関数表現で表すと、
 
