@@ -33,31 +33,35 @@ https://www.docswell.com/s/Kouhei_Ito/K38V1P-2024-02-10-094123#p125
 
 **時間領域**
 
-$u(t) = K_p e(t) + K_i \int_0^t e(\tau) d\tau + K_d \dot{e(t)}$
+$T(t) = mg + K_p e(t) + K_i \int_0^t e(\tau) d\tau + K_d \dot{e(t)}$
 
 $e(t) = r(t) - y(t)$
 
-- $u(t)$ : 制御入力
+- $T(t)$ : 制御入力
 - $e(t)$ : 偏差
 - $r(t)$ : 目標値
 - $y(t)$ : 出力値
+- $m$ : 質量
+- $g$ : 重力加速度
 - $K_p$ : 比例ゲイン
 - $K_i$ : 積分ゲイン
 - $K_d$ : 微分ゲイン
+
+$T(t) = T_0 + \Delta T(t)$
+
+として、釣り合いの式を考えると、以下の通りとなる。
+
+$T_0 = mg$ であるため、
+
+$\Delta T(t) =  K_p e(t) + K_i \int_0^t e(\tau) d\tau + K_d \dot{e(t)}$
 
 **ラプラス領域**
 
-$U(s) = K_p E(s) + K_i \frac{1}{s} E(s) + K_d s E(s)$
+$\Delta T(s) = K_p  E(s) + K_i \frac{1}{s}  E(s) + K_d s  E(s)$
 
-$E(s) = R(s) - Y(s)$
+これを伝達関数にすると以下の通り。
 
-- $U(s)$ : 制御入力
-- $E(s)$ : 偏差
-- $R(s)$ : 目標値
-- $Y(s)$ : 出力値
-- $K_p$ : 比例ゲイン
-- $K_i$ : 積分ゲイン
-- $K_d$ : 微分ゲイン
+$G_{\Delta T}(s) = \frac{\Delta T(s)}{E(s)} = K_p + \frac{K_i}{s} + K_d s$
 
 ## Z軸速度方向の線形モデル化
 
