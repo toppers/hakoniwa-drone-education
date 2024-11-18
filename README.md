@@ -1,6 +1,65 @@
 # hakoniwa-drone-education
 
+# 線形モデル解析手順
 
+線形モデル解析では、Pythonライブラリを利用します。
+
+そのため、最初に、以下のコマンドでPythonライブラリをインストールしてください。
+
+```bash
+pip install -r requirements.txt
+```
+
+線形モデル解析は以下の２ステップで行います。
+
+1. 解析的に求めた線形モデルの伝達関数を Json ファイルで定義する
+2. 定義したJsonファイルの伝達関数を用いて、古典制御ベースの道具を用いて解析を行う
+
+## 1. 解析的に求めた線形モデルの伝達関数を Json ファイルで定義する
+
+[Json ファイルの作成手順](models/README.md)
+
+
+## 2. 定義したJsonファイルの伝達関数を用いて、古典制御ベースの道具を用いて解析を行う
+
+
+以下のコマンドを実行することで、線形モデル解析を行うことができます。
+
+```bash
+ python src/libs/pid_param_view.py models/expanded_models/expanded_control_alt_spd.json --uptime 100 --input_increment 0.01 --step --bode
+```
+
+成功すると、下図のように、ステップ応答とボード線図および極配置図が表示されます。
+
+![image](docs/images/bode-step-pole.png)
+
+左下にあるPIDパラメータ調整を行うことで、ステップ応答やボード線図、極配置図が変化します。
+
+本ツールの使い方の詳細は、helpを参照してください。
+
+```bash
+ python src/libs/pid_param_view.py -h
+usage: pid_param_view.py [-h] [--uptime UPTIME] [--max_input_value MAX_INPUT_VALUE] [--input_increment INPUT_INCREMENT] [--step] [--bode] [--ny] [--p P] [--i I] [--d D] file_path
+
+PID パラメータ調整とステップ応答
+
+positional arguments:
+  file_path             Transfer function JSONファイルのパス
+
+options:
+  -h, --help            show this help message and exit
+  --uptime UPTIME       グラフ描画間隔。単位はmsecです
+  --max_input_value MAX_INPUT_VALUE
+                        入力可能な最大値
+  --input_increment INPUT_INCREMENT
+                        数値入力のステップサイズ
+  --step                ステップ応答を表示するかどうか
+  --bode                ボード線図と位相線図を表示するかどうか
+  --ny                  ナイキスト線図を表示するかどうか
+  --p P                 Pゲインのパラメータ名
+  --i I                 Iゲインのパラメータ名
+  --d D                 Dゲインのパラメータ名
+```
 
 # 箱庭ドローンシミュレータの環境構築手順
 
