@@ -10,9 +10,9 @@ def load_json(file_path):
     with open(file_path, 'r') as file:
         return json.load(file)
 
-def merge_json_files(base_dir, config_file):
-    """alt_control.jsonから指定されたJSONファイルを読み込んでマージする"""
-    config_path = os.path.join(base_dir, config_file)
+def merge_json_files(base_dir, config_path):
+    """指定されたJSONファイルを読み込んでマージする"""
+    print(f"base_dir: {base_dir} config_file: {config_path}")
     config_data = load_json(config_path)
     
     merged_data = {}
@@ -21,6 +21,7 @@ def merge_json_files(base_dir, config_file):
     if 'plants' in config_data:
         merged_data['plants'] = []
         for json_file in config_data['plants']:
+            print(f"json_file: {json_file}")
             json_path = os.path.join(base_dir, 'plants', json_file)
             try:
                 merged_data['plants'].append(load_json(json_path))
@@ -59,17 +60,18 @@ def save_json(data, output_file):
 
 def main():
     parser = argparse.ArgumentParser(description='alt_control.jsonを読み込み展開する')
-    parser.add_argument('config_file', help='展開するalt_control.jsonのパス')
+    parser.add_argument('base_dir', help='base_modelsのディレクトリ')
+    parser.add_argument('config_file', help='展開するcombined modelのパス')
     parser.add_argument('output_file', help='展開後のJSONファイルの出力先')
 
     args = parser.parse_args()
 
     # alt_control.jsonのディレクトリを取得
-    base_dir = os.path.dirname(args.config_file)
+    base_dir = args.base_dir
 
     try:
         # alt_control.jsonを展開してマージ
-        merged_data = merge_json_files(base_dir, os.path.basename(args.config_file))
+        merged_data = merge_json_files(base_dir, args.config_file)
 
         # 展開後のJSONを保存
         save_json(merged_data, args.output_file)

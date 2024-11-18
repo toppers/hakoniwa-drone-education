@@ -1,8 +1,8 @@
 {
     "plants":
     [
-        "rotor.json",
-        "spd_altitude.json"
+        "rotor_thruster.json",
+        "alt_spd.json"
     ],
     "controllers":
     [
