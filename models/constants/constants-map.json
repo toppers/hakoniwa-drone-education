@@ -1,0 +1,22 @@
+{
+    "m": "config_drone:components.droneDynamics.mass_kg",
+    "g": "config_pid:GRAVITY",
+    "N": "value:4",
+    "d": "config_drone:components.droneDynamics.airFrictionCoefficient[0]",
+    "R": "config_drone:components.rotor.dynamics_constants.R",
+    "Cq": "config_drone:components.rotor.dynamics_constants.Cq",
+    "K": "config_drone:components.rotor.dynamics_constants.K",
+    "D": "config_drone:components.rotor.dynamics_constants.D",
+    "J": "config_drone:components.rotor.dynamics_constants.J",
+    "Ct": "config_drone:components.thruster.Ct",
+    "W0": "calc:math.sqrt((m * g) / (N * Ct))",
+    "Km": "calc:(K) / ((K * K) + 2* R * Cq * W0)",
+    "Tm": "calc:(J * R) / ((K * K) + 2* R * Cq * W0)",
+    "VBat": "config_drone:components.battery.NominalVoltage",
+    "PID_ALT_SPD_Kp": "config_pid:PID_ALT_SPD_Kp",
+    "PID_ALT_SPD_Ki": "config_pid:PID_ALT_SPD_Ki",
+    "PID_ALT_SPD_Kd": "config_pid:PID_ALT_SPD_Kd",
+    "PID_ALT_Kp": "config_pid:PID_ALT_Kp",
+    "PID_ALT_Ki": "config_pid:PID_ALT_Ki",
+    "PID_ALT_Kd": "config_pid:PID_ALT_Kd"
+}
