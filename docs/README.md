@@ -129,7 +129,7 @@ $\Delta d = \frac{K + \frac{2 C_q R}{K}  }{V_{BAT}}\Delta \omega$
 $\frac{\Delta d}{\Delta \omega} = \frac{K^2 + 2 C_q R  }{K V_{BAT}}$
 
 
-デューティの伝達関数は、以下の通りとなる。
+ここで、
 
 $G_{\Delta \omega}(s) = \frac{\Delta \omega(s)}{\Delta T(s)} = \frac{1}{2 N C_t \omega_{0}}$
 
