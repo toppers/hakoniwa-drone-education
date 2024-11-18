@@ -133,7 +133,7 @@ $\frac{\Delta d}{\Delta \omega} = \frac{K^2 + 2 C_q R  }{K V_{BAT}}$
 
 $G_{\Delta \omega}(s) = \frac{\Delta \omega(s)}{\Delta T(s)} = \frac{1}{2 N C_t \omega_{0}}$
 
-を思い出して、デューティと回転数の関係を考えると、以下の通りとなる。
+を思い出して、デューティの伝達関数を考えると、以下の通りとなる。
 
 $G_{\Delta d(s)} = \frac{\Delta d(s)}{\Delta T(s)} =  \frac{\Delta \omega(s)}{\Delta T(s)} \frac{\Delta d(s)}{\Delta \omega(s)}  = \frac{1}{2 N C_t \omega_{0}} \frac{K^2 + 2 C_q R  }{K V_{BAT}}$
 
