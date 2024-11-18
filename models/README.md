@@ -31,3 +31,10 @@
 python src/libs/expand_constants.py src/drone_control/config/param-api-mixer.txt installer/config/mixer-api/drone_config_0.json models/constants/constants-map.json ./models/constants/constants.json
 ```
 
+# 展開モデルの作成方法
+
+plant_alt_spd.jsonを例に説明します。
+
+```bash
+python src/libs/expand_json.py models/base_models models/combined_models/plant_alt_spd.json models/expanded_models/expanded_plant_alt_spd.json
+```
