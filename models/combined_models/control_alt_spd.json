@@ -2,19 +2,14 @@
     "plants":
     [
         "rotor_num1.json",
-        "spd_roll.json"
+        "spd_altitude.json"
     ],
     "controllers":
     [
-        "spd_roll_pid.json"
+        "spd_alt_pid.json"
     ],
     "constants":
     [
         "constants.json"
-    ],
-    "pd_args": {
-        "PM": 60,
-        "Wc": 1,
-        "Ki": 0.0
-    }
+    ]
 }
