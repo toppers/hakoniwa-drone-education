@@ -6,7 +6,8 @@
     ],
     "controllers":
     [
-        "pid_alt_spd.json"
+        "pid_alt_spd.json",
+        "mixer.json"
     ],
     "constants":
     [

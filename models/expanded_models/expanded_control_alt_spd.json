@@ -32,6 +32,15 @@
                 "1",
                 "0"
             ]
+        },
+        {
+            "comment": "Mixer",
+            "num": [
+                "1"
+            ],
+            "den": [
+                "2 * N * Ct * W0 * Km * VBat"
+            ]
         }
     ],
     "constants": {
