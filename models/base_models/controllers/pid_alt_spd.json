@@ -1,8 +1,8 @@
 {
     "num": [
-        "VAlt_Kd",
-        "VAlt_Kp",
-        "VAlt_Ki"
+        "PID_ALT_SPD_Kd",
+        "PID_ALT_SPD_Kp",
+        "PID_ALT_SPD_Ki"
     ],
     "den": [
         "1",

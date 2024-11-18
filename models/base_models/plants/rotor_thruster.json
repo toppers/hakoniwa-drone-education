@@ -1,10 +1,10 @@
 {
-    "comment": "Rotor",
+    "comment": "Rotor and thruster",
     "num": [
-        "2 * N * A * W0 * Kr"
+        "Km * VBat * 2 * N * Ct * W0"
     ],
     "den": [
-        "Tr",
+        "Tm",
         "1"
     ]
 }

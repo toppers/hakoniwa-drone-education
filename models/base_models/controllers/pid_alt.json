@@ -1,8 +1,8 @@
 {
     "num": [
-        "Alt_Kd",
-        "Alt_Kp",
-        "Alt_Ki"
+        "PID_ALT_Kd",
+        "PID_ALT_Kp",
+        "PID_ALT_Ki"
     ],
     "den": [
         "1",
