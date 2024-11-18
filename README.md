@@ -39,7 +39,7 @@ bash ../installer/install.bash
 
 ```bash
 % ls
-hakoniwa-px4sim hakoniwa-webserver root            setup.bash
+hakoniwa-px4sim         hakoniwa-webserver      root                    setup.bash              static.webgl.zip
 ```
 
 箱庭ドローンシミュレータのバイナリやコンフィグファイル類は、すべて `root` に入っています。
