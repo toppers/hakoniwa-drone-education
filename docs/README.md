@@ -96,22 +96,50 @@ $2 \omega_{0} \Delta \omega = \frac{ \Delta T(t)}{N C_t}$
 
 $G_{\Delta \omega}(s) = \frac{\Delta \omega(s)}{\Delta T(s)} = \frac{1}{2 N C_t \omega_{0}}$
 
-ここで、デューティ値と回転数の関係は以下とし、
+ここで、デューティ値と回転数の関係式を求める。
 
-$d = \frac{\omega}{\omega_{max}}$
+まず、デューティ値と回転数の関係は以下の通りとなる。
 
-代入すると、以下の通りとなる。
+$d = \frac{e}{V_{BAT}}$
 
-$d_0 + \Delta d = \frac{\omega_0 + \Delta \omega}{ 2 \omega_{0}}$
+$e = K \omega+(C_q R / K ) \omega ^2$
 
-さらに、ホバリング状態では、 $d_0 = 0.5$ と仮定すると、以下となり、
+さらに、ホバリング状態では、 以下の通りである。
 
-$\Delta d = \frac{\Delta \omega}{2 \omega_{0}}$
+$d_0 = e_0/V_{bat}$
+
+$e_0 = K \omega_0+(C_q R / K ) \omega_0 ^2$
+
+ここで、ホバリング状態からの変化量という記述をする場合、以下のようになる。
+
+$\omega = \omega_0 + \Delta \omega$
+
+$e = K ( \omega_0 + \Delta \omega)+(C_q R / K ) ( \omega_0 + \Delta \omega) ^2$
+
+２次の項を無視すると、以下の通りとなる。
+
+$e = (K \omega_0 + \frac{C_q R}{K} \omega_0^2) + (K \Delta \omega+ \frac{C_q R}{K} 2 \Delta \omega)$
+
+よって、デューティと回転数の関係は以下の通りとなる。
+
+$d0 + \Delta d = \frac{e0 +  (K \Delta \omega+ \frac{C_q R}{K} 2 \Delta \omega)}{V_{BAT}}$
+
+$\Delta d = \frac{K + \frac{2 C_q R}{K}  }{V_{BAT}}\Delta \omega$
+
+$\frac{\Delta d}{\Delta \omega} = \frac{K^2 + 2 C_q R  }{K V_{BAT}}$
+
 
 デューティの伝達関数は、以下の通りとなる。
 
-$G_{\Delta d(s)} = \frac{\Delta d(s)}{\Delta T(s)} = \frac{1}{4 \omega_{0}^2 N C_t}$
+$G_{\Delta \omega}(s) = \frac{\Delta \omega(s)}{\Delta T(s)} = \frac{1}{2 N C_t \omega_{0}}$
 
+を思い出して、デューティと回転数の関係を考えると、以下の通りとなる。
+
+$G_{\Delta d(s)} = \frac{\Delta d(s)}{\Delta T(s)} =  \frac{\Delta \omega(s)}{\Delta T(s)} \frac{\Delta d(s)}{\Delta \omega(s)}  = \frac{1}{2 N C_t \omega_{0}} \frac{K^2 + 2 C_q R  }{K V_{BAT}}$
+
+最後に、 $K_m$ の定義を使うと、以下の通りとなる。
+
+$G_{\Delta d(s)} =  \frac{1}{2 N C_t \omega_{0}} \frac{1}{K_m V_{BAT}}$
 
 ## モータプロペラ系のモデルの線形モデル化
 
@@ -266,11 +294,11 @@ $G_{V_z}(s) = \frac{V_z(s)}{\Delta T(s)} = \frac{-1}{ms + D_z}$
 
 - コントローラの伝達関数
   - $G_{\Delta T}(s) = \frac{\Delta T(s)}{E(s)} = \frac{s^2 K_d + s K_p + K_i}{s}$
-  - $G_{\Delta d(s)} = \frac{\Delta d(s)}{\Delta T(s)} = \frac{1}{4 \omega_{0}^2 N C_t}$
+  - $G_{\Delta d(s)} = \frac{\Delta d(s)}{\Delta T(s)} = \frac{1}{2 N C_t \omega_{0}} \frac{1}{K_m V_{BAT}}$
 - プラントの伝達関数
   - $G_{\Delta \omega}(s) = \frac{\Delta \omega (s)}{\Delta d(s)} = \frac{K_m V_{BAT}}{\tau_m s + 1}$
   - $G_{\Delta T}(s) = \frac{\Delta T(s)}{\Delta \omega(s)} = 2 N C_t \omega_0$
   - $G_{V_z}(s) = \frac{V_z(s)}{\Delta T(s)} = \frac{-1}{ms + D_z}$
 
-$L(s) = \frac{V_z(s)}{E(s)} = - \frac{K_m V_{BAT} (s^2 K_d + s K_p + K_i)}{2 \omega_0 s (ms + D_z)(\tau_m s + 1)}$
+$L(s) = \frac{V_z(s)}{E(s)} = - \frac{s^2 K_d + s K_p + K_i}{ s (ms + D_z)(\tau_m s + 1)}$
 
