@@ -110,12 +110,14 @@ options:
 
 # 箱庭ドローンシミュレータの環境構築手順
 
-- サポート範囲：
-  - Nativeマシン
-    - MacOS(AppleSilicon/Intel)
-    - Ubuntu 22.0.4
-    - Windows/WSL2
+## サポート対象
 
+- MacOS(AppleSilicon/Intel)
+- Ubuntu 22.0.4
+- Windows/WSL2
+
+
+## 環境構築手順
 
 本リポジトリーをクローンします。
 
