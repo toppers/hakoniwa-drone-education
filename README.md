@@ -1,5 +1,52 @@
 # hakoniwa-drone-education
 
+
+本リポジトリでは、箱庭ドローンの数式を線形モデル化して、解析的にドローン制御のPIDパラメータを調査する方法をまとめています。
+
+具体的には、こんなことができます。
+
+- 解析的なPIDパラメータ調査手法としては、ボード線図や位相線図の作成からステップ応答解析などを Pythonライブラリで簡単に行えます。
+- 解析的に求めたパラメータを箱庭ドローンシミュレータで動作確認できます。この際、遅延時間やオーバーシュート量などを定量的に評価できます。
+
+箱庭ドローンの物理モデルは[こちら](https://github.com/toppers/hakoniwa-px4sim/blob/main/drone_physics/README-ja.md#%E6%95%B0%E5%BC%8F)。
+
+![image](https://github.com/user-attachments/assets/270c4b61-39f2-4451-b442-c6fc5c1100eb)
+
+
+現時点(2024/11/19)では、まだ開発中のステータスであり、[こちら](https://www.docswell.com/s/kanetugu2015/ZXE4D4-Hakoniwa-drone-control-engineering-environment)でその構想を説明しております。
+
+![image](docs/images/study-steps.png)
+
+# 目次
+
+- [物理モデル](#物理モデル)
+- [制御モデル](#制御モデル)
+- [線形モデル解析](#線形モデル解析)
+- 線形モデルのシミュレーション評価(TODO)
+- 制御設計仕様定義(TODO)
+- 解析評価(TODO)
+  - ラプラス領域
+  - 時間領域
+  - 周波数領域
+- PID制御シミュレーション評価(TODO)
+- ツールの説明
+  - [線形モデル解析手順](#線形モデル解析手順)
+  - [箱庭ドローンシミュレータの環境構築手順](#箱庭ドローンシミュレータの環境構築手順)
+
+# 物理モデル
+
+![image](docs/images/drone_model.png)
+
+# 制御モデル
+
+![image](docs/images/control_model.png)
+
+
+# 線形モデル解析
+
+箱庭ドローンおよび制御モデルの線形モデル化については、[こちら](models/README.md)を参照してください。
+
+
 # 線形モデル解析手順
 
 線形モデル解析では、Pythonライブラリを利用します。
