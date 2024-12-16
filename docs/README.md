@@ -310,4 +310,7 @@ $1 + L(s) = 1 - \frac{s^2 K_d + s K_p + K_i}{ s (ms + D_z)(\tau_m s + 1)} = \fra
 
 $\frac{1}{1 + L(s)} = \frac{s (ms + D_z)(\tau_m s + 1)}{s (ms + D_z)(\tau_m s + 1) - (s^2 K_d + s K_p + K_i)}$
 
+$\frac{L(s)}{1 + L(s)} =  - \frac{s^2 K_d + s K_p + K_i}{ s (ms + D_z)(\tau_m s + 1)} \frac{s (ms + D_z)(\tau_m s + 1)}{s (ms + D_z)(\tau_m s + 1) - (s^2 K_d + s K_p + K_i)}$
+
+
 $W(s) = - \frac{s^2 K_d + s K_p + K_i}{ s (ms + D_z)(\tau_m s + 1) - (s^2 K_d + s K_p + K_i)}$
