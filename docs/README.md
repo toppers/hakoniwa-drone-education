@@ -302,3 +302,12 @@ $G_{V_z}(s) = \frac{V_z(s)}{\Delta T(s)} = \frac{-1}{ms + D_z}$
 
 $L(s) = \frac{V_z(s)}{E(s)} = - \frac{s^2 K_d + s K_p + K_i}{ s (ms + D_z)(\tau_m s + 1)}$
 
+## 閉ループ伝達関数
+
+$W(s) = \frac{V_z(s)}{R(s)} = \frac{L(s)}{1 + L(s)}$
+
+$1 + L(s) = 1 - \frac{s^2 K_d + s K_p + K_i}{ s (ms + D_z)(\tau_m s + 1)} = \frac{s (ms + D_z)(\tau_m s + 1) - (s^2 K_d + s K_p + K_i)}{ s (ms + D_z)(\tau_m s + 1)}$
+
+$\frac{1}{1 + L(s)} = \frac{s (ms + D_z)(\tau_m s + 1)}{s (ms + D_z)(\tau_m s + 1) - (s^2 K_d + s K_p + K_i)}$
+
+$W(s) = - \frac{s^2 K_d + s K_p + K_i}{ s (ms + D_z)(\tau_m s + 1) - (s^2 K_d + s K_p + K_i)}$
