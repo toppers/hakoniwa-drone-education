@@ -1,0 +1,53 @@
+{
+    "plants": [
+        {
+            "comment": "Altitude Speed Control Ws",
+            "num": [
+                "-1 * PID_ALT_SPD_Kd",
+                "-1 * PID_ALT_SPD_Kp",
+                "-1 * PID_ALT_SPD_Ki"
+            ],
+            "den": [
+                "m * Tm",
+                "m + (d * Tm) - PID_ALT_SPD_Kd",
+                "d + PID_ALT_SPD_Kp",
+                "PID_ALT_SPD_Ki"
+            ]
+        }
+    ],
+    "controllers": [
+        {
+            "num": [
+                "PID_ALT_Kd",
+                "PID_ALT_Kp",
+                "PID_ALT_Ki"
+            ],
+            "den": [
+                "1",
+                "0"
+            ]
+        }
+    ],
+    "constants": {
+        "m": 0.71,
+        "g": 9.81,
+        "N": 4.0,
+        "d": 0.2,
+        "R": 0.12,
+        "Cq": 3e-08,
+        "K": 0.00328,
+        "D": 0.0,
+        "J": 8.12e-06,
+        "Ct": 8.3e-07,
+        "VBat": 14.8,
+        "PID_ALT_SPD_Kp": 5.0,
+        "PID_ALT_SPD_Ki": 0.0,
+        "PID_ALT_SPD_Kd": 5.0,
+        "PID_ALT_Kp": 10.0,
+        "PID_ALT_Ki": 0.0,
+        "PID_ALT_Kd": 5.0,
+        "W0": 1448.4204109121729,
+        "Km": 154.81171598139815,
+        "Tm": 0.04599040733301047
+    }
+}

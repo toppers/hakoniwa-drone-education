@@ -1,0 +1,14 @@
+{
+    "comment": "Altitude Speed Control Ws",
+    "num": [
+        "-1 * PID_ALT_SPD_Kd",
+        "-1 * PID_ALT_SPD_Kp",
+        "-1 * PID_ALT_SPD_Ki"
+    ],
+    "den": [
+        "m * Tm",
+        "m + (d * Tm) - PID_ALT_SPD_Kd",
+        "d + PID_ALT_SPD_Kp",
+        "PID_ALT_SPD_Ki"
+    ]
+}
