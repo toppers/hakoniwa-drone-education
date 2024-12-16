@@ -1,7 +1,8 @@
 {
     "plants":
     [
-        "ws_alt_spd_ctrl.json"
+        "ws_alt_spd_ctrl.json",
+        "alt.json"
     ],
     "controllers":
     [

@@ -8,7 +8,7 @@
     "den": [
         "m * Tm",
         "m + (d * Tm) - PID_ALT_SPD_Kd",
-        "d + PID_ALT_SPD_Kp",
-        "PID_ALT_SPD_Ki"
+        "d - PID_ALT_SPD_Kp",
+        "-1 * PID_ALT_SPD_Ki"
     ]
 }
