@@ -314,3 +314,5 @@ $\frac{L(s)}{1 + L(s)} =  - \frac{s^2 K_d + s K_p + K_i}{ s (ms + D_z)(\tau_m s 
 
 
 $W(s) = - \frac{s^2 K_d + s K_p + K_i}{ s (ms + D_z)(\tau_m s + 1) - (s^2 K_d + s K_p + K_i)}$
+
+$W(s) = - \frac{s^2 K_d + s K_p + K_i}{ s^3 m \tau_m + s^2 (m + D_z \tau_m - K_d) + s (D_z + K_p ) + K_i }$
